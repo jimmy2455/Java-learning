@@ -394,6 +394,36 @@ textarea {
   border-bottom: 0;
 }
 
+.lesson-nav .lesson-nav-item {
+  display: grid;
+  gap: 3px;
+}
+
+.lesson-nav .lesson-nav-item span {
+  color: var(--text);
+}
+
+.lesson-nav .lesson-nav-item small {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.lesson-nav .lesson-nav-item.active {
+  background: rgba(94, 234, 212, 0.13);
+}
+
+.lesson-nav .lesson-nav-item.active small {
+  color: var(--accent);
+}
+
+.lesson-nav .lesson-nav-item.completed {
+  background: rgba(134, 239, 172, 0.09);
+}
+
+.lesson-nav .lesson-nav-item.completed small {
+  color: var(--ok);
+}
+
 .lesson-article {
   min-width: 0;
 }
@@ -642,6 +672,23 @@ code {
 .answer-panel.solution pre {
   border-radius: var(--radius);
   background: var(--code-bg);
+}
+
+.muted-text {
+  color: var(--muted);
+}
+
+.section-pager {
+  margin-top: 18px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(15, 23, 42, 0.78);
+}
+
+.section-progress {
+  color: var(--muted);
+  font-weight: 700;
 }
 
 .quiz-question {

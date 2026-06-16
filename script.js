@@ -1,14 +1,6 @@
 const STORAGE_KEY = "javaVillageProgress";
 
-const createActivity = ({ id, type, title, question, hint, solution, explanation }) => ({
-  id,
-  type,
-  title,
-  question,
-  hint,
-  solution,
-  explanation
-});
+const createActivity = (activity) => activity;
 
 const chapters = [
   {
@@ -20,6 +12,7 @@ const chapters = [
     intro: "本章先建立全局觀。你不需要先會寫程式，只要知道 Java 是一種被大量使用、重視穩定性與可維護性的程式語言。",
     sections: [
       {
+        sectionId: "1.1",
         title: "Java 是什麼",
         body: [
           "Java 是一種程式設計語言，也是一套可以讓程式在不同電腦上執行的平台。它在 1990 年代出現，到現在仍然被很多公司、學校與開發團隊使用。",
@@ -35,6 +28,7 @@ const chapters = [
         }
       },
       {
+        sectionId: "1.2",
         title: "Java 可以做什麼",
         body: [
           "Java 常用在企業後端系統，例如訂單、會員、庫存、金流與內部管理系統。許多銀行、電商、物流平台都會使用 Java 建立穩定服務。",
@@ -48,6 +42,7 @@ const chapters = [
         ]
       },
       {
+        sectionId: "1.3",
         title: "Java 的特色",
         body: [
           "跨平台是 Java 很重要的特色。Java 程式通常會先被編譯成 bytecode，再由 JVM 執行，因此同一份程式可以在不同作業系統上運作。",
@@ -61,6 +56,7 @@ const chapters = [
         ]
       },
       {
+        sectionId: "1.4",
         title: "Java 和 JavaScript 的差別",
         body: [
           "Java 和 JavaScript 不是同一種語言。它們名字相似，但語法、用途、執行方式與主要應用場景都不同。",
@@ -68,6 +64,7 @@ const chapters = [
         ]
       },
       {
+        sectionId: "1.5",
         title: "新手學 Java 前需要知道什麼",
         body: [
           "你不需要先懂高深數學，也不需要先會其他語言。最重要的是願意慢慢練習：看懂一小段、改一小段、執行一小段。",
@@ -78,6 +75,7 @@ const chapters = [
     activities: [
       createActivity({
         id: "ch01-think-java-js",
+        sectionId: "1.5",
         type: "thought",
         title: "思考題：Java 和 JavaScript 是同一種語言嗎？",
         question: "請用一句話回答，並寫出你目前知道的一個差異。",
@@ -87,6 +85,7 @@ const chapters = [
       }),
       createActivity({
         id: "ch01-exercise-products",
+        sectionId: "1.2",
         type: "exercise",
         title: "實作練習：列出 Java 可以製作的東西",
         question: "列出 3 個你覺得 Java 可以製作的東西，並簡單說明用途。",
@@ -96,6 +95,7 @@ const chapters = [
       }),
       createActivity({
         id: "ch01-homework-compare",
+        sectionId: "1.5",
         type: "homework",
         title: "作業：寫一段 Java 學習前筆記",
         question: "用 5 到 8 句話整理：Java 是什麼、可以做什麼、和 JavaScript 有什麼不同、你想用 Java 做什麼。",
@@ -134,6 +134,7 @@ const chapters = [
     intro: "本章會讓你看見第一個完整 Java 程式。先不要急著背每個字，重點是知道每一段大概負責什麼。",
     sections: [
       {
+        sectionId: "2.1",
         title: "JDK 是什麼",
         body: [
           "JDK 是 Java Development Kit，也就是 Java 開發工具包。它包含寫 Java 程式需要的工具，例如編譯器 javac，以及執行 Java 程式所需的環境。",
@@ -141,13 +142,15 @@ const chapters = [
         ]
       },
       {
-        title: "編輯器介紹",
+        sectionId: "2.2",
+        title: "安裝編輯器",
         body: [
           "VS Code 是輕量、擴充彈性高的編輯器，適合想用同一套工具寫多種語言的人。安裝 Java 相關擴充套件後，也可以寫 Java。",
           "IntelliJ IDEA 是很受 Java 開發者歡迎的 IDE。它對 Java 專案、錯誤提示、重構與自動完成支援完整，適合長期深入學習。"
         ]
       },
       {
+        sectionId: "2.3",
         title: "第一個 Java 程式",
         body: [
           "許多語言的第一個範例都是 Hello World。它的目的不是做出複雜功能，而是確認你的環境、檔案、編譯與執行流程都能正常運作。",
@@ -163,7 +166,8 @@ const chapters = [
         }
       },
       {
-        title: "程式碼逐行解釋",
+        sectionId: "2.4",
+        title: "Java 程式的組成要素",
         body: [
           "`public class HelloWorld` 定義了一個名為 HelloWorld 的類別。Java 程式通常會放在 class 裡面。",
           "`public static void main(String[] args)` 是程式開始執行的入口。當你執行這個程式時，Java 會從 main 方法開始跑。",
@@ -172,28 +176,25 @@ const chapters = [
         ]
       },
       {
-        title: "編譯與執行的概念",
+        sectionId: "2.5",
+        title: "編譯與執行",
         body: [
           "Java 程式通常會先寫在 `.java` 檔案中。接著用編譯器把它轉成 `.class` 檔案，最後交給 JVM 執行。",
-          "你可以先記住流程：寫程式碼、編譯、執行、看結果、修正錯誤。這個循環會陪你很久，也會讓你越來越熟。"
+          "你可以先記住流程：寫程式碼、編譯、執行、看結果、修正錯誤。這個循環會陪你很久，也會讓你越來越熟。",
+          "如果看到找不到 class、找不到 main 方法、或分號錯誤，先不要慌。檢查檔名、class 名稱、main 方法拼字，以及每行指令是否有分號。",
+          "初學階段請先把程式放在簡單路徑，避免資料夾名稱太複雜。每次只改一小段，再重新編譯執行，會比較容易找出問題。"
         ],
         code: {
           title: "終端機概念指令",
           value: `javac HelloWorld.java
 java HelloWorld`
         }
-      },
-      {
-        title: "新手常見執行問題",
-        body: [
-          "如果看到找不到 class、找不到 main 方法、或分號錯誤，先不要慌。檢查檔名、class 名稱、main 方法拼字，以及每行指令是否有分號。",
-          "初學階段請先把程式放在簡單路徑，避免資料夾名稱太複雜。每次只改一小段，再重新編譯執行，會比較容易找出問題。"
-        ]
       }
     ],
     activities: [
       createActivity({
         id: "ch02-exercise-name",
+        sectionId: "2.3",
         type: "exercise",
         title: "實作練習：改成自己的名字",
         question: "把 `System.out.println(\"Hello, Java!\");` 裡面的文字改成自己的名字，並觀察輸出結果。",
@@ -207,6 +208,7 @@ java HelloWorld`
       }),
       createActivity({
         id: "ch02-thought-main",
+        sectionId: "2.4",
         type: "thought",
         title: "思考題：為什麼 main 方法很重要？",
         question: "請用自己的話說明：如果 Java 程式沒有 main 方法，可能會發生什麼事？",
@@ -216,6 +218,7 @@ java HelloWorld`
       }),
       createActivity({
         id: "ch02-homework-intro",
+        sectionId: "2.5",
         type: "homework",
         title: "作業：輸出三行自我介紹",
         question: "寫一個程式，輸出三行自我介紹。第一行是名字，第二行是目前想學 Java 的原因，第三行是你希望做出的作品。",
@@ -272,6 +275,7 @@ java HelloWorld`
     intro: "變數是程式設計最重要的基礎之一。你可以把變數想成貼了標籤的盒子，用來存放資料。",
     sections: [
       {
+        sectionId: "3.1",
         title: "變數是什麼",
         body: [
           "變數是用來儲存資料的名稱。程式執行時，我們常常需要記住某些值，例如名字、年齡、分數、是否登入、商品價格。",
@@ -284,6 +288,7 @@ int age = 18;`
         }
       },
       {
+        sectionId: "3.2",
         title: "為什麼需要變數",
         body: [
           "如果程式裡的資料都直接寫死，修改起來會很麻煩，也很容易出錯。變數讓我們可以重複使用資料，並讓程式根據不同資料產生不同結果。",
@@ -296,6 +301,7 @@ System.out.println("你好，我是 " + name);`
         }
       },
       {
+        sectionId: "3.3",
         title: "Java 常見資料型態",
         body: [
           "`int` 用來存放整數，例如年齡、數量、分數。`double` 用來存放有小數的數字，例如身高、體重、價格。",
@@ -311,6 +317,7 @@ String name = "小明";`
         }
       },
       {
+        sectionId: "3.4",
         title: "宣告變數與賦值",
         body: [
           "宣告變數就是告訴 Java：我要建立一個可以存資料的名稱。賦值就是把資料放進這個變數。",
@@ -324,6 +331,7 @@ System.out.println(score);`
         }
       },
       {
+        sectionId: "3.5",
         title: "變數命名規則",
         body: [
           "變數名稱可以包含英文字母、數字、底線與錢字符號，但不能用數字開頭。新手建議使用清楚的英文單字，讓自己之後看得懂。",
@@ -336,6 +344,7 @@ System.out.println(score);`
         ]
       },
       {
+        sectionId: "3.7",
         title: "常見錯誤",
         body: [
           "忘記分號是最常見的錯誤之一。Java 看到指令沒有正常結束，就會在編譯時提醒你。",
@@ -349,7 +358,8 @@ System.out.println(Name); // 錯誤：name 和 Name 不同`
         }
       },
       {
-        title: "把變數組合成輸出",
+        sectionId: "3.6",
+        title: "使用變數輸出資料",
         body: [
           "變數最常見的用途之一，是把資料組合成有意義的輸出。Java 可以用加號 `+` 把文字和變數串接起來。",
           "當你看到很多加號時，先從左到右讀：固定文字、變數、固定文字、變數。這樣會比一次看完整行容易很多。"
@@ -369,6 +379,7 @@ System.out.println("身高：" + height + " 公分");`
     activities: [
       createActivity({
         id: "ch03-exercise-profile-vars",
+        sectionId: "3.6",
         type: "exercise",
         title: "實作練習：建立 name、age、height 變數",
         question: "建立 `name`、`age`、`height` 三個變數，分別存放你的名字、年齡與身高，並用 `System.out.println()` 輸出。",
@@ -388,6 +399,7 @@ System.out.println("身高：" + height + " 公分");`
       }),
       createActivity({
         id: "ch03-thought-int-double",
+        sectionId: "3.3",
         type: "thought",
         title: "思考題：年齡和身高適合用什麼型態？",
         question: "為什麼年齡適合用 `int`，而身高可能適合用 `double`？",
@@ -397,6 +409,7 @@ System.out.println("身高：" + height + " 公分");`
       }),
       createActivity({
         id: "ch03-homework-profile-card",
+        sectionId: "3.6",
         type: "homework",
         title: "作業：簡單個人資料卡程式",
         question: "寫一個簡單個人資料卡程式，輸出姓名、年齡、身高、是否為學生，以及一句自我介紹。",
@@ -461,7 +474,8 @@ System.out.println("身高：" + height + " 公分");`
     intro: "運算式是程式做計算、比較、組合文字與判斷條件的基礎。本章會從最簡單的 `5 + 3` 開始，慢慢走到布林運算、位元運算、轉型與使用者輸入。",
     sections: [
       {
-        title: "4.1 什麼是運算式",
+        sectionId: "4.1",
+        title: "什麼是運算式",
         body: [
           "運算式是可以被 Java 算出一個結果的程式片段。它可能是數學計算，也可能是比較結果，甚至可以是文字串接。",
           "運算式通常由三個部分組成：運算元（Operand）、算符（Operator）與運算結果（Result）。以 `5 + 3` 來說，`5` 和 `3` 是運算元，`+` 是算符，結果是 `8`。",
@@ -475,7 +489,8 @@ name + "同學"`
         }
       },
       {
-        title: "4.2 指定算符（Assignment Operator）",
+        sectionId: "4.2",
+        title: "指定算符（Assignment Operator）",
         body: [
           "指定算符用來把右邊的值放進左邊的變數。最基本的是 `=`，例如 `int x = 10;`，意思是建立 x 並放入 10。",
           "`+=`、`-=`、`*=`、`/=`、`%=` 是複合指定算符。它們會先用原本的變數值做運算，再把結果存回同一個變數。",
@@ -489,10 +504,41 @@ x -= 2;   // x = x - 2
 x *= 3;   // x = x * 3
 x /= 4;   // x = x / 4
 x %= 2;   // x = x % 2`
-        }
+        },
+        codes: [
+          {
+            title: "= 基本指定",
+            value: `int count = 10;
+String name = "Jimmy";
+boolean passed = true;`
+          },
+          {
+            title: "+= 累加",
+            value: `int score = 80;
+score += 10;
+System.out.println(score); // 90`
+          },
+          {
+            title: "-= 扣除",
+            value: `int coins = 50;
+coins -= 15;
+System.out.println(coins); // 35`
+          },
+          {
+            title: "*= 與 /= 更新數值",
+            value: `int price = 100;
+price *= 2;
+System.out.println(price); // 200
+
+int people = 20;
+people /= 4;
+System.out.println(people); // 5`
+          }
+        ]
       },
       {
-        title: "4.3 數值運算",
+        sectionId: "4.3",
+        title: "數值運算",
         body: [
           "Java 的基本數值運算包含加法 `+`、減法 `-`、乘法 `*`、除法 `/` 與取餘數 `%`。這些符號會回傳一個新的數值結果。",
           "整數除法是新手很容易踩到的地方。當兩邊都是 int 時，`10 / 3` 會得到 `3`，小數部分會被捨去，不會自動變成 3.333。",
@@ -508,10 +554,43 @@ System.out.println(a - b); // 7
 System.out.println(a * b); // 30
 System.out.println(a / b); // 3
 System.out.println(a % b); // 1`
-        }
+        },
+        codes: [
+          {
+            title: "加法",
+            value: `int total = 120 + 80;
+System.out.println(total); // 200`
+          },
+          {
+            title: "減法",
+            value: `int remaining = 100 - 35;
+System.out.println(remaining); // 65`
+          },
+          {
+            title: "乘法",
+            value: `int area = 6 * 4;
+System.out.println(area); // 24`
+          },
+          {
+            title: "除法",
+            value: `int groups = 20 / 5;
+System.out.println(groups); // 4`
+          },
+          {
+            title: "餘數",
+            value: `int leftover = 17 % 5;
+System.out.println(leftover); // 2`
+          },
+          {
+            title: "整數除法",
+            value: `int result = 10 / 3;
+System.out.println(result); // 3，不是 3.333`
+          }
+        ]
       },
       {
-        title: "4.4 布林運算（Logical Operation）",
+        sectionId: "4.4",
+        title: "布林運算（Logical Operation）",
         body: [
           "布林運算會得到 true 或 false，常用於條件判斷。比較算符包含 `>`、`<`、`>=`、`<=`、`==`、`!=`。",
           "`&&` 表示而且，左右兩邊都要是 true，結果才是 true。`||` 表示或者，只要其中一邊是 true，結果就是 true。`!` 則會把 true 變 false，把 false 變 true。",
@@ -525,10 +604,44 @@ boolean workingAge = age >= 18 && age <= 65;
 
 System.out.println(canVote);
 System.out.println(workingAge);`
-        }
+        },
+        codes: [
+          {
+            title: "> 大於",
+            value: `int score = 85;
+System.out.println(score > 60); // true`
+          },
+          {
+            title: "== 等於",
+            value: `int level = 3;
+System.out.println(level == 3); // true`
+          },
+          {
+            title: "!= 不等於",
+            value: `String role = "student";
+System.out.println(role != "admin"); // true`
+          },
+          {
+            title: "&& 而且",
+            value: `int age = 25;
+System.out.println(age >= 18 && age <= 65); // true`
+          },
+          {
+            title: "|| 或者",
+            value: `boolean hasTicket = false;
+boolean isVip = true;
+System.out.println(hasTicket || isVip); // true`
+          },
+          {
+            title: "! 反轉",
+            value: `boolean isLocked = false;
+System.out.println(!isLocked); // true`
+          }
+        ]
       },
       {
-        title: "4.5 位元運算（Bitwise Operation）",
+        sectionId: "4.5",
+        title: "位元運算（Bitwise Operation）",
         body: [
           "位元運算會直接針對整數的二進位位元做操作。新手不用先深入 CPU 或硬體，只要知道整數在底層可以看成一串 0 和 1。",
           "`&` 代表兩邊都是 1 才留下 1，`|` 代表其中一邊是 1 就留下 1，`^` 代表兩邊不同才是 1，`~` 會把 0 和 1 反轉。",
@@ -545,7 +658,8 @@ System.out.println(workingAge);`
         }
       },
       {
-        title: "4.6 運算式的運算順序",
+        sectionId: "4.6",
+        title: "運算式的運算順序",
         body: [
           "一個運算式如果有多個算符，Java 會依照優先順序計算。你可以先用 PEMDAS 當記憶方向：括號、乘除餘、加減。",
           "`3 + 4 * 5` 會先算乘法，所以是 `3 + 20`，結果是 23。`(3 + 4) * 5` 因為有括號，所以先算 3 + 4，結果是 35。",
@@ -559,7 +673,8 @@ System.out.println(10 - 6 / 2);    // 7`
         }
       },
       {
-        title: "4.7 資料的轉型（Type Conversion）",
+        sectionId: "4.7",
+        title: "資料的轉型（Type Conversion）",
         body: [
           "資料轉型是把一種型態的值轉成另一種型態。Java 會在安全時自動轉型，例如把 int 放進 double，因為整數可以被表示成小數。",
           "強制轉型需要你明確寫出目標型態，例如 `(int)3.14`。這會把 3.14 轉成 3，但它不是四捨五入，而是直接捨去小數部分。",
@@ -572,10 +687,36 @@ int y = (int) 3.14;  // 強制轉成 int，結果是 3
 
 double average = (double) 10 / 3;
 System.out.println(average);`
-        }
+        },
+        codes: [
+          {
+            title: "int 自動轉 double",
+            value: `int count = 5;
+double number = count;
+System.out.println(number); // 5.0`
+          },
+          {
+            title: "double 強制轉 int",
+            value: `double price = 99.9;
+int dollars = (int) price;
+System.out.println(dollars); // 99`
+          },
+          {
+            title: "字串與數字相加",
+            value: `String label = "年齡：";
+int age = 25;
+System.out.println(label + age); // 年齡：25`
+          },
+          {
+            title: "整數除法改成小數結果",
+            value: `double result = (double) 10 / 3;
+System.out.println(result); // 3.3333333333333335`
+          }
+        ]
       },
       {
-        title: "4.8 其他算符",
+        sectionId: "4.8",
+        title: "其他算符",
         body: [
           "`++` 可以讓變數加 1，常用於計數。`score++` 大致可以先理解成 `score = score + 1;`。",
           "三元運算子 `condition ? A : B` 可以根據條件選擇其中一個結果。如果 condition 是 true，就回傳 A；如果是 false，就回傳 B。",
@@ -591,7 +732,8 @@ System.out.println(result);`
         }
       },
       {
-        title: "4.9 取得輸入",
+        sectionId: "4.9",
+        title: "取得輸入",
         body: [
           "Scanner 可以讓 Java 程式讀取使用者在終端機輸入的資料。使用前需要先匯入 `java.util.Scanner`。",
           "建立 Scanner 時，`new Scanner(System.in)` 表示從標準輸入讀資料，也就是使用者在終端機輸入的內容。",
@@ -614,12 +756,56 @@ public class InputDemo {
         System.out.println("你好 " + name + "，你今年 " + age + " 歲。");
     }
 }`
-        }
+        },
+        codes: [
+          {
+            title: "輸入姓名",
+            value: `import java.util.Scanner;
+
+public class InputName {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("請輸入姓名：");
+        String name = sc.nextLine();
+        System.out.println("你好 " + name);
+    }
+}`
+          },
+          {
+            title: "輸入年齡",
+            value: `import java.util.Scanner;
+
+public class InputAge {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("請輸入年齡：");
+        int age = sc.nextInt();
+        System.out.println("你今年 " + age + " 歲");
+    }
+}`
+          },
+          {
+            title: "輸入姓名與年齡",
+            value: `import java.util.Scanner;
+
+public class InputNameAndAge {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("請輸入姓名：");
+        String name = sc.nextLine();
+        System.out.print("請輸入年齡：");
+        int age = sc.nextInt();
+        System.out.println("你好 " + name + "，你今年 " + age + " 歲。");
+    }
+}`
+          }
+        ]
       }
     ],
     activities: [
       createActivity({
         id: "ch04-activity-expression",
+        sectionId: "4.1",
         type: "exercise",
         title: "4.1 練習題：判斷哪些屬於運算式",
         question: "判斷下列哪些屬於運算式：`5 + 3`、`age >= 18`、`name + \"同學\"`、`int age;`。",
@@ -629,6 +815,7 @@ public class InputDemo {
       }),
       createActivity({
         id: "ch04-activity-assignment",
+        sectionId: "4.2",
         type: "exercise",
         title: "4.2 練習題：計算指定後的結果",
         question: "如果 `int x = 10;`，依序執行 `x += 5;`、`x *= 2;`、`x %= 6;`，最後 x 是多少？",
@@ -638,6 +825,7 @@ public class InputDemo {
       }),
       createActivity({
         id: "ch04-activity-calculator",
+        sectionId: "4.3",
         type: "homework",
         title: "4.3 作業：設計簡易計算機",
         question: "建立兩個整數變數 a 和 b，輸出它們的加、減、乘、除、餘數結果。",
@@ -658,6 +846,7 @@ public class InputDemo {
       }),
       createActivity({
         id: "ch04-activity-int-division",
+        sectionId: "4.3",
         type: "thought",
         title: "4.3 思考題：為什麼 10 / 3 不是 3.333？",
         question: "請說明為什麼 Java 中 `10 / 3` 的結果不是 3.333。",
@@ -667,6 +856,7 @@ public class InputDemo {
       }),
       createActivity({
         id: "ch04-activity-vote",
+        sectionId: "4.4",
         type: "exercise",
         title: "4.4 實作練習：判斷是否符合投票資格",
         question: "建立 `age` 變數，判斷年齡是否大於等於 18，並輸出結果。",
@@ -682,6 +872,7 @@ public class InputDemo {
       }),
       createActivity({
         id: "ch04-activity-bitwise",
+        sectionId: "4.5",
         type: "exercise",
         title: "4.5 練習題：看圖判斷位元運算結果",
         question: "根據二進位圖解，計算 `5 & 3`、`5 | 3`、`8 >> 1` 的結果。",
@@ -691,6 +882,7 @@ public class InputDemo {
       }),
       createActivity({
         id: "ch04-activity-precedence",
+        sectionId: "4.6",
         type: "exercise",
         title: "4.6 實作練習：預測運算結果",
         question: "先不要執行程式，預測 `3 + 4 * 5` 和 `(3 + 4) * 5` 的結果。",
@@ -700,6 +892,7 @@ public class InputDemo {
       }),
       createActivity({
         id: "ch04-activity-casting",
+        sectionId: "4.7",
         type: "thought",
         title: "4.7 思考題：為什麼 (int)3.99 不是四捨五入？",
         question: "請說明 `(int)3.99` 的結果為什麼是 3，而不是 4。",
@@ -709,6 +902,7 @@ public class InputDemo {
       }),
       createActivity({
         id: "ch04-activity-ternary",
+        sectionId: "4.8",
         type: "exercise",
         title: "4.8 實作練習：根據成績顯示結果",
         question: "建立 `score` 變數，使用三元運算子輸出 `及格` 或 `不及格`。",
@@ -724,6 +918,7 @@ public class InputDemo {
       }),
       createActivity({
         id: "ch04-activity-scanner",
+        sectionId: "4.9",
         type: "exercise",
         title: "4.9 實作練習：讀取姓名與年齡",
         question: "使用 Scanner 詢問姓名與年齡，最後輸出：`你好 Jimmy，你今年 25 歲。` 這種格式的句子。",
@@ -816,8 +1011,9 @@ const mainNav = document.querySelector("[data-main-nav]");
 
 function getDefaultState() {
   return {
-    version: 2,
+    version: 3,
     completedChapters: [],
+    completedSections: [],
     completedActivities: [],
     quizAnswers: {}
   };
@@ -838,6 +1034,7 @@ function getState() {
       ...getDefaultState(),
       ...saved,
       completedChapters: Array.isArray(saved?.completedChapters) ? saved.completedChapters : [],
+      completedSections: Array.isArray(saved?.completedSections) ? saved.completedSections : [],
       completedActivities: Array.isArray(saved?.completedActivities) ? saved.completedActivities : [],
       quizAnswers: saved?.quizAnswers && typeof saved.quizAnswers === "object" ? saved.quizAnswers : {}
     });
@@ -848,21 +1045,23 @@ function getState() {
 
 function normalizeState(state) {
   const completedActivities = [...new Set(state.completedActivities)];
+  const completedSections = [...new Set(state.completedSections)];
   const quizAnswers = state.quizAnswers;
   const completedChapters = state.completedChapters.filter((chapterId) => {
     const chapter = chapters.find((item) => item.id === chapterId);
     if (!chapter) return false;
 
-    const allActivitiesDone = chapter.activities.every((activity) => completedActivities.includes(activity.id));
+    const allSectionsDone = getSortedSections(chapter).every((section) => completedSections.includes(getSectionKey(chapter.id, section.sectionId)));
     const answers = quizAnswers[getChapterKey(chapter.id)] || {};
     const allQuizDone = chapter.quiz.every((_, index) => Number.isInteger(answers[index]));
 
-    return allActivitiesDone && allQuizDone;
+    return allSectionsDone && allQuizDone;
   });
 
   return {
     ...state,
     completedActivities,
+    completedSections,
     completedChapters
   };
 }
@@ -871,7 +1070,7 @@ function saveState(state) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(normalizeState({
     ...getDefaultState(),
     ...state,
-    version: 2
+    version: 3
   })));
 }
 
@@ -886,8 +1085,44 @@ function getChapter(id) {
   return chapters.find((chapter) => chapter.id === id) || chapters[0];
 }
 
+function getSortedSections(chapter) {
+  return [...chapter.sections].sort((a, b) => compareSectionIds(a.sectionId, b.sectionId));
+}
+
+function compareSectionIds(a, b) {
+  const [aMajor, aMinor] = a.split(".").map(Number);
+  const [bMajor, bMinor] = b.split(".").map(Number);
+
+  if (aMajor !== bMajor) return aMajor - bMajor;
+  return aMinor - bMinor;
+}
+
 function getChapterKey(chapterId) {
   return String(chapterId);
+}
+
+function getSectionKey(chapterId, sectionId) {
+  return `${chapterId}:${sectionId}`;
+}
+
+function getAssessmentSection(chapter) {
+  const sections = getSortedSections(chapter);
+  return {
+    sectionId: `${chapter.id}.${sections.length + 1}`,
+    title: "本章練習與測驗"
+  };
+}
+
+function getActivitiesForSection(chapter, sectionId) {
+  return chapter.activities.filter((activity) => activity.sectionId === sectionId);
+}
+
+function getInitialSectionId(chapter, state = getState()) {
+  const firstUnfinished = getSortedSections(chapter).find((section) => {
+    return !state.completedSections.includes(getSectionKey(chapter.id, section.sectionId));
+  });
+
+  return firstUnfinished?.sectionId || getSortedSections(chapter)[0].sectionId;
 }
 
 function getChapterQuizAnswers(chapterId, state = getState()) {
@@ -896,21 +1131,27 @@ function getChapterQuizAnswers(chapterId, state = getState()) {
 
 function getChapterStats(chapter, state = getState()) {
   const completedActivities = chapter.activities.filter((activity) => state.completedActivities.includes(activity.id)).length;
+  const sections = getSortedSections(chapter);
+  const completedSections = sections.filter((section) => state.completedSections.includes(getSectionKey(chapter.id, section.sectionId))).length;
   const answers = getChapterQuizAnswers(chapter.id, state);
   const answeredCount = chapter.quiz.filter((_, index) => Number.isInteger(answers[index])).length;
   const correctCount = chapter.quiz.filter((question, index) => answers[index] === question.answer).length;
   const allActivitiesDone = completedActivities === chapter.activities.length;
+  const allSectionsDone = completedSections === sections.length;
   const allQuizDone = answeredCount === chapter.quiz.length;
 
   return {
     completedActivities,
     totalActivities: chapter.activities.length,
+    completedSections,
+    totalSections: sections.length,
     answeredCount,
     correctCount,
     totalQuiz: chapter.quiz.length,
     allActivitiesDone,
+    allSectionsDone,
     allQuizDone,
-    canComplete: allActivitiesDone && allQuizDone
+    canComplete: allSectionsDone && allQuizDone
   };
 }
 
@@ -945,7 +1186,8 @@ function renderMainNav() {
 function updateActiveNav() {
   const hash = location.hash || "#home";
   document.querySelectorAll(".top-nav a").forEach((link) => {
-    link.classList.toggle("active", link.getAttribute("href") === hash);
+    const href = link.getAttribute("href");
+    link.classList.toggle("active", href === hash || (href?.startsWith("#chapter-") && hash.startsWith(`${href}/`)));
   });
 }
 
@@ -1038,6 +1280,7 @@ function renderMap() {
             <div class="chapter-meta">
               <span class="pill">${chapter.minutes} 分鐘</span>
               <span class="pill ${isDone ? "done" : ""}">${isDone ? "已完成" : "尚未完成"}</span>
+              <span class="pill">小節 ${chapterStats.completedSections}/${chapterStats.totalSections}</span>
               <span class="pill">練習 ${chapterStats.completedActivities}/${chapterStats.totalActivities}</span>
               <span class="pill">測驗 ${chapterStats.answeredCount}/${chapterStats.totalQuiz}</span>
             </div>
@@ -1063,11 +1306,12 @@ function renderCodeBlock(code) {
 
 function renderSection(section, index) {
   return `
-    <section id="section-${index + 1}" class="content-section">
-      <h2>${section.title}</h2>
+    <section id="section-${section.sectionId}" class="content-section">
+      <h2>${section.sectionId} ${section.title}</h2>
       ${section.body.map((paragraph) => `<p>${formatInlineCode(paragraph)}</p>`).join("")}
       ${section.list ? `<ul>${section.list.map((item) => `<li>${formatInlineCode(item)}</li>`).join("")}</ul>` : ""}
       ${renderCodeBlock(section.code)}
+      ${section.codes ? section.codes.map(renderCodeBlock).join("") : ""}
     </section>
   `;
 }
@@ -1128,15 +1372,17 @@ function renderActivity(activity, state) {
   `;
 }
 
-function renderActivities(chapter, state) {
+function renderActivities(chapter, state, activities = chapter.activities) {
   return `
     <section class="activity-group" id="activities">
       <div class="group-heading">
         <p class="eyebrow">Practice</p>
-        <h2>練習、思考與作業</h2>
+        <h2>${activities.length === chapter.activities.length ? "本章練習總覽" : "本小節練習"}</h2>
         <p>每題都可以先看提示，再查看標準解答與解析。完成後勾選，進度會儲存在此瀏覽器。</p>
       </div>
-      ${chapter.activities.map((activity) => renderActivity(activity, state)).join("")}
+      ${activities.length
+        ? activities.map((activity) => renderActivity(activity, state)).join("")
+        : `<p class="muted-text">本小節沒有額外練習題，請完成閱讀後標記本小節完成。</p>`}
     </section>
   `;
 }
@@ -1207,7 +1453,7 @@ function renderCompletionCard(chapter, state) {
   const stats = getChapterStats(chapter, state);
   const missing = [];
 
-  if (!stats.allActivitiesDone) missing.push(`完成所有練習 ${stats.completedActivities}/${stats.totalActivities}`);
+  if (!stats.allSectionsDone) missing.push(`完成所有小節 ${stats.completedSections}/${stats.totalSections}`);
   if (!stats.allQuizDone) missing.push(`完成所有測驗 ${stats.answeredCount}/${stats.totalQuiz}`);
 
   return `
@@ -1229,38 +1475,130 @@ function renderCompletionCard(chapter, state) {
   `;
 }
 
-function renderChapter(id) {
+function getSectionStatus(chapter, section, activeSectionId, state) {
+  if (state.completedSections.includes(getSectionKey(chapter.id, section.sectionId))) {
+    return "completed";
+  }
+
+  if (section.sectionId === activeSectionId) {
+    return "active";
+  }
+
+  return "not-started";
+}
+
+function getSectionStatusText(status) {
+  const labels = {
+    completed: "已完成",
+    active: "學習中",
+    "not-started": "尚未開始"
+  };
+
+  return labels[status];
+}
+
+function renderLessonNav(chapter, activeView, activeSectionId, state) {
+  const sections = getSortedSections(chapter);
+  const assessment = getAssessmentSection(chapter);
+  const quizDone = getChapterStats(chapter, state).allQuizDone;
+
+  return `
+    <aside class="lesson-nav" aria-label="章節導覽">
+      <a href="#map">返回地圖</a>
+      ${sections.map((section) => {
+        const status = getSectionStatus(chapter, section, activeSectionId, state);
+        return `
+          <button class="lesson-nav-item ${status}" type="button" data-section-target="${section.sectionId}">
+            <span>${section.sectionId} ${section.title}</span>
+            <small>${getSectionStatusText(status)}</small>
+          </button>
+        `;
+      }).join("")}
+      <button class="lesson-nav-item ${activeView === "assessment" ? "active" : quizDone ? "completed" : "not-started"}" type="button" data-assessment-target="${chapter.id}">
+        <span>${assessment.sectionId} ${assessment.title}</span>
+        <small>${activeView === "assessment" ? "學習中" : quizDone ? "已完成" : "尚未開始"}</small>
+      </button>
+    </aside>
+  `;
+}
+
+function renderSectionPager(chapter, section, activeIndex, totalSections, state) {
+  const completed = state.completedSections.includes(getSectionKey(chapter.id, section.sectionId));
+  const progressText = `${section.sectionId} / ${chapter.id}.${totalSections}`;
+  const isFirst = activeIndex === 0;
+  const isLast = activeIndex === totalSections - 1;
+
+  return `
+    <section class="section-pager">
+      <div class="section-progress">目前進度：${progressText}</div>
+      <div class="section-actions">
+        <button class="button secondary" type="button" data-prev-section="${chapter.id}" ${isFirst ? "disabled" : ""}>上一小節</button>
+        <button class="button" type="button" data-complete-section="${section.sectionId}" ${completed ? "disabled" : ""}>
+          ${completed ? "本小節已完成" : "完成本小節"}
+        </button>
+        <button class="button secondary" type="button" ${isLast ? `data-assessment-target="${chapter.id}"` : `data-next-section="${chapter.id}"`}>
+          ${isLast ? "前往本章測驗" : "下一小節"}
+        </button>
+      </div>
+    </section>
+  `;
+}
+
+function renderAssessmentPage(chapter, state) {
+  const assessment = getAssessmentSection(chapter);
+  const stats = getChapterStats(chapter, state);
+
+  return `
+    <section class="lesson-heading assessment-heading">
+      <span class="chapter-kicker">${chapter.code}</span>
+      <h1>${assessment.sectionId} ${assessment.title}</h1>
+      <p>確認本章小節完成狀態，完成測驗後就能標記整章完成。</p>
+      <div class="chapter-meta">
+        <span class="pill">小節 ${stats.completedSections}/${stats.totalSections}</span>
+        <span class="pill">練習 ${stats.completedActivities}/${stats.totalActivities}</span>
+        <span class="pill">測驗 ${stats.answeredCount}/${stats.totalQuiz}</span>
+      </div>
+    </section>
+    ${renderActivities(chapter, state)}
+    ${renderQuiz(chapter, state)}
+    ${renderCompletionCard(chapter, state)}
+  `;
+}
+
+function renderChapter(id, requestedView = null) {
   const chapter = getChapter(id);
   const state = getState();
   const completed = state.completedChapters.includes(chapter.id);
   const stats = getChapterStats(chapter, state);
+  const sections = getSortedSections(chapter);
+  const requestedSection = sections.find((section) => section.sectionId === requestedView);
+  const activeView = requestedView === "quiz" ? "assessment" : "section";
+  const activeSection = requestedSection || sections.find((section) => section.sectionId === getInitialSectionId(chapter, state)) || sections[0];
+  const activeIndex = sections.findIndex((section) => section.sectionId === activeSection.sectionId);
+  const sectionActivities = getActivitiesForSection(chapter, activeSection.sectionId);
 
   app.innerHTML = `
     <div class="lesson-layout">
-      <aside class="lesson-nav" aria-label="章節導覽">
-        <a href="#map">返回地圖</a>
-        ${chapter.sections.map((section, index) => `<button type="button" data-scroll-target="section-${index + 1}">${index + 1}. ${section.title}</button>`).join("")}
-        <button type="button" data-scroll-target="activities">練習與作業</button>
-        <button type="button" data-scroll-target="quiz">章末測驗</button>
-      </aside>
+      ${renderLessonNav(chapter, activeView, activeSection.sectionId, state)}
 
       <article class="lesson-article">
-        <header class="lesson-heading">
-          <span class="chapter-kicker">${chapter.code}</span>
-          <h1>${chapter.title}</h1>
-          <p>${chapter.intro}</p>
-          <div class="chapter-meta">
-            <span class="pill">${chapter.minutes} 分鐘</span>
-            <span class="pill ${completed ? "done" : ""}">${completed ? "已完成" : "尚未完成"}</span>
-            <span class="pill">練習 ${stats.completedActivities}/${stats.totalActivities}</span>
-            <span class="pill">測驗 ${stats.answeredCount}/${stats.totalQuiz}</span>
-          </div>
-        </header>
-
-        ${chapter.sections.map(renderSection).join("")}
-        ${renderActivities(chapter, state)}
-        ${renderQuiz(chapter, state)}
-        ${renderCompletionCard(chapter, state)}
+        ${activeView === "assessment" ? renderAssessmentPage(chapter, state) : `
+          <header class="lesson-heading">
+            <span class="chapter-kicker">${chapter.code}</span>
+            <h1>${chapter.title}</h1>
+            <p>${chapter.intro}</p>
+            <div class="chapter-meta">
+              <span class="pill">${chapter.minutes} 分鐘</span>
+              <span class="pill ${completed ? "done" : ""}">${completed ? "已完成" : "尚未完成"}</span>
+              <span class="pill">小節 ${stats.completedSections}/${stats.totalSections}</span>
+              <span class="pill">練習 ${stats.completedActivities}/${stats.totalActivities}</span>
+              <span class="pill">測驗 ${stats.answeredCount}/${stats.totalQuiz}</span>
+            </div>
+          </header>
+          ${renderSection(activeSection, activeIndex)}
+          ${renderActivities(chapter, state, sectionActivities)}
+          ${renderSectionPager(chapter, activeSection, activeIndex, sections.length, state)}
+        `}
       </article>
     </div>
   `;
@@ -1354,6 +1692,59 @@ function completeChapter(id) {
   renderCurrentRoute();
 }
 
+function parseChapterRoute() {
+  const match = (location.hash || "#home").match(/^#chapter-(\d+)(?:\/(.+))?$/);
+
+  if (!match) {
+    return null;
+  }
+
+  return {
+    chapterId: Number(match[1]),
+    view: match[2] ? decodeURIComponent(match[2]) : null
+  };
+}
+
+function navigateToSection(chapterId, sectionId) {
+  location.hash = `#chapter-${chapterId}/${encodeURIComponent(sectionId)}`;
+}
+
+function navigateToAssessment(chapterId) {
+  location.hash = `#chapter-${chapterId}/quiz`;
+}
+
+function navigateRelativeSection(chapterId, direction) {
+  const chapter = getChapter(chapterId);
+  const sections = getSortedSections(chapter);
+  const route = parseChapterRoute();
+  const currentSectionId = route?.view && route.view !== "quiz" ? route.view : getInitialSectionId(chapter);
+  const currentIndex = sections.findIndex((section) => section.sectionId === currentSectionId);
+  const nextIndex = Math.min(Math.max(currentIndex + direction, 0), sections.length - 1);
+
+  navigateToSection(chapterId, sections[nextIndex].sectionId);
+}
+
+function completeCurrentSection(sectionId) {
+  const route = parseChapterRoute();
+  if (!route) return;
+
+  const state = getState();
+  const completedSections = new Set(state.completedSections);
+  completedSections.add(getSectionKey(route.chapterId, sectionId));
+
+  saveState({
+    ...state,
+    completedSections: [...completedSections]
+  });
+
+  if (!route.view || route.view === "quiz") {
+    navigateToSection(route.chapterId, sectionId);
+    return;
+  }
+
+  renderCurrentRoute();
+}
+
 function bindEvents() {
   app.addEventListener("click", (event) => {
     const toggleButton = event.target.closest("[data-toggle-panel]");
@@ -1374,9 +1765,40 @@ function bindEvents() {
       return;
     }
 
+    const completeSectionButton = event.target.closest("[data-complete-section]");
+    if (completeSectionButton) {
+      completeCurrentSection(completeSectionButton.dataset.completeSection);
+      return;
+    }
+
     const completeButton = event.target.closest("[data-complete]");
     if (completeButton) {
       completeChapter(Number(completeButton.dataset.complete));
+      return;
+    }
+
+    const sectionButton = event.target.closest("[data-section-target]");
+    if (sectionButton) {
+      const route = parseChapterRoute();
+      if (route) navigateToSection(route.chapterId, sectionButton.dataset.sectionTarget);
+      return;
+    }
+
+    const prevButton = event.target.closest("[data-prev-section]");
+    if (prevButton) {
+      navigateRelativeSection(Number(prevButton.dataset.prevSection), -1);
+      return;
+    }
+
+    const nextButton = event.target.closest("[data-next-section]");
+    if (nextButton) {
+      navigateRelativeSection(Number(nextButton.dataset.nextSection), 1);
+      return;
+    }
+
+    const assessmentButton = event.target.closest("[data-assessment-target]");
+    if (assessmentButton) {
+      navigateToAssessment(Number(assessmentButton.dataset.assessmentTarget));
       return;
     }
 
@@ -1399,10 +1821,10 @@ function bindEvents() {
 
 function renderCurrentRoute() {
   const hash = location.hash || "#home";
-  const chapterMatch = hash.match(/^#chapter-(\d+)$/);
+  const chapterRoute = parseChapterRoute();
 
-  if (chapterMatch) {
-    renderChapter(Number(chapterMatch[1]));
+  if (chapterRoute) {
+    renderChapter(chapterRoute.chapterId, chapterRoute.view);
   } else if (hash === "#map") {
     renderMap();
   } else {
