@@ -1633,6 +1633,874 @@ switch (day) {
         explanation: "固定編號對應固定輸出，是 switch 很適合的情境。"
       }
     ]
+  },
+  {
+    id: 6,
+    code: "CH06",
+    title: "流程控制（二）：迴圈",
+    minutes: 105,
+    summary: "學會 for、while、do-while、巢狀迴圈、break 與 continue，讓程式能重複執行工作。",
+    intro: "迴圈是程式變得有力量的關鍵。當一件事需要重複做十次、一百次，甚至直到使用者輸入正確為止，就該交給迴圈處理。",
+    sections: [
+      {
+        sectionId: "6.1",
+        title: "for 迴圈",
+        body: [
+          "如果沒有迴圈，想印出五次 Hello 就要寫五行一樣的程式。這不只麻煩，也很難維護。迴圈可以把重複規則濃縮成一段程式。",
+          "`for` 適合用在你大致知道要重複幾次的情境，例如印出 1 到 10、計算 1 到 100 總和、跑九九乘法表。",
+          "`for(初始值; 條件式; 更新式)` 有三個重點：初始值通常設定計數器，條件式決定迴圈是否繼續，更新式在每次執行後改變計數器。",
+          "執行流程可以想成：開始 -> 判斷條件 -> 執行程式 -> 更新變數 -> 回到條件判斷。只要條件仍成立，就會繼續下一圈。"
+        ],
+        code: {
+          title: "沒有迴圈：重複寫五行",
+          value: `System.out.println("Hello");
+System.out.println("Hello");
+System.out.println("Hello");
+System.out.println("Hello");
+System.out.println("Hello");`
+        },
+        codes: [
+          {
+            title: "有迴圈：印出五次 Hello",
+            value: `for (int i = 1; i <= 5; i++) {
+    System.out.println("Hello");
+}
+
+// 執行結果：
+// Hello
+// Hello
+// Hello
+// Hello
+// Hello`
+          },
+          {
+            title: "for 的三個部分",
+            value: `for (初始值; 條件式; 更新式) {
+    // 條件成立時重複執行
+}`
+          },
+          {
+            title: "範例 1：印出 1 到 5",
+            value: `for (int i = 1; i <= 5; i++) {
+    System.out.println(i);
+}
+
+// 執行結果：
+// 1
+// 2
+// 3
+// 4
+// 5`
+          },
+          {
+            title: "範例 2：倒數 5 到 1",
+            value: `for (int i = 5; i >= 1; i--) {
+    System.out.println(i);
+}
+
+// 執行結果：
+// 5
+// 4
+// 3
+// 2
+// 1`
+          },
+          {
+            title: "範例 3：每次加 2 印出偶數",
+            value: `for (int i = 0; i <= 10; i += 2) {
+    System.out.println(i);
+}
+
+// 執行結果：
+// 0
+// 2
+// 4
+// 6
+// 8
+// 10`
+          },
+          {
+            title: "範例 4：計算 1 到 100 總和",
+            value: `int sum = 0;
+
+for (int i = 1; i <= 100; i++) {
+    sum += i;
+}
+
+System.out.println(sum);
+
+// 執行結果：
+// 5050`
+          },
+          {
+            title: "範例 5：九九乘法表單行",
+            value: `for (int i = 1; i <= 9; i++) {
+    System.out.println("2 x " + i + " = " + (2 * i));
+}
+
+// 執行結果：
+// 2 x 1 = 2
+// 2 x 2 = 4
+// ...
+// 2 x 9 = 18`
+          },
+          {
+            title: "範例 6：印出陣列中的分數",
+            value: `int[] scores = {80, 95, 72};
+
+for (int i = 0; i < scores.length; i++) {
+    System.out.println(scores[i]);
+}
+
+// 執行結果：
+// 80
+// 95
+// 72`
+          },
+          {
+            title: "範例 7：累計及格人數",
+            value: `int[] scores = {80, 45, 90, 55, 70};
+int passed = 0;
+
+for (int i = 0; i < scores.length; i++) {
+    if (scores[i] >= 60) {
+        passed++;
+    }
+}
+
+System.out.println("及格人數：" + passed);
+
+// 執行結果：
+// 及格人數：3`
+          },
+          {
+            title: "範例 8：建立重複文字",
+            value: `String line = "";
+
+for (int i = 1; i <= 5; i++) {
+    line += "*";
+}
+
+System.out.println(line);
+
+// 執行結果：
+// *****`
+          }
+        ]
+      },
+      {
+        sectionId: "6.2",
+        title: "while 迴圈",
+        body: [
+          "`while` 會在每次執行前先檢查條件。條件成立就執行，不成立就離開迴圈。",
+          "`while` 很適合用在不知道會執行幾次的情況。例如使用者一直輸入到正確為止、遊戲持續到結束、資料讀到沒有下一筆為止。",
+          "寫 while 時一定要注意：迴圈裡要有機會讓條件變成 false。否則程式可能進入無限迴圈，一直跑不停。"
+        ],
+        code: {
+          title: "while 基本語法",
+          value: `while (條件) {
+    // 條件成立時重複執行
+}`
+        },
+        codes: [
+          {
+            title: "範例 1：印出 1 到 5",
+            value: `int i = 1;
+
+while (i <= 5) {
+    System.out.println(i);
+    i++;
+}
+
+// 執行結果：
+// 1
+// 2
+// 3
+// 4
+// 5`
+          },
+          {
+            title: "範例 2：倒數計時",
+            value: `int count = 10;
+
+while (count >= 1) {
+    System.out.println(count);
+    count--;
+}
+
+// 執行結果：
+// 10
+// 9
+// ...
+// 1`
+          },
+          {
+            title: "範例 3：累加計算",
+            value: `int sum = 0;
+int i = 1;
+
+while (i <= 100) {
+    sum += i;
+    i++;
+}
+
+System.out.println(sum);
+
+// 執行結果：
+// 5050`
+          },
+          {
+            title: "範例 4：無限迴圈概念",
+            value: `while (true) {
+    System.out.println("這會一直執行");
+    break; // 先用 break 避免真的無限執行
+}
+
+// 執行結果：
+// 這會一直執行`
+          },
+          {
+            title: "範例 5：常見錯誤，忘記更新變數",
+            value: `int i = 1;
+
+while (i <= 5) {
+    System.out.println(i);
+    // 忘記 i++，i 永遠是 1，迴圈不會結束
+}`
+          },
+          {
+            title: "範例 6：密碼輸入最多三次",
+            value: `String password = "1234";
+String input = "0000";
+int tries = 1;
+
+while (!input.equals(password) && tries < 3) {
+    tries++;
+    input = "1234";
+}
+
+System.out.println("嘗試次數：" + tries);
+
+// 執行結果：
+// 嘗試次數：2`
+          }
+        ]
+      },
+      {
+        sectionId: "6.3",
+        title: "do-while 迴圈",
+        body: [
+          "`do-while` 和 `while` 最大的差別是：do-while 會先執行一次，再判斷條件。因此它至少會執行一次。",
+          "這很適合選單、輸入提示、確認訊息等情境。即使條件一開始不成立，使用者也應該先看見一次選單或提示。"
+        ],
+        code: {
+          title: "do-while 基本語法",
+          value: `do {
+    // 至少執行一次
+} while (條件);`
+        },
+        codes: [
+          {
+            title: "範例 1：印出 1 到 5",
+            value: `int i = 1;
+
+do {
+    System.out.println(i);
+    i++;
+} while (i <= 5);
+
+// 執行結果：
+// 1
+// 2
+// 3
+// 4
+// 5`
+          },
+          {
+            title: "範例 2：條件一開始就不成立",
+            value: `int i = 10;
+
+do {
+    System.out.println(i);
+} while (i < 5);
+
+// 執行結果：
+// 10`
+          },
+          {
+            title: "比較：while 一開始不成立",
+            value: `int i = 10;
+
+while (i < 5) {
+    System.out.println(i);
+}
+
+// 執行結果：
+// 不會輸出任何內容`
+          },
+          {
+            title: "範例 3：簡單選單至少顯示一次",
+            value: `int choice = 2;
+
+do {
+    System.out.println("1. 開始遊戲");
+    System.out.println("2. 離開");
+} while (choice != 2);
+
+// 執行結果：
+// 1. 開始遊戲
+// 2. 離開`
+          }
+        ]
+      },
+      {
+        sectionId: "6.4",
+        title: "巢狀迴圈",
+        body: [
+          "巢狀迴圈就是迴圈裡面再放迴圈。可以想成外層迴圈控制第幾列，內層迴圈控制每一列要做幾次。",
+          "外層跑一次，內層通常會完整跑一輪。這個概念很常用在表格、座標、星號圖形與九九乘法表。",
+          "圖解：外層迴圈 -> 進入內層迴圈 -> 內層跑完 -> 回到外層下一圈。"
+        ],
+        code: {
+          title: "巢狀迴圈基本概念",
+          value: `for (int i = 1; i <= 3; i++) {
+    for (int j = 1; j <= 3; j++) {
+        System.out.println(i + "," + j);
+    }
+}`
+        },
+        codes: [
+          {
+            title: "範例 1：座標組合",
+            value: `for (int i = 1; i <= 3; i++) {
+    for (int j = 1; j <= 3; j++) {
+        System.out.println(i + "," + j);
+    }
+}
+
+// 執行結果：
+// 1,1
+// 1,2
+// 1,3
+// 2,1
+// ...
+// 3,3`
+          },
+          {
+            title: "範例 2：矩形星號",
+            value: `for (int i = 1; i <= 5; i++) {
+    for (int j = 1; j <= 5; j++) {
+        System.out.print("*");
+    }
+    System.out.println();
+}
+
+// 執行結果：
+// *****
+// *****
+// *****
+// *****
+// *****`
+          },
+          {
+            title: "範例 3：三角形",
+            value: `for (int i = 1; i <= 5; i++) {
+    for (int j = 1; j <= i; j++) {
+        System.out.print("*");
+    }
+    System.out.println();
+}
+
+// 執行結果：
+// *
+// **
+// ***
+// ****
+// *****`
+          },
+          {
+            title: "範例 4：完整九九乘法表",
+            value: `for (int i = 1; i <= 9; i++) {
+    for (int j = 1; j <= 9; j++) {
+        System.out.printf("%d x %d = %d%n", i, j, i * j);
+    }
+}
+
+// 執行結果：
+// 1 x 1 = 1
+// 1 x 2 = 2
+// ...
+// 9 x 9 = 81`
+          },
+          {
+            title: "範例 5：每列不同數字",
+            value: `for (int i = 1; i <= 4; i++) {
+    for (int j = 1; j <= 4; j++) {
+        System.out.print(i);
+    }
+    System.out.println();
+}
+
+// 執行結果：
+// 1111
+// 2222
+// 3333
+// 4444`
+          },
+          {
+            title: "範例 6：倒三角形",
+            value: `for (int i = 5; i >= 1; i--) {
+    for (int j = 1; j <= i; j++) {
+        System.out.print("*");
+    }
+    System.out.println();
+}
+
+// 執行結果：
+// *****
+// ****
+// ***
+// **
+// *`
+          }
+        ]
+      },
+      {
+        sectionId: "6.5",
+        title: "break 與 continue",
+        body: [
+          "`break` 會提前離開迴圈。當你已經找到答案、達到停止條件、或使用者選擇離開時，可以使用 break。",
+          "`continue` 會略過本次迴圈剩下的程式，直接進入下一圈。它常用在跳過不需要處理的資料。",
+          "簡單比較：break 是停止整個迴圈；continue 是只跳過這一次。"
+        ],
+        code: {
+          title: "break：遇到 5 就停止",
+          value: `for (int i = 1; i <= 10; i++) {
+    if (i == 5) {
+        break;
+    }
+
+    System.out.println(i);
+}
+
+// 執行結果：
+// 1
+// 2
+// 3
+// 4`
+        },
+        codes: [
+          {
+            title: "continue：略過 5",
+            value: `for (int i = 1; i <= 10; i++) {
+    if (i == 5) {
+        continue;
+    }
+
+    System.out.println(i);
+}
+
+// 執行結果：
+// 1
+// 2
+// 3
+// 4
+// 6
+// 7
+// 8
+// 9
+// 10`
+          },
+          {
+            title: "範例 2：找到第一個大於 50 的 7 的倍數",
+            value: `for (int i = 1; i <= 100; i++) {
+    if (i > 50 && i % 7 == 0) {
+        System.out.println(i);
+        break;
+    }
+}
+
+// 執行結果：
+// 56`
+          },
+          {
+            title: "範例 3：略過所有奇數",
+            value: `for (int i = 1; i <= 10; i++) {
+    if (i % 2 != 0) {
+        continue;
+    }
+
+    System.out.println(i);
+}
+
+// 執行結果：
+// 2
+// 4
+// 6
+// 8
+// 10`
+          }
+        ]
+      },
+      {
+        sectionId: "6.6",
+        title: "綜合演練",
+        body: [
+          "這一節把 for、while、巢狀迴圈、break 與條件判斷組合起來。你不需要一次背完所有寫法，先看懂每個專案的流程。",
+          "寫小專案時，先用中文描述步驟，再翻成 Java。範例中的每個程式都故意保持簡短，讓你能看見迴圈在專案中扮演的角色。"
+        ],
+        code: {
+          title: "專案 1：1 到 100 加總計算器",
+          value: `int sum = 0;
+
+for (int i = 1; i <= 100; i++) {
+    sum += i;
+}
+
+System.out.println("1 到 100 總和是 " + sum);
+
+// 執行結果：
+// 1 到 100 總和是 5050`
+        },
+        codes: [
+          {
+            title: "專案 2：猜數字遊戲",
+            value: `int answer = 7;
+int guess = 3;
+
+while (guess != answer) {
+    System.out.println("猜錯了，再猜一次");
+    guess = 7;
+}
+
+System.out.println("猜對了");
+
+// 執行結果：
+// 猜錯了，再猜一次
+// 猜對了`
+          },
+          {
+            title: "專案 3：星號金字塔",
+            value: `for (int i = 1; i <= 5; i++) {
+    for (int j = 1; j <= i; j++) {
+        System.out.print("*");
+    }
+    System.out.println();
+}
+
+// 執行結果：
+// *
+// **
+// ***
+// ****
+// *****`
+          },
+          {
+            title: "專案 4：簡易登入系統",
+            value: `String correctPassword = "java123";
+String input = "wrong";
+int attempts = 1;
+
+while (!input.equals(correctPassword) && attempts < 3) {
+    System.out.println("密碼錯誤");
+    attempts++;
+    input = attempts == 3 ? "wrong" : "java123";
+}
+
+if (input.equals(correctPassword)) {
+    System.out.println("登入成功");
+} else {
+    System.out.println("帳號鎖定");
+}
+
+// 執行結果：
+// 密碼錯誤
+// 登入成功`
+          }
+        ]
+      }
+    ],
+    activities: [
+      createActivity({
+        id: "ch06-exercise-for-basic",
+        sectionId: "6.1",
+        type: "exercise",
+        title: "實作練習：for 迴圈基本練習",
+        question: "請用 for 迴圈完成：印出 1~10、印出 10~1、印出 1~20 的所有偶數、計算 1~50 總和。",
+        hint: "先決定起始值與結束條件。倒數時更新式會用 i--，偶數可以用 i += 2 或 i % 2 == 0。",
+        solution: `int sum = 0;
+
+for (int i = 1; i <= 10; i++) {
+    System.out.println(i);
+}
+
+for (int i = 10; i >= 1; i--) {
+    System.out.println(i);
+}
+
+for (int i = 2; i <= 20; i += 2) {
+    System.out.println(i);
+}
+
+for (int i = 1; i <= 50; i++) {
+    sum += i;
+}
+
+System.out.println("總和：" + sum);`,
+        explanation: "for 迴圈最重要的是三個部分是否互相配合。起始值決定從哪裡開始，條件式決定何時停下，更新式決定每圈如何接近結束。"
+      }),
+      createActivity({
+        id: "ch06-thought-for-flow",
+        sectionId: "6.1",
+        type: "thought",
+        title: "思考題：for 的執行順序",
+        question: "請用自己的話描述 for 迴圈中初始值、條件式、程式內容、更新式的執行順序。",
+        hint: "初始值只會在一開始執行一次；條件式會在每一圈前檢查。",
+        solution: "先執行初始值，接著檢查條件式。條件成立就執行大括號內的程式，執行完後跑更新式，再回到條件式重新判斷。",
+        explanation: "理解執行順序後，比較容易判斷迴圈會跑幾次，也比較能找出少跑一次或多跑一次的錯誤。"
+      }),
+      createActivity({
+        id: "ch06-exercise-while-basic",
+        sectionId: "6.2",
+        type: "exercise",
+        title: "實作練習：while 迴圈",
+        question: "使用 while 完成：印出 1~20、印出 20~1、計算 1~100 總和。",
+        hint: "while 需要在迴圈外先宣告變數，並在迴圈內記得更新變數。",
+        solution: `int i = 1;
+
+while (i <= 20) {
+    System.out.println(i);
+    i++;
+}
+
+i = 20;
+
+while (i >= 1) {
+    System.out.println(i);
+    i--;
+}
+
+int sum = 0;
+i = 1;
+
+while (i <= 100) {
+    sum += i;
+    i++;
+}
+
+System.out.println(sum);`,
+        explanation: "while 的條件會在每圈前判斷。若忘記 i++ 或 i--，條件可能永遠成立，造成無限迴圈。"
+      }),
+      createActivity({
+        id: "ch06-thought-infinite-loop",
+        sectionId: "6.2",
+        type: "thought",
+        title: "思考題：為什麼會有無限迴圈？",
+        question: "為什麼 `while (i <= 5)` 裡面如果沒有 `i++`，程式可能停不下來？",
+        hint: "想想 i 的值是否有機會變大，條件是否有機會變成 false。",
+        solution: "因為 i 一直沒有改變，如果一開始 i 是 1，`i <= 5` 會一直是 true，所以 while 會一直重複執行。",
+        explanation: "迴圈必須設計出離開條件。每一圈都要讓變數逐漸接近停止條件，否則程式會不斷重複。"
+      }),
+      createActivity({
+        id: "ch06-exercise-do-while-menu",
+        sectionId: "6.3",
+        type: "exercise",
+        title: "實作練習：建立簡單選單",
+        question: "用 do-while 建立簡單選單，至少顯示一次：1. 開始遊戲 2. 離開。",
+        hint: "先把 choice 設成某個值，do 區塊負責顯示選單，while 判斷是否繼續。",
+        solution: `int choice = 2;
+
+do {
+    System.out.println("1. 開始遊戲");
+    System.out.println("2. 離開");
+} while (choice != 2);`,
+        explanation: "do-while 會先執行 do 區塊，再檢查條件，所以很適合選單這類至少要顯示一次的畫面。"
+      }),
+      createActivity({
+        id: "ch06-exercise-nested-loops",
+        sectionId: "6.4",
+        type: "exercise",
+        title: "實作練習：巢狀迴圈圖形",
+        question: "請用巢狀迴圈印出方形、三角形，以及完整九九乘法表。",
+        hint: "外層控制第幾列，內層控制每列要印幾次。三角形的內層次數可以跟 i 有關。",
+        solution: `for (int i = 1; i <= 5; i++) {
+    for (int j = 1; j <= 5; j++) {
+        System.out.print("*");
+    }
+    System.out.println();
+}
+
+for (int i = 1; i <= 5; i++) {
+    for (int j = 1; j <= i; j++) {
+        System.out.print("*");
+    }
+    System.out.println();
+}
+
+for (int i = 1; i <= 9; i++) {
+    for (int j = 1; j <= 9; j++) {
+        System.out.printf("%d x %d = %d%n", i, j, i * j);
+    }
+}`,
+        explanation: "巢狀迴圈的重點是看懂外層與內層的分工。外層每跑一次，內層就會從頭跑到結束。"
+      }),
+      createActivity({
+        id: "ch06-exercise-break-continue",
+        sectionId: "6.5",
+        type: "exercise",
+        title: "實作練習：break 與 continue",
+        question: "寫兩段程式：找到第一個大於 50 的 7 的倍數後停止；印出 1~20 但略過所有奇數。",
+        hint: "停止整個迴圈用 break；略過本次迴圈用 continue。判斷倍數可以用 `%`。",
+        solution: `for (int i = 1; i <= 100; i++) {
+    if (i > 50 && i % 7 == 0) {
+        System.out.println(i);
+        break;
+    }
+}
+
+for (int i = 1; i <= 20; i++) {
+    if (i % 2 != 0) {
+        continue;
+    }
+
+    System.out.println(i);
+}`,
+        explanation: "第一段找到 56 後 break，整個迴圈結束。第二段遇到奇數時 continue，會跳過 println，直接進入下一圈。"
+      }),
+      createActivity({
+        id: "ch06-homework-loop-projects",
+        sectionId: "6.6",
+        type: "homework",
+        title: "作業：完成四個迴圈小專案",
+        question: "請完成：1~100 加總計算器、猜數字遊戲、星號金字塔、最多三次的簡易登入系統。",
+        hint: "先分別決定每個專案適合的迴圈：加總用 for，猜數字和登入可用 while，星號金字塔用巢狀迴圈。",
+        solution: `// 1. 加總
+int sum = 0;
+for (int i = 1; i <= 100; i++) {
+    sum += i;
+}
+System.out.println(sum);
+
+// 2. 猜數字概念
+int answer = 8;
+int guess = 0;
+while (guess != answer) {
+    guess = answer;
+}
+System.out.println("猜對了");
+
+// 3. 星號金字塔
+for (int i = 1; i <= 5; i++) {
+    for (int j = 1; j <= i; j++) {
+        System.out.print("*");
+    }
+    System.out.println();
+}
+
+// 4. 登入系統概念
+String password = "java123";
+String input = "wrong";
+int tries = 1;
+while (!input.equals(password) && tries < 3) {
+    tries++;
+    input = "java123";
+}
+System.out.println(input.equals(password) ? "登入成功" : "帳號鎖定");`,
+        explanation: "這份作業的目的，是把迴圈和條件分支一起使用。真實程式會用 Scanner 讀輸入，這裡先用固定值保留流程重點。"
+      })
+    ],
+    quiz: [
+      {
+        question: "什麼情況最適合使用迴圈？",
+        options: ["需要重複執行相似工作", "只宣告一個 class", "只寫一行註解", "只修改檔名"],
+        answer: 0,
+        explanation: "迴圈用來處理重複執行的工作，例如印出多次、累加、重複讀取輸入。"
+      },
+      {
+        question: "`for (int i = 1; i <= 5; i++)` 會執行幾次？",
+        options: ["5 次", "4 次", "6 次", "永遠不執行"],
+        answer: 0,
+        explanation: "i 會是 1、2、3、4、5，共五次。"
+      },
+      {
+        question: "for 迴圈的更新式通常負責什麼？",
+        options: ["改變計數器", "建立 class", "輸入檔案名稱", "停止瀏覽器"],
+        answer: 0,
+        explanation: "更新式通常讓計數器增加或減少，使迴圈逐漸接近結束條件。"
+      },
+      {
+        question: "哪個 for 寫法可以倒數 5 到 1？",
+        options: ["for (int i = 5; i >= 1; i--)", "for (int i = 1; i <= 5; i++)", "for (int i = 0; i < 5; i++)", "for (int i = 5; i <= 1; i++)"],
+        answer: 0,
+        explanation: "倒數時起點是 5，條件是 i >= 1，更新式是 i--。"
+      },
+      {
+        question: "while 迴圈何時檢查條件？",
+        options: ["每次執行前", "只在程式結束後", "永遠不檢查", "只在編譯時"],
+        answer: 0,
+        explanation: "while 會先判斷條件，條件成立才執行迴圈內容。"
+      },
+      {
+        question: "while 迴圈忘記更新變數，可能造成什麼？",
+        options: ["無限迴圈", "自動轉型", "switch 貫穿", "變數名稱變大寫"],
+        answer: 0,
+        explanation: "如果條件永遠不會變成 false，迴圈就可能不停執行。"
+      },
+      {
+        question: "`while (true)` 通常代表什麼？",
+        options: ["無限迴圈", "永遠不執行", "只執行一次", "只能用在 String"],
+        answer: 0,
+        explanation: "true 永遠成立，因此除非裡面有 break 或程式被停止，否則會一直執行。"
+      },
+      {
+        question: "do-while 的主要特色是什麼？",
+        options: ["至少執行一次", "一定不會執行", "不能有條件", "只能印文字"],
+        answer: 0,
+        explanation: "do-while 先執行 do 區塊，再檢查條件，所以至少會執行一次。"
+      },
+      {
+        question: "哪個情境很適合 do-while？",
+        options: ["選單至少顯示一次", "只比較兩個固定字串", "宣告 class 名稱", "只寫註解"],
+        answer: 0,
+        explanation: "選單通常需要先顯示一次，再依使用者選擇判斷是否繼續。"
+      },
+      {
+        question: "巢狀迴圈是什麼？",
+        options: ["迴圈裡面再放迴圈", "只能使用一個 if", "不能輸出資料", "只用於 import"],
+        answer: 0,
+        explanation: "巢狀迴圈就是一個迴圈內部還有另一個迴圈。"
+      },
+      {
+        question: "在星號矩形中，外層迴圈常負責什麼？",
+        options: ["控制列數", "控制 Java 版本", "建立 Scanner 套件", "刪除分號"],
+        answer: 0,
+        explanation: "外層常控制第幾列，內層控制每列印出幾個星號。"
+      },
+      {
+        question: "九九乘法表通常適合使用什麼？",
+        options: ["巢狀迴圈", "只用一個變數", "沒有條件式", "只用 break"],
+        answer: 0,
+        explanation: "九九乘法表有兩個變化的數字，因此很適合用外層與內層迴圈處理。"
+      },
+      {
+        question: "break 在迴圈中的作用是什麼？",
+        options: ["提前離開迴圈", "略過本次後繼續下一圈", "讓數字加一", "宣告字串"],
+        answer: 0,
+        explanation: "break 會直接結束所在的迴圈。"
+      },
+      {
+        question: "continue 在迴圈中的作用是什麼？",
+        options: ["略過本次迴圈剩下的程式", "結束整個程式", "建立 main 方法", "把 int 轉 String"],
+        answer: 0,
+        explanation: "continue 會跳過本次剩餘內容，直接進入下一輪迴圈判斷。"
+      },
+      {
+        question: "簡易登入系統最多輸入三次密碼，適合搭配哪個概念？",
+        options: ["while 與計數器", "只用 System.out.println", "只用 char", "只用位元運算"],
+        answer: 0,
+        explanation: "登入重試通常不知道何時成功，可以用 while 搭配 attempts 計數器限制次數。"
+      }
+    ]
   }
 ];
 
