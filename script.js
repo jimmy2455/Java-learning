@@ -2501,6 +2501,980 @@ System.out.println(input.equals(password) ? "登入成功" : "帳號鎖定");`,
         explanation: "登入重試通常不知道何時成功，可以用 while 搭配 attempts 計數器限制次數。"
       }
     ]
+  },
+  {
+    id: 7,
+    code: "CH07",
+    title: "陣列（Array）",
+    minutes: 120,
+    summary: "學會用陣列保存同型態資料，讀取與修改元素，理解多維陣列、參照型別與命令列參數。",
+    intro: "陣列讓你可以把一群相同型態的資料放在同一個名字底下管理。從這章開始，程式不再只處理單一變數，而是能處理一整批資料。",
+    sections: [
+      {
+        sectionId: "7.1",
+        title: "什麼是陣列",
+        body: [
+          "先想一個問題：如果要儲存五位學生成績，可以宣告五個變數。但如果有一百位學生呢？變數名稱會變得很難管理，程式也會非常重複。",
+          "陣列（Array）可以儲存大量相同型態的資料。例如一整組 int 分數、一整組 String 姓名，或一整組 boolean 狀態。",
+          "陣列最重要的三個觀念是：索引（Index）從 0 開始、`length` 代表元素數量、最後一個元素的位置是 `length - 1`。",
+          "圖解：索引 0 1 2 3 4 對應資料 80 75 90 60 88。也就是 `scores[0]` 是 80，`scores[4]` 是 88。"
+        ],
+        code: {
+          title: "不用陣列：五位學生成績",
+          value: `int score1 = 80;
+int score2 = 75;
+int score3 = 90;
+int score4 = 60;
+int score5 = 88;`
+        },
+        codes: [
+          {
+            title: "圖解：索引與資料位置",
+            value: `Index
+
+0    1    2    3    4
++----+----+----+----+----+
+| 80 | 75 | 90 | 60 | 88 |
++----+----+----+----+----+`
+          },
+          {
+            title: "範例 1：宣告並初始化陣列",
+            value: `int[] scores = {80, 75, 90, 60, 88};
+
+// 圖解：
+// scores[0] -> 80
+// scores[1] -> 75
+// scores[2] -> 90
+// scores[3] -> 60
+// scores[4] -> 88`
+          },
+          {
+            title: "範例 2：讀取第一個元素",
+            value: `int[] scores = {80, 75, 90, 60, 88};
+
+System.out.println(scores[0]);
+
+// 執行結果：
+// 80`
+          },
+          {
+            title: "範例 3：讀取最後一個元素",
+            value: `int[] scores = {80, 75, 90, 60, 88};
+
+System.out.println(scores[4]);
+
+// 執行結果：
+// 88`
+          },
+          {
+            title: "範例 4：修改元素",
+            value: `int[] scores = {80, 75, 90, 60, 88};
+
+scores[1] = 100;
+
+System.out.println(scores[1]);
+
+// 執行結果：
+// 100`
+          },
+          {
+            title: "範例 5：使用 length",
+            value: `int[] scores = {80, 75, 90, 60, 88};
+
+System.out.println(scores.length);
+
+// 執行結果：
+// 5`
+          },
+          {
+            title: "範例 6：最後一個索引是 length - 1",
+            value: `int[] scores = {80, 75, 90, 60, 88};
+
+int lastIndex = scores.length - 1;
+System.out.println(scores[lastIndex]);
+
+// 執行結果：
+// 88`
+          },
+          {
+            title: "範例 7：用迴圈印出所有元素",
+            value: `int[] scores = {80, 75, 90, 60, 88};
+
+for (int i = 0; i < scores.length; i++) {
+    System.out.println(scores[i]);
+}
+
+// 執行結果：
+// 80
+// 75
+// 90
+// 60
+// 88`
+          },
+          {
+            title: "範例 8：常見錯誤，索引超出範圍",
+            value: `int[] scores = {80, 75, 90, 60, 88};
+
+System.out.println(scores[5]);
+
+// 執行結果：
+// ArrayIndexOutOfBoundsException
+//
+// 原因：
+// 陣列長度是 5，合法索引只有 0 到 4。`
+          }
+        ]
+      },
+      {
+        sectionId: "7.2",
+        title: "陣列的配置與初值設定",
+        body: [
+          "建立陣列常見方式有兩種：宣告時直接放入資料，或先指定大小，再把資料一格一格放進去。",
+          "使用 `new int[5]` 代表建立一個可以放 5 個 int 的陣列。這 5 格一開始會有預設值。int 預設是 0，double 預設是 0.0，boolean 預設是 false，String 預設是 null。",
+          "指定大小的陣列很適合搭配 Scanner 和迴圈：先建立空陣列，再讓使用者輸入資料，最後計算總和、平均或最大值。"
+        ],
+        code: {
+          title: "方式 1：宣告同時初始化",
+          value: `int[] nums = {1, 2, 3, 4, 5};
+
+// 圖解：
+// Index: 0 1 2 3 4
+// Value: 1 2 3 4 5`
+        },
+        codes: [
+          {
+            title: "方式 2：指定大小",
+            value: `int[] nums = new int[5];
+
+// 圖解：
+// Index: 0 1 2 3 4
+// Value: 0 0 0 0 0`
+          },
+          {
+            title: "範例 1：int 陣列預設值",
+            value: `int[] numbers = new int[5];
+
+for (int i = 0; i < numbers.length; i++) {
+    System.out.println(numbers[i]);
+}
+
+// 執行結果：
+// 0
+// 0
+// 0
+// 0
+// 0`
+          },
+          {
+            title: "範例 2：double 陣列預設值",
+            value: `double[] prices = new double[3];
+
+for (int i = 0; i < prices.length; i++) {
+    System.out.println(prices[i]);
+}
+
+// 執行結果：
+// 0.0
+// 0.0
+// 0.0`
+          },
+          {
+            title: "範例 3：boolean 陣列預設值",
+            value: `boolean[] passed = new boolean[3];
+
+for (int i = 0; i < passed.length; i++) {
+    System.out.println(passed[i]);
+}
+
+// 執行結果：
+// false
+// false
+// false`
+          },
+          {
+            title: "範例 4：String 陣列預設值",
+            value: `String[] names = new String[3];
+
+for (int i = 0; i < names.length; i++) {
+    System.out.println(names[i]);
+}
+
+// 執行結果：
+// null
+// null
+// null`
+          },
+          {
+            title: "範例 5：指定元素值",
+            value: `int[] numbers = new int[5];
+
+numbers[0] = 10;
+numbers[1] = 20;
+numbers[2] = 30;
+
+System.out.println(numbers[2]);
+
+// 執行結果：
+// 30`
+          },
+          {
+            title: "範例 6：利用迴圈輸出",
+            value: `int[] numbers = {10, 20, 30, 40, 50};
+
+for (int i = 0; i < numbers.length; i++) {
+    System.out.println(numbers[i]);
+}
+
+// 執行結果：
+// 10
+// 20
+// 30
+// 40
+// 50`
+          },
+          {
+            title: "範例 7：利用 Scanner 輸入資料",
+            value: `import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int[] numbers = new int[5];
+
+        for (int i = 0; i < numbers.length; i++) {
+            numbers[i] = sc.nextInt();
+        }
+    }
+}
+
+// 輸入範例：
+// 80 75 90 60 88`
+          },
+          {
+            title: "範例 8：計算總和",
+            value: `int[] scores = {80, 75, 90, 60, 88};
+int sum = 0;
+
+for (int i = 0; i < scores.length; i++) {
+    sum += scores[i];
+}
+
+System.out.println(sum);
+
+// 執行結果：
+// 393`
+          },
+          {
+            title: "範例 9：計算平均分數",
+            value: `int[] scores = {80, 75, 90, 60, 88};
+int sum = 0;
+
+for (int i = 0; i < scores.length; i++) {
+    sum += scores[i];
+}
+
+double average = (double) sum / scores.length;
+System.out.println(average);
+
+// 執行結果：
+// 78.6`
+          },
+          {
+            title: "範例 10：找最大值",
+            value: `int[] scores = {80, 75, 90, 60, 88};
+int max = scores[0];
+
+for (int i = 1; i < scores.length; i++) {
+    if (scores[i] > max) {
+        max = scores[i];
+    }
+}
+
+System.out.println(max);
+
+// 執行結果：
+// 90`
+          }
+        ]
+      },
+      {
+        sectionId: "7.3",
+        title: "多維陣列（Multi-Dimensional Array）",
+        body: [
+          "二維陣列可以把資料想成表格。第一個索引通常代表列（row），第二個索引代表欄（column）。",
+          "例如 `table[1][2]` 代表第 1 列、第 2 欄。因為索引從 0 開始，所以它是第二列第三欄。",
+          "二維陣列很適合表示學生成績表、座位表、棋盤、乘法表等資料。搭配巢狀迴圈可以逐列逐欄處理。"
+        ],
+        code: {
+          title: "圖解：3 x 3 表格",
+          value: `      0   1   2
+
+0    10  20  30
+1    40  50  60
+2    70  80  90`
+        },
+        codes: [
+          {
+            title: "宣告二維陣列",
+            value: `int[][] table = {
+    {10, 20, 30},
+    {40, 50, 60},
+    {70, 80, 90}
+};
+
+// 圖解：
+// table[0] -> {10, 20, 30}
+// table[1] -> {40, 50, 60}
+// table[2] -> {70, 80, 90}`
+          },
+          {
+            title: "範例 1：讀取元素",
+            value: `int[][] table = {
+    {10, 20, 30},
+    {40, 50, 60},
+    {70, 80, 90}
+};
+
+System.out.println(table[1][2]);
+
+// 執行結果：
+// 60`
+          },
+          {
+            title: "範例 2：修改元素",
+            value: `int[][] table = {
+    {10, 20, 30},
+    {40, 50, 60},
+    {70, 80, 90}
+};
+
+table[0][1] = 99;
+System.out.println(table[0][1]);
+
+// 執行結果：
+// 99`
+          },
+          {
+            title: "範例 3：使用巢狀迴圈輸出",
+            value: `int[][] table = {
+    {10, 20, 30},
+    {40, 50, 60},
+    {70, 80, 90}
+};
+
+for (int row = 0; row < table.length; row++) {
+    for (int col = 0; col < table[row].length; col++) {
+        System.out.print(table[row][col] + " ");
+    }
+    System.out.println();
+}
+
+// 執行結果：
+// 10 20 30
+// 40 50 60
+// 70 80 90`
+          },
+          {
+            title: "範例 4：建立 3 x 3 乘法表",
+            value: `int[][] multiply = new int[3][3];
+
+for (int i = 0; i < multiply.length; i++) {
+    for (int j = 0; j < multiply[i].length; j++) {
+        multiply[i][j] = (i + 1) * (j + 1);
+    }
+}
+
+// 圖解：
+// 1 2 3
+// 2 4 6
+// 3 6 9`
+          },
+          {
+            title: "範例 5：學生成績表",
+            value: `int[][] scores = {
+    {80, 90, 75},
+    {60, 88, 92}
+};
+
+System.out.println("第 1 位學生國文：" + scores[0][0]);
+System.out.println("第 2 位學生英文：" + scores[1][1]);
+
+// 執行結果：
+// 第 1 位學生國文：80
+// 第 2 位學生英文：88`
+          },
+          {
+            title: "範例 6：計算二維陣列總和",
+            value: `int[][] table = {
+    {10, 20, 30},
+    {40, 50, 60}
+};
+int sum = 0;
+
+for (int i = 0; i < table.length; i++) {
+    for (int j = 0; j < table[i].length; j++) {
+        sum += table[i][j];
+    }
+}
+
+System.out.println(sum);
+
+// 執行結果：
+// 210`
+          },
+          {
+            title: "範例 7：每位學生平均",
+            value: `int[][] scores = {
+    {80, 90, 70},
+    {60, 75, 85}
+};
+
+for (int i = 0; i < scores.length; i++) {
+    int sum = 0;
+
+    for (int j = 0; j < scores[i].length; j++) {
+        sum += scores[i][j];
+    }
+
+    System.out.println((double) sum / scores[i].length);
+}
+
+// 執行結果：
+// 80.0
+// 73.33333333333333`
+          },
+          {
+            title: "範例 8：不規則二維陣列",
+            value: `int[][] data = {
+    {1, 2},
+    {3, 4, 5},
+    {6}
+};
+
+for (int i = 0; i < data.length; i++) {
+    System.out.println("第 " + i + " 列長度：" + data[i].length);
+}
+
+// 執行結果：
+// 第 0 列長度：2
+// 第 1 列長度：3
+// 第 2 列長度：1`
+          }
+        ]
+      },
+      {
+        sectionId: "7.4",
+        title: "參照型別（Reference Data Type）",
+        body: [
+          "Java 的資料型態可以先粗略分成基本型別與參照型別。基本型別包含 int、double、boolean、char；參照型別包含 String、Array、Scanner 等。",
+          "新手可以先這樣理解：基本型別變數比較像直接存資料，參照型別變數比較像存放一個指向資料位置的參考。",
+          "陣列是參照型別。當你把一個陣列指定給另一個變數時，通常不是複製整份陣列，而是讓兩個變數指向同一個陣列。"
+        ],
+        code: {
+          title: "圖解：基本型別",
+          value: `int x = 10
+
+變數 x 直接保存 10 這個值`
+        },
+        codes: [
+          {
+            title: "圖解：參照型別",
+            value: `String name = "Jimmy"
+int[] scores = {80, 90, 100}
+
+變數 name 與 scores 保存的是參考位置
+真正資料放在另一個地方`
+          },
+          {
+            title: "範例 1：基本型別複製值",
+            value: `int a = 10;
+int b = a;
+
+b = 99;
+
+System.out.println(a);
+System.out.println(b);
+
+// 執行結果：
+// 10
+// 99`
+          },
+          {
+            title: "範例 2：陣列參照同一份資料",
+            value: `int[] arr1 = {1, 2, 3};
+int[] arr2 = arr1;
+
+arr2[0] = 99;
+
+System.out.println(arr1[0]);
+System.out.println(arr2[0]);
+
+// 執行結果：
+// 99
+// 99`
+          },
+          {
+            title: "範例 3：建立真正的新陣列",
+            value: `int[] arr1 = {1, 2, 3};
+int[] arr2 = {1, 2, 3};
+
+arr2[0] = 99;
+
+System.out.println(arr1[0]);
+System.out.println(arr2[0]);
+
+// 執行結果：
+// 1
+// 99`
+          }
+        ]
+      },
+      {
+        sectionId: "7.5",
+        title: "命令列參數：argv 陣列",
+        body: [
+          "你在 `main` 方法中看到的 `String[] args`，其實就是一個 String 陣列。它用來接收執行程式時從命令列傳進來的參數。",
+          "例如執行 `java Main Jimmy`，程式中的 `args[0]` 就會是 `Jimmy`。如果執行 `java Main Jimmy 25`，`args[0]` 是 Jimmy，`args[1]` 是 25。",
+          "使用 args 時要特別小心：如果沒有傳入任何參數，卻讀取 `args[0]`，就會發生索引超出範圍錯誤。"
+        ],
+        code: {
+          title: "main 方法中的 args",
+          value: `public static void main(String[] args) {
+    // args 是 String 陣列
+}`
+        },
+        codes: [
+          {
+            title: "範例 1：印出第一個參數",
+            value: `public class Main {
+    public static void main(String[] args) {
+        System.out.println(args[0]);
+    }
+}
+
+// 執行：
+// java Main Jimmy
+//
+// 輸出：
+// Jimmy`
+          },
+          {
+            title: "範例 2：輸入姓名與年齡",
+            value: `public class Main {
+    public static void main(String[] args) {
+        System.out.println("姓名：" + args[0]);
+        System.out.println("年齡：" + args[1]);
+    }
+}
+
+// 執行：
+// java Main Jimmy 25
+//
+// 輸出：
+// 姓名：Jimmy
+// 年齡：25`
+          },
+          {
+            title: "範例 3：利用迴圈印出所有參數",
+            value: `public class Main {
+    public static void main(String[] args) {
+        for (int i = 0; i < args.length; i++) {
+            System.out.println(args[i]);
+        }
+    }
+}
+
+// 執行：
+// java Main Java Array Loop
+//
+// 輸出：
+// Java
+// Array
+// Loop`
+          },
+          {
+            title: "範例 4：計算參數數量",
+            value: `public class Main {
+    public static void main(String[] args) {
+        System.out.println(args.length);
+    }
+}
+
+// 執行：
+// java Main Jimmy 25
+//
+// 輸出：
+// 2`
+          },
+          {
+            title: "範例 5：先檢查長度再讀取",
+            value: `public class Main {
+    public static void main(String[] args) {
+        if (args.length > 0) {
+            System.out.println("你好 " + args[0]);
+        } else {
+            System.out.println("請輸入姓名");
+        }
+    }
+}
+
+// 沒有參數時不會讀取 args[0]，避免錯誤。`
+          }
+        ]
+      },
+      {
+        sectionId: "7.6",
+        title: "綜合演練",
+        body: [
+          "這一節把陣列、迴圈、二維陣列與命令列參數放進小專案。重點不是一次寫出很大的系統，而是看懂陣列如何保存一批資料。",
+          "如果題目看起來複雜，先拆成三步：建立陣列、用迴圈處理資料、輸出結果。這個思考方式會一直用到後面的課程。"
+        ],
+        code: {
+          title: "專案 1：學生成績管理系統",
+          value: `int[] scores = {80, 75, 90, 60, 88};
+int sum = 0;
+
+for (int i = 0; i < scores.length; i++) {
+    System.out.println("第 " + (i + 1) + " 位：" + scores[i]);
+    sum += scores[i];
+}
+
+double average = (double) sum / scores.length;
+
+System.out.println("總分：" + sum);
+System.out.println("平均：" + average);
+
+// 執行結果：
+// 第 1 位：80
+// ...
+// 總分：393
+// 平均：78.6`
+        },
+        codes: [
+          {
+            title: "專案 2：最高分搜尋器",
+            value: `int[] scores = {80, 75, 90, 60, 88};
+int max = scores[0];
+
+for (int i = 1; i < scores.length; i++) {
+    if (scores[i] > max) {
+        max = scores[i];
+    }
+}
+
+System.out.println("最高分：" + max);
+
+// 執行結果：
+// 最高分：90`
+          },
+          {
+            title: "專案 3：班級成績表",
+            value: `int[][] classScores = {
+    {80, 90, 75},
+    {60, 88, 92},
+    {95, 70, 85}
+};
+
+for (int student = 0; student < classScores.length; student++) {
+    System.out.print("學生 " + (student + 1) + "：");
+
+    for (int subject = 0; subject < classScores[student].length; subject++) {
+        System.out.print(classScores[student][subject] + " ");
+    }
+
+    System.out.println();
+}
+
+// 執行結果：
+// 學生 1：80 90 75
+// 學生 2：60 88 92
+// 學生 3：95 70 85`
+          },
+          {
+            title: "專案 4：命令列問候程式",
+            value: `public class Main {
+    public static void main(String[] args) {
+        if (args.length > 0) {
+            System.out.println("你好 " + args[0]);
+        } else {
+            System.out.println("請輸入姓名");
+        }
+    }
+}
+
+// 執行：
+// java Main Jimmy
+//
+// 輸出：
+// 你好 Jimmy`
+          }
+        ]
+      }
+    ],
+    activities: [
+      createActivity({
+        id: "ch07-exercise-array-basic",
+        sectionId: "7.1",
+        type: "exercise",
+        title: "實作練習：建立並操作一維陣列",
+        question: "建立 5 個整數的陣列，印出第一個元素，修改第三個元素，再用迴圈印出所有元素。",
+        hint: "第三個元素的索引是 2，不是 3。印出所有元素時，條件可以寫 `i < 陣列.length`。",
+        solution: `int[] numbers = {10, 20, 30, 40, 50};
+
+System.out.println(numbers[0]);
+
+numbers[2] = 99;
+
+for (int i = 0; i < numbers.length; i++) {
+    System.out.println(numbers[i]);
+}`,
+        explanation: "陣列索引從 0 開始，因此第一個元素是 numbers[0]，第三個元素是 numbers[2]。使用 length 可以避免把陣列長度寫死。"
+      }),
+      createActivity({
+        id: "ch07-thought-index",
+        sectionId: "7.1",
+        type: "thought",
+        title: "思考題：為什麼 scores[5] 會錯？",
+        question: "如果 `scores` 裡有 5 個元素，為什麼 `scores[5]` 會發生 ArrayIndexOutOfBoundsException？",
+        hint: "列出合法索引：0、1、2、3、4。最後一個位置不是 5。",
+        solution: "因為長度是 5 的陣列，合法索引只有 0 到 4。`scores[5]` 想讀取第 6 個位置，但這個位置不存在。",
+        explanation: "length 是元素數量，不是最後索引。最後索引永遠是 length - 1。這是陣列最常見的新手錯誤之一。"
+      }),
+      createActivity({
+        id: "ch07-exercise-array-input",
+        sectionId: "7.2",
+        type: "exercise",
+        title: "實作練習：輸入 5 個分數並統計",
+        question: "建立長度為 5 的分數陣列，輸入 5 個分數，計算總和、平均與最大值。",
+        hint: "可以用三段邏輯：輸入資料、跑迴圈累加、用 if 更新最大值。",
+        solution: `import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int[] scores = new int[5];
+        int sum = 0;
+        int max;
+
+        for (int i = 0; i < scores.length; i++) {
+            scores[i] = sc.nextInt();
+        }
+
+        max = scores[0];
+
+        for (int i = 0; i < scores.length; i++) {
+            sum += scores[i];
+
+            if (scores[i] > max) {
+                max = scores[i];
+            }
+        }
+
+        System.out.println("總和：" + sum);
+        System.out.println("平均：" + ((double) sum / scores.length));
+        System.out.println("最高分：" + max);
+    }
+}`,
+        explanation: "陣列讓你可以先收集一批分數，再用迴圈統一處理。找最大值時常把第一個元素當作初始最大值，再逐一比較。"
+      }),
+      createActivity({
+        id: "ch07-exercise-2d-array",
+        sectionId: "7.3",
+        type: "exercise",
+        title: "實作練習：2 x 3 二維陣列",
+        question: "建立 2 x 3 的整數陣列，印出全部資料，並計算總和。",
+        hint: "外層迴圈跑列，內層迴圈跑欄。二維陣列的總和要在內層累加每個元素。",
+        solution: `int[][] data = {
+    {10, 20, 30},
+    {40, 50, 60}
+};
+int sum = 0;
+
+for (int i = 0; i < data.length; i++) {
+    for (int j = 0; j < data[i].length; j++) {
+        System.out.print(data[i][j] + " ");
+        sum += data[i][j];
+    }
+    System.out.println();
+}
+
+System.out.println("總和：" + sum);`,
+        explanation: "二維陣列可以看成表格。`data.length` 是列數，`data[i].length` 是第 i 列的欄數。"
+      }),
+      createActivity({
+        id: "ch07-exercise-reference",
+        sectionId: "7.4",
+        type: "exercise",
+        title: "實作練習：觀察參照型別",
+        question: "建立 `arr1` 與 `arr2`，讓 `arr2 = arr1`，修改 `arr2[0]` 後觀察 `arr1[0]` 的變化。",
+        hint: "arr2 = arr1 不是複製整份陣列，而是讓兩個變數指向同一個陣列。",
+        solution: `int[] arr1 = {1, 2, 3};
+int[] arr2 = arr1;
+
+arr2[0] = 99;
+
+System.out.println(arr1[0]);
+System.out.println(arr2[0]);`,
+        explanation: "因為 arr1 和 arr2 參照同一個陣列，所以透過 arr2 修改第 0 格，arr1 看到的也是修改後的結果。"
+      }),
+      createActivity({
+        id: "ch07-exercise-args",
+        sectionId: "7.5",
+        type: "exercise",
+        title: "實作練習：使用 args 陣列",
+        question: "寫一個程式：印出第一個參數、印出全部參數、計算參數個數。請先檢查長度，避免沒有參數時出錯。",
+        hint: "可以先判斷 `args.length > 0`，再讀取 `args[0]`。印出全部參數可用 for 迴圈。",
+        solution: `public class Main {
+    public static void main(String[] args) {
+        if (args.length > 0) {
+            System.out.println("第一個參數：" + args[0]);
+        } else {
+            System.out.println("沒有參數");
+        }
+
+        for (int i = 0; i < args.length; i++) {
+            System.out.println(args[i]);
+        }
+
+        System.out.println("參數個數：" + args.length);
+    }
+}`,
+        explanation: "args 是 String 陣列，所以可以用 length 和索引讀取。讀取前先檢查長度，是避免索引超出範圍的好習慣。"
+      }),
+      createActivity({
+        id: "ch07-homework-array-projects",
+        sectionId: "7.6",
+        type: "homework",
+        title: "作業：完成四個陣列小專案",
+        question: "完成學生成績管理系統、最高分搜尋器、班級成績表、命令列問候程式。",
+        hint: "一維成績用 int[]，班級成績表用 int[][]，命令列問候用 String[] args。",
+        solution: `// 1. 學生成績管理與 2. 最高分搜尋
+int[] scores = {80, 75, 90, 60, 88};
+int sum = 0;
+int max = scores[0];
+
+for (int i = 0; i < scores.length; i++) {
+    System.out.println(scores[i]);
+    sum += scores[i];
+
+    if (scores[i] > max) {
+        max = scores[i];
+    }
+}
+
+System.out.println("總分：" + sum);
+System.out.println("平均：" + ((double) sum / scores.length));
+System.out.println("最高分：" + max);
+
+// 3. 班級成績表
+int[][] classScores = {
+    {80, 90, 75},
+    {60, 88, 92}
+};
+
+for (int i = 0; i < classScores.length; i++) {
+    for (int j = 0; j < classScores[i].length; j++) {
+        System.out.print(classScores[i][j] + " ");
+    }
+    System.out.println();
+}
+
+// 4. 命令列問候寫在 main 的 args 中使用`,
+        explanation: "這份作業整合本章核心：用一維陣列管理同類資料，用二維陣列表示表格，用 args 接收命令列資料。"
+      })
+    ],
+    quiz: [
+      {
+        question: "陣列最適合用來儲存什麼？",
+        options: ["大量相同型態資料", "只能儲存一個整數", "只能儲存 class 名稱", "只能儲存 if 條件"],
+        answer: 0,
+        explanation: "陣列可以把多個相同型態的資料放在同一個變數名稱底下管理。"
+      },
+      {
+        question: "Java 陣列索引從幾開始？",
+        options: ["0", "1", "-1", "陣列長度"],
+        answer: 0,
+        explanation: "Java 陣列索引從 0 開始。"
+      },
+      {
+        question: "長度為 5 的陣列，最後一個合法索引是什麼？",
+        options: ["4", "5", "6", "length"],
+        answer: 0,
+        explanation: "最後索引是 length - 1，所以長度 5 的最後索引是 4。"
+      },
+      {
+        question: "`scores[5]` 對長度 5 的陣列會造成什麼？",
+        options: ["ArrayIndexOutOfBoundsException", "自動讀取最後一格", "回傳 null", "把長度變成 6"],
+        answer: 0,
+        explanation: "長度 5 的合法索引是 0 到 4，索引 5 超出範圍。"
+      },
+      {
+        question: "`int[] nums = new int[5];` 中 int 的預設值是什麼？",
+        options: ["0", "0.0", "false", "null"],
+        answer: 0,
+        explanation: "int 陣列建立後，每個元素預設是 0。"
+      },
+      {
+        question: "String 陣列元素的預設值是什麼？",
+        options: ["null", "0", "false", "空白字元"],
+        answer: 0,
+        explanation: "String 是參照型別，陣列中的 String 預設值是 null。"
+      },
+      {
+        question: "計算陣列平均時，為什麼常把 sum 轉成 double？",
+        options: ["避免整數除法捨去小數", "讓陣列變長", "避免使用迴圈", "把索引改成 1 開始"],
+        answer: 0,
+        explanation: "如果 sum 和 length 都是 int，除法會是整數除法，可能失去小數部分。"
+      },
+      {
+        question: "二維陣列常可以想成什麼？",
+        options: ["表格", "單一字元", "一個 boolean", "一個 import"],
+        answer: 0,
+        explanation: "二維陣列有列和欄，很適合用表格理解。"
+      },
+      {
+        question: "`table[1][2]` 通常代表什麼？",
+        options: ["第 1 列第 2 欄的元素", "陣列長度", "整個 table", "main 方法"],
+        answer: 0,
+        explanation: "二維陣列使用兩個索引，第一個常代表列，第二個常代表欄。"
+      },
+      {
+        question: "輸出二維陣列全部資料通常會使用什麼？",
+        options: ["巢狀迴圈", "只用一個 println", "只用 break", "只用 char"],
+        answer: 0,
+        explanation: "外層跑列，內層跑欄，因此常使用巢狀迴圈。"
+      },
+      {
+        question: "下列哪個是基本型別？",
+        options: ["int", "String", "Array", "Scanner"],
+        answer: 0,
+        explanation: "int 是基本型別；String、Array、Scanner 可先視為參照型別。"
+      },
+      {
+        question: "`int[] arr2 = arr1;` 後修改 arr2[0]，arr1 可能會怎樣？",
+        options: ["arr1[0] 也看到變化", "arr1 一定不變", "arr1 會消失", "程式一定不能編譯"],
+        answer: 0,
+        explanation: "arr1 和 arr2 參照同一個陣列，所以透過其中一個變數修改，另一個也會看到結果。"
+      },
+      {
+        question: "`String[] args` 是什麼？",
+        options: ["命令列參數陣列", "固定的整數陣列", "二維陣列", "Scanner 物件"],
+        answer: 0,
+        explanation: "main 方法中的 args 是 String 陣列，用來接收命令列參數。"
+      },
+      {
+        question: "執行 `java Main Jimmy 25` 時，`args.length` 是多少？",
+        options: ["2", "0", "1", "25"],
+        answer: 0,
+        explanation: "Jimmy 和 25 是兩個命令列參數，所以長度是 2。"
+      },
+      {
+        question: "成績管理系統中，找最高分常用哪個策略？",
+        options: ["先把第一個元素當最大值，再逐一比較", "直接讀 scores[999]", "把所有分數變成 String", "只印出 length"],
+        answer: 0,
+        explanation: "常見做法是用第一個元素初始化 max，再用迴圈比較每個元素。"
+      }
+    ]
   }
 ];
 
