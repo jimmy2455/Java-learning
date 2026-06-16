@@ -1003,6 +1003,636 @@ public class UserInputPractice {
         explanation: "Scanner 位於 java.util 套件中，因此通常要先寫 `import java.util.Scanner;`。"
       }
     ]
+  },
+  {
+    id: 5,
+    code: "CH05",
+    title: "流程控制（一）：條件分支",
+    minutes: 75,
+    summary: "學會 if、if-else、if-else if、巢狀 if 與 switch，開始讓程式根據條件做決定。",
+    intro: "前面幾章的程式大多由上往下執行。從本章開始，你會學會讓程式根據條件選擇不同路線，這是寫出真正互動程式的重要一步。",
+    sections: [
+      {
+        sectionId: "5.1",
+        title: "什麼是流程控制",
+        body: [
+          "程式預設會由上往下依序執行，這稱為順序結構（Sequence）。如果程式只有順序結構，它每次都會做一樣的事情。",
+          "但真實程式常常需要根據條件做決定。例如是否成年、是否及格、是否登入成功、是否符合優惠資格。這時就需要條件分支。",
+          "`if` 可以讓程式在條件成立時才執行某段程式。條件通常是一個 boolean 運算式，結果只有 true 或 false。"
+        ],
+        code: {
+          title: "順序結構",
+          value: `System.out.println("第一行");
+System.out.println("第二行");
+System.out.println("第三行");`
+        },
+        codes: [
+          {
+            title: "範例 1：判斷是否成年",
+            value: `int age = 20;
+
+if (age >= 18) {
+    System.out.println("成年人");
+}`
+          },
+          {
+            title: "範例 2：判斷是否及格",
+            value: `int score = 90;
+
+if (score >= 60) {
+    System.out.println("及格");
+}`
+          }
+        ]
+      },
+      {
+        sectionId: "5.2",
+        title: "if 條件分支",
+        body: [
+          "`if` 是最基本的條件分支。條件成立時執行大括號內的程式；條件不成立時，就跳過那段程式。",
+          "`if-else` 可以處理兩種路線：條件成立做 A，不成立做 B。這很適合及格/不及格、登入成功/失敗這類二選一情境。",
+          "`if-else if` 可以處理多個區間，例如成績等級 A、B、C、D。Java 會從上往下檢查，遇到第一個成立的條件就執行，後面就不再檢查。",
+          "巢狀 if 是 if 裡面再放 if。它可以表達多層條件，但如果太深會不好讀。初學時可以先用它理解條件的層次。"
+        ],
+        code: {
+          title: "if 基本語法",
+          value: `if (條件) {
+    // 條件成立時執行
+}`
+        },
+        codes: [
+          {
+            title: "範例 1：if",
+            value: `int score = 80;
+
+if (score >= 60) {
+    System.out.println("及格");
+}`
+          },
+          {
+            title: "範例 2：if-else",
+            value: `int score = 50;
+
+if (score >= 60) {
+    System.out.println("及格");
+} else {
+    System.out.println("不及格");
+}`
+          },
+          {
+            title: "範例 3：if-else if",
+            value: `int score = 85;
+
+if (score >= 90) {
+    System.out.println("A");
+} else if (score >= 80) {
+    System.out.println("B");
+} else if (score >= 70) {
+    System.out.println("C");
+} else {
+    System.out.println("D");
+}`
+          },
+          {
+            title: "範例 4：巢狀 if",
+            value: `boolean member = true;
+int amount = 1200;
+
+if (member) {
+    if (amount >= 1000) {
+        System.out.println("享有折扣");
+    }
+}`
+          },
+          {
+            title: "範例 5：輸入年齡判斷成年",
+            value: `import java.util.Scanner;
+
+public class AgeCheck {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int age = sc.nextInt();
+
+        if (age >= 18) {
+            System.out.println("成年人");
+        } else {
+            System.out.println("未成年");
+        }
+    }
+}`
+          },
+          {
+            title: "範例 6：登入成功或失敗",
+            value: `String password = "java123";
+
+if (password.equals("java123")) {
+    System.out.println("登入成功");
+} else {
+    System.out.println("登入失敗");
+}`
+          },
+          {
+            title: "常見錯誤 1：省略大括號造成誤解",
+            value: `if (score >= 60)
+    System.out.println("及格");
+    System.out.println("完成"); // 這行不屬於 if，永遠會執行`
+          },
+          {
+            title: "常見錯誤 2：= 和 == 不同",
+            value: `// 錯誤觀念：= 是指定，不是比較
+// if (score = 60)
+
+// 正確：== 才是比較是否相等
+if (score == 60) {
+    System.out.println("剛好 60 分");
+}`
+          }
+        ]
+      },
+      {
+        sectionId: "5.3",
+        title: "switch 多條件分支",
+        body: [
+          "當條件很多，而且都是拿同一個變數去比對固定值時，`switch` 常常比大量 `if-else if` 更清楚。",
+          "`case` 表示某個可能的值，`default` 表示以上 case 都不符合時要做的事。",
+          "`break` 的作用是離開 switch。如果忘記 break，程式可能會繼續往下一個 case 執行，這稱為貫穿（Fall Through）。"
+        ],
+        code: {
+          title: "switch 基本語法",
+          value: `switch (變數) {
+    case 值1:
+        break;
+    case 值2:
+        break;
+    default:
+}`
+        },
+        codes: [
+          {
+            title: "範例 1：星期顯示",
+            value: `int day = 3;
+
+switch (day) {
+    case 1:
+        System.out.println("星期一");
+        break;
+    case 2:
+        System.out.println("星期二");
+        break;
+    case 3:
+        System.out.println("星期三");
+        break;
+    default:
+        System.out.println("未知");
+}`
+          },
+          {
+            title: "範例 2：成績等級",
+            value: `char grade = 'A';
+
+switch (grade) {
+    case 'A':
+        System.out.println("優秀");
+        break;
+    case 'B':
+        System.out.println("良好");
+        break;
+    default:
+        System.out.println("繼續努力");
+}`
+          },
+          {
+            title: "範例 3：沒有 break 的貫穿",
+            value: `int day = 1;
+
+switch (day) {
+    case 1:
+        System.out.println("星期一");
+    case 2:
+        System.out.println("星期二");
+    case 3:
+        System.out.println("星期三");
+}`
+          },
+          {
+            title: "範例 4：月份顯示季節",
+            value: `int month = 4;
+
+switch (month) {
+    case 3:
+    case 4:
+    case 5:
+        System.out.println("春季");
+        break;
+    case 6:
+    case 7:
+    case 8:
+        System.out.println("夏季");
+        break;
+    case 9:
+    case 10:
+    case 11:
+        System.out.println("秋季");
+        break;
+    default:
+        System.out.println("冬季");
+}`
+          },
+          {
+            title: "範例 5：餐點編號",
+            value: `int menu = 2;
+
+switch (menu) {
+    case 1:
+        System.out.println("漢堡");
+        break;
+    case 2:
+        System.out.println("炸雞");
+        break;
+    case 3:
+        System.out.println("咖哩飯");
+        break;
+    default:
+        System.out.println("沒有這個餐點");
+}`
+          }
+        ]
+      },
+      {
+        sectionId: "5.4",
+        title: "綜合演練",
+        body: [
+          "這一節把條件判斷放進完整小專案中。你會看到 if-else if 適合區間判斷，巢狀條件適合多條件資格判斷，switch 適合固定選項判斷。",
+          "做小專案時，先把輸入、處理、輸出分清楚。輸入是使用者提供的資料，處理是條件判斷，輸出是最後印出的結果。"
+        ],
+        code: {
+          title: "專案 1：成績判斷系統",
+          value: `import java.util.Scanner;
+
+public class GradeSystem {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("請輸入分數：");
+        int score = sc.nextInt();
+
+        if (score >= 90) {
+            System.out.println("A");
+        } else if (score >= 80) {
+            System.out.println("B");
+        } else if (score >= 70) {
+            System.out.println("C");
+        } else {
+            System.out.println("D");
+        }
+    }
+}`
+        },
+        codes: [
+          {
+            title: "專案 2：會員折扣系統",
+            value: `import java.util.Scanner;
+
+public class DiscountSystem {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("是否會員 true/false：");
+        boolean member = sc.nextBoolean();
+
+        System.out.print("消費金額：");
+        int amount = sc.nextInt();
+
+        if (member && amount >= 1000) {
+            System.out.println("符合優惠資格");
+        } else {
+            System.out.println("不符合優惠資格");
+        }
+    }
+}`
+          },
+          {
+            title: "專案 3：餐廳點餐系統",
+            value: `import java.util.Scanner;
+
+public class RestaurantOrder {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("請輸入餐點編號：");
+        int item = sc.nextInt();
+
+        switch (item) {
+            case 1:
+                System.out.println("漢堡");
+                break;
+            case 2:
+                System.out.println("炸雞");
+                break;
+            case 3:
+                System.out.println("咖哩飯");
+                break;
+            default:
+                System.out.println("沒有這個餐點");
+        }
+    }
+}`
+          }
+        ]
+      }
+    ],
+    activities: [
+      createActivity({
+        id: "ch05-thought-age-15",
+        sectionId: "5.1",
+        type: "thought",
+        title: "5.1 思考題：age = 15 會發生什麼事？",
+        question: "如果 `int age = 15;`，執行 `if (age >= 18)` 的成年人輸出會發生什麼事？",
+        hint: "先判斷 `15 >= 18` 是 true 還是 false。",
+        solution: "不會印出 `成年人`，因為 `15 >= 18` 的結果是 false。",
+        explanation: "if 只會在條件成立時執行大括號內的程式。條件不成立時，程式會跳過該區塊，繼續往下執行。"
+      }),
+      createActivity({
+        id: "ch05-exercise-rain",
+        sectionId: "5.1",
+        type: "exercise",
+        title: "5.1 練習題：判斷今天是否下雨",
+        question: "建立 boolean 變數 `isRaining`，如果是 true 就輸出 `記得帶傘`。",
+        hint: "boolean 變數本身就可以放在 if 的括號中。",
+        solution: `public class RainCheck {
+    public static void main(String[] args) {
+        boolean isRaining = true;
+
+        if (isRaining) {
+            System.out.println("記得帶傘");
+        }
+    }
+}`,
+        explanation: "`if (isRaining)` 等同於判斷 isRaining 是否為 true。這是 boolean 變數很常見的用法。"
+      }),
+      createActivity({
+        id: "ch05-exercise-age-input",
+        sectionId: "5.2",
+        type: "exercise",
+        title: "5.2 練習 1：輸入年齡判斷是否成年",
+        question: "使用 Scanner 輸入年齡，如果大於等於 18 顯示成年人，否則顯示未成年。",
+        hint: "使用 `nextInt()` 讀取年齡，搭配 if-else。",
+        solution: `import java.util.Scanner;
+
+public class AgeInput {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int age = sc.nextInt();
+
+        if (age >= 18) {
+            System.out.println("成年人");
+        } else {
+            System.out.println("未成年");
+        }
+    }
+}`,
+        explanation: "這題練習輸入、比較運算與 if-else。條件成立走 if，不成立走 else。"
+      }),
+      createActivity({
+        id: "ch05-exercise-pass-fail",
+        sectionId: "5.2",
+        type: "exercise",
+        title: "5.2 練習 2：輸入成績顯示及格或不及格",
+        question: "輸入成績，如果大於等於 60 顯示及格，否則顯示不及格。",
+        hint: "條件可以寫成 `score >= 60`。",
+        solution: `import java.util.Scanner;
+
+public class PassFail {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int score = sc.nextInt();
+
+        if (score >= 60) {
+            System.out.println("及格");
+        } else {
+            System.out.println("不及格");
+        }
+    }
+}`,
+        explanation: "及格與不及格是二選一情境，很適合用 if-else。"
+      }),
+      createActivity({
+        id: "ch05-exercise-grade-level",
+        sectionId: "5.2",
+        type: "exercise",
+        title: "5.2 練習 3：輸入成績顯示 A、B、C、D",
+        question: "輸入成績後，用 if-else if 顯示 A、B、C、D 等級。",
+        hint: "分數區間要從高分往低分判斷。",
+        solution: `import java.util.Scanner;
+
+public class GradeLevel {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int score = sc.nextInt();
+
+        if (score >= 90) {
+            System.out.println("A");
+        } else if (score >= 80) {
+            System.out.println("B");
+        } else if (score >= 70) {
+            System.out.println("C");
+        } else {
+            System.out.println("D");
+        }
+    }
+}`,
+        explanation: "if-else if 會由上往下檢查，所以高分區間要放前面，避免 95 分先被 `score >= 70` 攔住。"
+      }),
+      createActivity({
+        id: "ch05-homework-discount",
+        sectionId: "5.2",
+        type: "homework",
+        title: "5.2 作業：會員折扣判斷系統",
+        question: "設計會員折扣判斷系統：會員且消費滿 1000 元顯示符合優惠資格，否則顯示不符合優惠資格。",
+        hint: "兩個條件要同時成立，可以用 `member && amount >= 1000`。",
+        solution: `public class MemberDiscount {
+    public static void main(String[] args) {
+        boolean member = true;
+        int amount = 1200;
+
+        if (member && amount >= 1000) {
+            System.out.println("符合優惠資格");
+        } else {
+            System.out.println("不符合優惠資格");
+        }
+    }
+}`,
+        explanation: "這題重點是 `&&`：必須是會員，而且金額也達標，才符合優惠資格。"
+      }),
+      createActivity({
+        id: "ch05-exercise-season",
+        sectionId: "5.3",
+        type: "exercise",
+        title: "5.3 實作練習：輸入月份顯示季節",
+        question: "輸入月份 1 到 12，使用 switch 顯示春季、夏季、秋季、冬季。",
+        hint: "多個 case 可以共用同一段輸出，例如 3、4、5 都是春季。",
+        solution: `int month = 4;
+
+switch (month) {
+    case 3:
+    case 4:
+    case 5:
+        System.out.println("春季");
+        break;
+    case 6:
+    case 7:
+    case 8:
+        System.out.println("夏季");
+        break;
+    case 9:
+    case 10:
+    case 11:
+        System.out.println("秋季");
+        break;
+    default:
+        System.out.println("冬季");
+}`,
+        explanation: "switch 很適合固定值分類。多個 case 沒有 break 時會往下共用同一段程式，這裡是刻意用來合併月份。"
+      }),
+      createActivity({
+        id: "ch05-homework-weekday",
+        sectionId: "5.3",
+        type: "homework",
+        title: "5.3 作業：輸入數字顯示星期幾",
+        question: "輸入數字 1 到 7，使用 switch 顯示星期一到星期日。",
+        hint: "每個 case 記得加 break，default 可以顯示輸入錯誤。",
+        solution: `int day = 7;
+
+switch (day) {
+    case 1:
+        System.out.println("星期一");
+        break;
+    case 2:
+        System.out.println("星期二");
+        break;
+    case 3:
+        System.out.println("星期三");
+        break;
+    case 4:
+        System.out.println("星期四");
+        break;
+    case 5:
+        System.out.println("星期五");
+        break;
+    case 6:
+        System.out.println("星期六");
+        break;
+    case 7:
+        System.out.println("星期日");
+        break;
+    default:
+        System.out.println("輸入錯誤");
+}`,
+        explanation: "每個 case 對應一個固定數值。break 可以避免執行完某個 case 後繼續往下跑。"
+      }),
+      createActivity({
+        id: "ch05-project-grade",
+        sectionId: "5.4",
+        type: "exercise",
+        title: "5.4 專案練習：成績判斷系統",
+        question: "完成成績判斷系統：輸入學生分數，輸出 A、B、C、D。",
+        hint: "使用 if-else if，並從最高分條件開始判斷。",
+        solution: "可參考本節專案 1，重點是輸入分數後用多段條件判斷等級。",
+        explanation: "這個專案整合 Scanner 與 if-else if。它是很多真實判斷系統的簡化版本。"
+      }),
+      createActivity({
+        id: "ch05-project-member",
+        sectionId: "5.4",
+        type: "exercise",
+        title: "5.4 專案練習：會員折扣系統",
+        question: "完成會員折扣系統：輸入是否會員與消費金額，輸出是否享有優惠。",
+        hint: "使用 boolean 與 int，條件是 `member && amount >= 1000`。",
+        solution: "可參考本節專案 2，使用 Scanner 讀取會員狀態與消費金額，再用 if-else 輸出資格。",
+        explanation: "這個專案練習多條件同時成立。`&&` 能讓你表達「兩個條件都要成立」。"
+      }),
+      createActivity({
+        id: "ch05-project-restaurant",
+        sectionId: "5.4",
+        type: "exercise",
+        title: "5.4 專案練習：餐廳點餐系統",
+        question: "完成餐廳點餐系統：輸入 1、2、3，輸出漢堡、炸雞、咖哩飯。",
+        hint: "固定編號對應固定餐點，很適合用 switch。",
+        solution: "可參考本節專案 3，使用 switch 依餐點編號輸出餐點名稱。",
+        explanation: "當選項是固定值時，switch 的可讀性通常很好。default 可以處理使用者輸入不存在的編號。"
+      })
+    ],
+    quiz: [
+      {
+        question: "程式預設由上往下執行，稱為什麼結構？",
+        options: ["順序結構", "位元結構", "資料庫結構", "隨機結構"],
+        answer: 0,
+        explanation: "程式預設由上到下依序執行，稱為順序結構。"
+      },
+      {
+        question: "`if (age >= 18)` 中的條件結果必須是什麼型態？",
+        options: ["boolean", "String", "double", "char"],
+        answer: 0,
+        explanation: "if 括號中的條件必須能得到 true 或 false。"
+      },
+      {
+        question: "如果 `age = 15`，`if (age >= 18)` 內的程式會怎樣？",
+        options: ["不會執行", "一定會執行", "變成 18", "出現星期三"],
+        answer: 0,
+        explanation: "`15 >= 18` 是 false，因此 if 區塊不會執行。"
+      },
+      {
+        question: "二選一情境最適合使用哪一種結構？",
+        options: ["if-else", "只有 if", "import", "class"],
+        answer: 0,
+        explanation: "if-else 可以處理條件成立與不成立兩種路線。"
+      },
+      {
+        question: "多個分數區間 A、B、C、D 常用哪一種寫法？",
+        options: ["if-else if", "只用一個 println", "Scanner", "註解"],
+        answer: 0,
+        explanation: "if-else if 適合處理多個條件區間。"
+      },
+      {
+        question: "`if(score = 60)` 的問題是什麼？",
+        options: ["= 是指定，不是比較", "= 代表大於", "= 只能用在 String", "= 是 switch"],
+        answer: 0,
+        explanation: "比較是否相等要用 `==`，`=` 是指定值。"
+      },
+      {
+        question: "沒有大括號時，if 預設只控制幾行敘述？",
+        options: ["一行", "兩行", "整個檔案", "所有 println"],
+        answer: 0,
+        explanation: "沒有大括號時，if 只控制緊接著的一行敘述，容易造成誤解。"
+      },
+      {
+        question: "當同一個變數要比對很多固定值時，哪個語法常更清楚？",
+        options: ["switch", "double", "package", "boolean"],
+        answer: 0,
+        explanation: "switch 適合固定值分支，例如星期、月份、餐點編號。"
+      },
+      {
+        question: "switch 中 break 的作用是什麼？",
+        options: ["離開 switch", "建立變數", "讀取輸入", "讓數字加一"],
+        answer: 0,
+        explanation: "break 會讓程式離開 switch，避免繼續往下執行其他 case。"
+      },
+      {
+        question: "switch 忘記 break 可能產生什麼現象？",
+        options: ["Fall Through 貫穿", "四捨五入", "自動 import", "變數消失"],
+        answer: 0,
+        explanation: "沒有 break 時，程式可能繼續執行後面的 case，稱為貫穿。"
+      },
+      {
+        question: "會員且消費滿 1000 元，應該使用哪個邏輯算符連接兩個條件？",
+        options: ["&&", "||", "!", "%"],
+        answer: 0,
+        explanation: "`&&` 表示兩個條件都要成立。"
+      },
+      {
+        question: "餐點編號 1、2、3 對應固定餐點名稱，適合用什麼？",
+        options: ["switch", "只用變數宣告", "強制轉型", "位元反轉"],
+        answer: 0,
+        explanation: "固定編號對應固定輸出，是 switch 很適合的情境。"
+      }
+    ]
   }
 ];
 
@@ -1151,7 +1781,7 @@ function getChapterStats(chapter, state = getState()) {
     allActivitiesDone,
     allSectionsDone,
     allQuizDone,
-    canComplete: allSectionsDone && allQuizDone
+    canComplete: allSectionsDone && allActivitiesDone && allQuizDone
   };
 }
 
@@ -1454,6 +2084,7 @@ function renderCompletionCard(chapter, state) {
   const missing = [];
 
   if (!stats.allSectionsDone) missing.push(`完成所有小節 ${stats.completedSections}/${stats.totalSections}`);
+  if (!stats.allActivitiesDone) missing.push(`完成所有練習 ${stats.completedActivities}/${stats.totalActivities}`);
   if (!stats.allQuizDone) missing.push(`完成所有測驗 ${stats.answeredCount}/${stats.totalQuiz}`);
 
   return `
@@ -1462,7 +2093,7 @@ function renderCompletionCard(chapter, state) {
       <p>${completed
         ? "進度已儲存在這個瀏覽器中。你可以回章節地圖看整體進度。"
         : stats.canComplete
-          ? "你已完成本章所有練習與測驗，現在可以標記章節完成。"
+          ? "你已完成本章所有小節、練習與測驗，現在可以標記章節完成。"
           : `完成本章前還需要：${missing.join("、")}。`}
       </p>
       <div class="section-actions">
@@ -1547,6 +2178,7 @@ function renderSectionPager(chapter, section, activeIndex, totalSections, state)
 function renderAssessmentPage(chapter, state) {
   const assessment = getAssessmentSection(chapter);
   const stats = getChapterStats(chapter, state);
+  const completed = state.completedChapters.includes(chapter.id);
 
   return `
     <section class="lesson-heading assessment-heading">
@@ -1554,6 +2186,7 @@ function renderAssessmentPage(chapter, state) {
       <h1>${assessment.sectionId} ${assessment.title}</h1>
       <p>確認本章小節完成狀態，完成測驗後就能標記整章完成。</p>
       <div class="chapter-meta">
+        <span class="pill ${completed ? "done" : ""}">${completed ? "已完成" : "尚未完成"}</span>
         <span class="pill">小節 ${stats.completedSections}/${stats.totalSections}</span>
         <span class="pill">練習 ${stats.completedActivities}/${stats.totalActivities}</span>
         <span class="pill">測驗 ${stats.answeredCount}/${stats.totalQuiz}</span>
