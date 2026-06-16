@@ -1638,6 +1638,8 @@ switch (day) {
 
 const app = document.querySelector("#app");
 const mainNav = document.querySelector("[data-main-nav]");
+const siteHeader = document.querySelector("[data-site-header]");
+const navToggle = document.querySelector("[data-nav-toggle]");
 
 function getDefaultState() {
   return {
@@ -1806,19 +1808,40 @@ function getProgressStats() {
 
 function renderMainNav() {
   if (!mainNav) return;
+  const courseLinks = chapters.map((chapter) => `
+    <a href="#chapter-${chapter.id}" data-nav-link>${chapter.code} ${chapter.title}</a>
+  `).join("");
+
   mainNav.innerHTML = `
-    <a href="#home">首頁</a>
-    <a href="#map">章節地圖</a>
-    ${chapters.map((chapter) => `<a href="#chapter-${chapter.id}">${chapter.code}</a>`).join("")}
+    <a href="#home" data-nav-link>首頁</a>
+    <div class="nav-dropdown" data-course-dropdown>
+      <button class="nav-dropdown-toggle" type="button" data-course-toggle aria-expanded="false" aria-controls="courseMenu">
+        <span>課程地圖</span>
+        <span class="dropdown-caret">▼</span>
+      </button>
+      <div class="nav-dropdown-menu" id="courseMenu" data-course-menu hidden>
+        <a class="nav-map-link" href="#map" data-nav-link>查看完整章節地圖</a>
+        <div class="nav-group-title">Java基礎</div>
+        ${courseLinks}
+      </div>
+    </div>
+    <a href="#toolbox" data-nav-link>Java工具箱</a>
+    <a href="#cheatsheet" data-nav-link>Java Cheat Sheet</a>
+    <a href="#progress" data-nav-link>學習進度</a>
   `;
 }
 
 function updateActiveNav() {
   const hash = location.hash || "#home";
-  document.querySelectorAll(".top-nav a").forEach((link) => {
+  document.querySelectorAll(".top-nav a[data-nav-link]").forEach((link) => {
     const href = link.getAttribute("href");
     link.classList.toggle("active", href === hash || (href?.startsWith("#chapter-") && hash.startsWith(`${href}/`)));
   });
+
+  const courseToggle = document.querySelector("[data-course-toggle]");
+  if (courseToggle) {
+    courseToggle.classList.toggle("active", hash === "#map" || hash.startsWith("#chapter-"));
+  }
 }
 
 function renderProgressPanel() {
@@ -1894,7 +1917,7 @@ function renderMap() {
     <section class="page-title">
       <p class="eyebrow">Chapter Map</p>
       <h1>章節地圖</h1>
-      <p>先完成前三章 prototype：從 Java 是什麼，到第一支程式，再到變數。每一章都可以單獨閱讀，也可以照順序前進。</p>
+      <p>依照章節順序建立 Java 基礎。每一章都可以單獨閱讀，也可以照順序完成小節、練習與測驗。</p>
       ${renderProgressPanel()}
     </section>
 
@@ -1917,6 +1940,98 @@ function renderMap() {
           </a>
         `;
       }).join("")}
+    </section>
+  `;
+}
+
+function renderToolbox() {
+  app.innerHTML = `
+    <section class="page-title">
+      <p class="eyebrow">Java Toolbox</p>
+      <h1>Java工具箱</h1>
+      <p>這裡整理學 Java 時常用到的工具與觀念入口。之後可以逐步補上安裝教學、常用命令與環境檢查清單。</p>
+    </section>
+
+    <section class="content-section">
+      <h2>常用工具</h2>
+      <ul>
+        <li><strong>JDK：</strong>撰寫、編譯與執行 Java 程式的開發工具包。</li>
+        <li><strong>VS Code：</strong>輕量編輯器，適合新手快速開始與練習小程式。</li>
+        <li><strong>IntelliJ IDEA：</strong>Java 專案常用 IDE，提示、除錯與專案管理功能完整。</li>
+        <li><strong>終端機：</strong>練習 <code>javac</code>、<code>java</code> 等基本命令，理解程式如何被編譯與執行。</li>
+      </ul>
+      <div class="section-actions">
+        <a class="button" href="#chapter-2/2.1">複習 JDK</a>
+        <a class="button secondary" href="#chapter-2/2.5">複習編譯與執行</a>
+      </div>
+    </section>
+  `;
+}
+
+function renderCheatSheet() {
+  app.innerHTML = `
+    <section class="page-title">
+      <p class="eyebrow">Quick Reference</p>
+      <h1>Java Cheat Sheet</h1>
+      <p>把前面章節最常用的語法集中放在這裡，方便練習時快速回頭查。</p>
+    </section>
+
+    <section class="content-section">
+      <h2>Hello World</h2>
+      ${renderCodeBlock({
+        title: "HelloWorld.java",
+        value: `public class HelloWorld {
+    public static void main(String[] args) {
+        System.out.println("Hello, Java!");
+    }
+}`
+      })}
+    </section>
+
+    <section class="content-section">
+      <h2>變數與條件判斷</h2>
+      ${renderCodeBlock({
+        title: "常用語法速查",
+        value: `String name = "小明";
+int age = 18;
+double height = 170.5;
+boolean canVote = age >= 18;
+
+if (canVote) {
+    System.out.println(name + " 可以投票");
+} else {
+    System.out.println(name + " 還不能投票");
+}`
+      })}
+    </section>
+  `;
+}
+
+function renderProgressPage() {
+  const stats = getProgressStats();
+  const state = stats.state;
+  app.innerHTML = `
+    <section class="page-title">
+      <p class="eyebrow">Learning Progress</p>
+      <h1>學習進度</h1>
+      <p>進度會儲存在此瀏覽器的 localStorage。完成小節、練習與測驗後，章節完成按鈕才會解鎖。</p>
+      ${renderProgressPanel()}
+    </section>
+
+    <section class="content-section">
+      <h2>章節狀態</h2>
+      <div class="progress-list">
+        ${chapters.map((chapter) => {
+          const chapterStats = getChapterStats(chapter, state);
+          const isDone = state.completedChapters.includes(chapter.id);
+          return `
+            <a class="progress-list-item" href="#chapter-${chapter.id}">
+              <span>${chapter.code} ${chapter.title}</span>
+              <small>${isDone ? "已完成" : "尚未完成"} · 小節 ${chapterStats.completedSections}/${chapterStats.totalSections} · 練習 ${chapterStats.completedActivities}/${chapterStats.totalActivities} · 測驗 ${chapterStats.answeredCount}/${chapterStats.totalQuiz}</small>
+            </a>
+          `;
+        }).join("")}
+      </div>
     </section>
   `;
 }
@@ -2378,6 +2493,63 @@ function completeCurrentSection(sectionId) {
   renderCurrentRoute();
 }
 
+function closeCourseMenu() {
+  const menu = document.querySelector("[data-course-menu]");
+  const toggle = document.querySelector("[data-course-toggle]");
+  if (!menu || !toggle) return;
+
+  menu.hidden = true;
+  toggle.setAttribute("aria-expanded", "false");
+}
+
+function closeMobileNav() {
+  if (!siteHeader || !navToggle) return;
+
+  siteHeader.classList.remove("nav-open");
+  navToggle.setAttribute("aria-expanded", "false");
+}
+
+function bindMainNavEvents() {
+  if (!mainNav) return;
+
+  navToggle?.addEventListener("click", () => {
+    const isOpen = siteHeader?.classList.toggle("nav-open") || false;
+    navToggle.setAttribute("aria-expanded", String(isOpen));
+  });
+
+  mainNav.addEventListener("click", (event) => {
+    const courseToggle = event.target.closest("[data-course-toggle]");
+    if (courseToggle) {
+      const menu = document.querySelector("[data-course-menu]");
+      if (!menu) return;
+
+      const shouldOpen = menu.hidden;
+      menu.hidden = !shouldOpen;
+      courseToggle.setAttribute("aria-expanded", String(shouldOpen));
+      return;
+    }
+
+    const navLink = event.target.closest("[data-nav-link]");
+    if (navLink) {
+      closeCourseMenu();
+      closeMobileNav();
+    }
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!event.target.closest("[data-course-dropdown]")) {
+      closeCourseMenu();
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      closeCourseMenu();
+      closeMobileNav();
+    }
+  });
+}
+
 function bindEvents() {
   app.addEventListener("click", (event) => {
     const toggleButton = event.target.closest("[data-toggle-panel]");
@@ -2460,6 +2632,12 @@ function renderCurrentRoute() {
     renderChapter(chapterRoute.chapterId, chapterRoute.view);
   } else if (hash === "#map") {
     renderMap();
+  } else if (hash === "#toolbox") {
+    renderToolbox();
+  } else if (hash === "#cheatsheet") {
+    renderCheatSheet();
+  } else if (hash === "#progress") {
+    renderProgressPage();
   } else {
     renderHome();
   }
@@ -2470,5 +2648,6 @@ function renderCurrentRoute() {
 
 renderMainNav();
 window.addEventListener("hashchange", renderCurrentRoute);
+bindMainNavEvents();
 bindEvents();
 renderCurrentRoute();

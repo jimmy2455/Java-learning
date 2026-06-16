@@ -10,21 +10,21 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="site-header">
-    <a class="brand" href="#home" aria-label="回到首頁">
-      <span class="brand-mark">J</span>
-      <span>Java 新手村</span>
-    </a>
-    <nav class="top-nav" data-main-nav aria-label="主要導覽">
-      <a href="#home">首頁</a>
-      <a href="#map">章節地圖</a>
-    </nav>
+  <header class="site-header" data-site-header>
+    <div class="header-main">
+      <a class="brand" href="#home" aria-label="回到首頁">
+        <span class="brand-mark">J</span>
+        <span>Java 新手村</span>
+      </a>
+      <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="mainNav" aria-label="開啟主選單">☰</button>
+    </div>
+    <nav class="top-nav" id="mainNav" data-main-nav aria-label="主要導覽"></nav>
   </header>
 
   <main id="app" class="app-shell" tabindex="-1"></main>
 
   <footer class="site-footer">
-    <span>Prototype: 前 3 章完成</span>
+    <span>Prototype: 目前章節持續擴充</span>
     <span>進度儲存在此瀏覽器的 localStorage</span>
   </footer>
 
