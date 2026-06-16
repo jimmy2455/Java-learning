@@ -345,10 +345,26 @@ textarea {
 .lesson-nav {
   position: sticky;
   top: 82px;
+  max-height: calc(100vh - 104px);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: rgba(15, 23, 42, 0.74);
-  overflow: hidden;
+  overflow-y: auto;
+  scrollbar-color: rgba(94, 234, 212, 0.52) rgba(169, 184, 216, 0.12);
+  scrollbar-width: thin;
+}
+
+.lesson-nav::-webkit-scrollbar {
+  width: 8px;
+}
+
+.lesson-nav::-webkit-scrollbar-track {
+  background: rgba(169, 184, 216, 0.12);
+}
+
+.lesson-nav::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(94, 234, 212, 0.52);
 }
 
 .lesson-nav a,
@@ -760,7 +776,9 @@ code {
   .lesson-nav {
     position: static;
     display: flex;
+    max-height: none;
     overflow-x: auto;
+    overflow-y: hidden;
   }
 
   .lesson-nav a {
