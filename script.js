@@ -3475,436 +3475,994 @@ for (int i = 0; i < classScores.length; i++) {
         explanation: "常見做法是用第一個元素初始化 max，再用迴圈比較每個元素。"
       }
     ]
-  },
-  {
+  }
+];
+
+applyRequestedContentUpdates();
+
+function applyRequestedContentUpdates() {
+  updateSection(5, "5.4", {
+    title: "綜合演練",
+    body: [
+      "本節改用統一的解題流程：問題說明 -> 解題思路 -> 流程圖 -> Hint -> Solution -> Explanation -> 延伸挑戰。",
+      "條件分支最重要的能力，是把現實規則翻成清楚的 if、else if、else 或 switch。請先讀懂條件，再開始寫程式。"
+    ],
+    code: {
+      title: "題目 1：判斷是否可為三角形的三邊長",
+      value: `問題說明：
+輸入三個邊長 a、b、c，判斷是否能組成三角形。
+
+解題思路：
+三角形任兩邊相加都必須大於第三邊。
+
+流程圖：
+輸入 a b c
+  ↓
+a + b > c 且 a + c > b 且 b + c > a？
+  ↓
+是：可以成為三角形
+否：不可以成為三角形
+
+Hint：
+三個條件要同時成立，適合使用 &&。
+
+Solution：
+int a = 3;
+int b = 4;
+int c = 5;
+
+if (a + b > c && a + c > b && b + c > a) {
+    System.out.println("可以成為三角形");
+} else {
+    System.out.println("不可以成為三角形");
+}
+
+執行結果：
+可以成為三角形
+
+Explanation：
+只檢查一組邊長不夠，因為任一邊太長都會讓三角形無法閉合。
+
+延伸挑戰：
+再判斷是否為等邊三角形或等腰三角形。`
+    },
+    codes: [
+      {
+        title: "題目 2：電影票票價計算",
+        value: `問題說明：
+依照年齡計算電影票價格：未滿 12 歲 180 元，65 歲以上 200 元，其餘 300 元。
+
+解題思路：
+這是年齡區間判斷，適合使用 if-else if。
+
+流程圖：
+輸入 age
+  ↓
+age < 12？
+  ↓ 否
+age >= 65？
+  ↓
+輸出票價
+
+Hint：
+先處理特殊票價，再處理一般票價。
+
+Solution：
+int age = 10;
+int price;
+
+if (age < 12) {
+    price = 180;
+} else if (age >= 65) {
+    price = 200;
+} else {
+    price = 300;
+}
+
+System.out.println("票價：" + price);
+
+執行結果：
+票價：180
+
+Explanation：
+if-else if 會從上往下檢查，找到第一個成立條件後就不再往下判斷。
+
+延伸挑戰：
+加入是否為會員，會員再折 30 元。`
+      },
+      {
+        title: "題目 3：利用手機序號判斷製造年份",
+        value: `問題說明：
+假設手機序號開頭代表製造年份：A=2021、B=2022、C=2023、D=2024。
+
+解題思路：
+固定字元對應固定年份，適合用 switch。
+
+流程圖：
+取得序號第一個字元
+  ↓
+switch 判斷 A/B/C/D
+  ↓
+輸出製造年份
+
+Hint：
+可以使用 char code = serial.charAt(0);
+
+Solution：
+String serial = "C98765";
+char code = serial.charAt(0);
+
+switch (code) {
+    case 'A':
+        System.out.println("製造年份：2021");
+        break;
+    case 'B':
+        System.out.println("製造年份：2022");
+        break;
+    case 'C':
+        System.out.println("製造年份：2023");
+        break;
+    case 'D':
+        System.out.println("製造年份：2024");
+        break;
+    default:
+        System.out.println("未知年份");
+}
+
+執行結果：
+製造年份：2023
+
+Explanation：
+switch 適合處理固定代碼表。default 可以處理未知或錯誤的序號。
+
+延伸挑戰：
+加入第二個字元代表製造月份。`
+      }
+    ]
+  });
+
+  replaceSectionActivities(5, "5.4", [
+    createActivity({
+      id: "ch05-project-triangle",
+      sectionId: "5.4",
+      type: "exercise",
+      title: "5.4 練習：三角形三邊長判斷",
+      question: "輸入三個整數邊長，判斷是否可以組成三角形。",
+      hint: "任兩邊相加都要大於第三邊，三個條件要用 && 串起來。",
+      solution: `int a = 3;
+int b = 4;
+int c = 5;
+
+if (a + b > c && a + c > b && b + c > a) {
+    System.out.println("可以成為三角形");
+} else {
+    System.out.println("不可以成為三角形");
+}`,
+      explanation: "這題訓練多條件判斷。只要其中一個條件不成立，就不能形成三角形。"
+    }),
+    createActivity({
+      id: "ch05-project-movie-ticket",
+      sectionId: "5.4",
+      type: "exercise",
+      title: "5.4 練習：電影票票價計算",
+      question: "根據年齡輸出電影票票價，並嘗試加入會員折扣。",
+      hint: "先用 if-else if 算出基本票價，再用另一個 if 處理折扣。",
+      solution: `int age = 30;
+boolean member = true;
+int price;
+
+if (age < 12) {
+    price = 180;
+} else if (age >= 65) {
+    price = 200;
+} else {
+    price = 300;
+}
+
+if (member) {
+    price -= 30;
+}
+
+System.out.println(price);`,
+      explanation: "先解決主要分類，再處理額外條件，程式會比把所有條件塞在一起更清楚。"
+    }),
+    createActivity({
+      id: "ch05-project-phone-serial",
+      sectionId: "5.4",
+      type: "exercise",
+      title: "5.4 練習：手機序號年份判斷",
+      question: "使用序號第一個字元判斷製造年份。",
+      hint: "固定代碼很適合 switch，記得每個 case 加 break。",
+      solution: `String serial = "B12345";
+char code = serial.charAt(0);
+
+switch (code) {
+    case 'A':
+        System.out.println(2021);
+        break;
+    case 'B':
+        System.out.println(2022);
+        break;
+    case 'C':
+        System.out.println(2023);
+        break;
+    default:
+        System.out.println("未知");
+}`,
+      explanation: "這題把字元當作分類代碼。switch 讓每個代碼對應的結果更容易閱讀。"
+    })
+  ]);
+
+  updateSection(6, "6.6", {
+    title: "綜合演練",
+    body: [
+      "本節統一使用：問題說明 -> 解題思路 -> 流程圖 -> Hint -> Solution -> Explanation -> 延伸挑戰。",
+      "迴圈常和 if 搭配使用：迴圈負責重複檢查，if 負責決定某一次是否符合條件。"
+    ],
+    code: {
+      title: "題目 1：迴圈與 if 混合應用，判斷質數",
+      value: `問題說明：
+判斷一個整數 n 是否為質數。
+
+解題思路：
+質數只能被 1 和自己整除。檢查 2 到 n - 1 是否有任何數可以整除 n。
+
+流程圖：
+設定 isPrime = true
+  ↓
+i 從 2 跑到 n - 1
+  ↓
+n % i == 0？
+  ↓ 是：不是質數，停止
+  ↓ 否：繼續檢查
+
+Hint：
+找到第一個可以整除的數，就可以 break。
+
+Solution：
+int n = 17;
+boolean isPrime = true;
+
+if (n <= 1) {
+    isPrime = false;
+} else {
+    for (int i = 2; i < n; i++) {
+        if (n % i == 0) {
+            isPrime = false;
+            break;
+        }
+    }
+}
+
+System.out.println(isPrime ? "質數" : "不是質數");
+
+執行結果：
+質數
+
+Explanation：
+for 負責逐一嘗試除數，if 負責檢查是否整除。break 可以避免多餘檢查。
+
+延伸挑戰：
+只檢查到平方根以內，提升效率。`
+    },
+    codes: [
+      {
+        title: "題目 2：Scanner 類別的輸入檢查",
+        value: `問題說明：
+讓使用者輸入 1 到 100 的分數，如果不合法就要求重新輸入。
+
+解題思路：
+不知道使用者會輸錯幾次，適合用 while。
+
+流程圖：
+讀取 score
+  ↓
+score < 0 或 score > 100？
+  ↓ 是：重新輸入
+  ↓ 否：輸出合法分數
+
+Hint：
+條件可以寫成 score < 0 || score > 100。
+
+Solution：
+import java.util.Scanner;
+
+Scanner sc = new Scanner(System.in);
+int score = sc.nextInt();
+
+while (score < 0 || score > 100) {
+    System.out.println("請輸入 0 到 100");
+    score = sc.nextInt();
+}
+
+System.out.println("分數：" + score);
+
+執行結果：
+分數：80
+
+Explanation：
+while 適合做輸入檢查，因為錯誤次數不固定。
+
+延伸挑戰：
+限制最多只能輸入三次。`
+      },
+      {
+        title: "題目 3：各種迴圈混合應用，計算階乘",
+        value: `問題說明：
+計算 n!，例如 5! = 5 x 4 x 3 x 2 x 1。
+
+解題思路：
+使用 for 從 1 乘到 n，或使用 while 倒數乘回 1。
+
+流程圖：
+result = 1
+  ↓
+i 從 1 到 n
+  ↓
+result = result * i
+  ↓
+輸出 result
+
+Hint：
+階乘是連乘，不是連加。
+
+Solution：
+int n = 5;
+int result = 1;
+
+for (int i = 1; i <= n; i++) {
+    result *= i;
+}
+
+System.out.println(result);
+
+執行結果：
+120
+
+Explanation：
+每一圈把目前的 i 乘進 result，最後就會得到 1 到 n 的連乘結果。
+
+延伸挑戰：
+改用 while 或 do-while 完成同一題。`
+      }
+    ]
+  });
+
+  replaceSectionActivities(6, "6.6", [
+    createActivity({
+      id: "ch06-project-prime",
+      sectionId: "6.6",
+      type: "exercise",
+      title: "6.6 練習：判斷質數",
+      question: "使用 for 與 if 判斷一個數是否為質數。",
+      hint: "從 2 檢查到 n - 1，只要找到可以整除的數，就不是質數。",
+      solution: `int n = 17;
+boolean isPrime = true;
+
+for (int i = 2; i < n; i++) {
+    if (n % i == 0) {
+        isPrime = false;
+        break;
+    }
+}
+
+System.out.println(isPrime);`,
+      explanation: "迴圈負責嘗試不同除數，if 負責判斷是否整除。"
+    }),
+    createActivity({
+      id: "ch06-project-input-check",
+      sectionId: "6.6",
+      type: "exercise",
+      title: "6.6 練習：Scanner 輸入檢查",
+      question: "讓使用者輸入合法分數，若小於 0 或大於 100 就重新輸入。",
+      hint: "while 條件可以是不合法的狀態。",
+      solution: `while (score < 0 || score > 100) {
+    System.out.println("請重新輸入");
+    score = sc.nextInt();
+}`,
+      explanation: "用 while 包住錯誤狀態，可以讓程式持續要求修正直到合法。"
+    }),
+    createActivity({
+      id: "ch06-project-factorial",
+      sectionId: "6.6",
+      type: "homework",
+      title: "6.6 作業：計算階乘",
+      question: "使用 for、while 各寫一次階乘計算。",
+      hint: "階乘從 1 乘到 n，初始值應該是 1。",
+      solution: `int n = 5;
+int result = 1;
+
+for (int i = 1; i <= n; i++) {
+    result *= i;
+}
+
+System.out.println(result);`,
+      explanation: "階乘是連乘。若 result 初始為 0，最後永遠會是 0。"
+    })
+  ]);
+
+  updateSection(7, "7.6", {
+    title: "綜合演練",
+    body: [
+      "本節統一使用：問題說明 -> 解題思路 -> 流程圖 -> Hint -> Solution -> Explanation -> 延伸挑戰。",
+      "陣列的核心價值，是把一批資料集中管理，再用迴圈、搜尋、排序或查表方式處理。"
+    ],
+    code: {
+      title: "題目 1：將陣列運用在查表上",
+      value: `問題說明：
+使用月份編號 1 到 12 查詢季節。
+
+解題思路：
+把每個月份對應的季節存在陣列，使用 month - 1 當索引。
+
+流程圖：
+輸入 month
+  ↓
+index = month - 1
+  ↓
+seasons[index]
+
+Hint：
+月份從 1 開始，但陣列索引從 0 開始。
+
+Solution：
+String[] seasons = {
+    "冬季", "冬季", "春季", "春季", "春季", "夏季",
+    "夏季", "夏季", "秋季", "秋季", "秋季", "冬季"
+};
+
+int month = 4;
+System.out.println(seasons[month - 1]);
+
+執行結果：
+春季
+
+Explanation：
+查表可以減少大量 if 或 switch。只要對應關係固定，就可以考慮用陣列保存答案。
+
+延伸挑戰：
+加入月份合法性檢查。`
+    },
+    codes: [
+      {
+        title: "題目 2：找出最大值與最小值",
+        value: `問題說明：
+從分數陣列中找出最高分與最低分。
+
+解題思路：
+先把第一個元素當作 max 和 min，再逐一比較。
+
+流程圖：
+max = scores[0], min = scores[0]
+  ↓
+逐一讀取元素
+  ↓
+比 max 大就更新 max
+比 min 小就更新 min
+
+Hint：
+不要把 max 初始為 0，資料可能都是負數。
+
+Solution：
+int[] scores = {80, 75, 90, 60, 88};
+int max = scores[0];
+int min = scores[0];
+
+for (int i = 1; i < scores.length; i++) {
+    if (scores[i] > max) {
+        max = scores[i];
+    }
+    if (scores[i] < min) {
+        min = scores[i];
+    }
+}
+
+System.out.println("最高：" + max);
+System.out.println("最低：" + min);
+
+執行結果：
+最高：90
+最低：60
+
+Explanation：
+用第一個元素當初始值，可以避免不合理的預設值影響結果。
+
+延伸挑戰：
+同時記錄最高分與最低分的位置。`
+      },
+      {
+        title: "題目 3：搜尋二維陣列",
+        value: `問題說明：
+在二維陣列中搜尋某個數字是否存在。
+
+解題思路：
+外層跑列，內層跑欄，找到目標後記錄位置。
+
+流程圖：
+逐列
+  ↓
+逐欄
+  ↓
+data[i][j] == target？
+
+Hint：
+找到後可以用 boolean found 記錄狀態。
+
+Solution：
+int[][] data = {
+    {10, 20, 30},
+    {40, 50, 60}
+};
+int target = 50;
+boolean found = false;
+
+for (int i = 0; i < data.length; i++) {
+    for (int j = 0; j < data[i].length; j++) {
+        if (data[i][j] == target) {
+            System.out.println("找到：" + i + "," + j);
+            found = true;
+        }
+    }
+}
+
+執行結果：
+找到：1,1
+
+Explanation：
+二維陣列需要兩層索引。i 代表第幾列，j 代表該列第幾欄。
+
+延伸挑戰：
+找到後立即結束搜尋。`
+      },
+      {
+        title: "題目 4：排序（Sorting）",
+        value: `問題說明：
+將整數陣列由小到大排序。
+
+解題思路：
+初學可先用簡單交換排序：如果前面的數比後面大，就交換。
+
+流程圖：
+外層控制第幾輪
+  ↓
+內層比較相鄰兩數
+  ↓
+需要時交換
+
+Hint：
+交換兩個變數需要暫存變數 temp。
+
+Solution：
+int[] nums = {5, 2, 9, 1};
+
+for (int i = 0; i < nums.length - 1; i++) {
+    for (int j = 0; j < nums.length - 1 - i; j++) {
+        if (nums[j] > nums[j + 1]) {
+            int temp = nums[j];
+            nums[j] = nums[j + 1];
+            nums[j + 1] = temp;
+        }
+    }
+}
+
+for (int n : nums) {
+    System.out.println(n);
+}
+
+執行結果：
+1
+2
+5
+9
+
+Explanation：
+排序的核心是比較與交換。這裡不追求最快，而是先看懂資料如何逐步排好。
+
+延伸挑戰：
+改成由大到小排序。`
+      },
+      {
+        title: "題目 5：利用陣列儲存計算結果",
+        value: `問題說明：
+把 1 到 5 的平方結果存入陣列。
+
+解題思路：
+建立長度 5 的陣列，用迴圈計算每個數的平方並存入。
+
+流程圖：
+建立 results
+  ↓
+i 從 0 到 4
+  ↓
+number = i + 1
+  ↓
+results[i] = number * number
+
+Hint：
+索引從 0 開始，但要計算的數字從 1 開始。
+
+Solution：
+int[] results = new int[5];
+
+for (int i = 0; i < results.length; i++) {
+    int number = i + 1;
+    results[i] = number * number;
+}
+
+for (int value : results) {
+    System.out.println(value);
+}
+
+執行結果：
+1
+4
+9
+16
+25
+
+Explanation：
+陣列不只可以保存輸入資料，也可以保存計算後的結果，方便後續查詢或輸出。
+
+延伸挑戰：
+改成儲存 1 到 10 的階乘結果。`
+      }
+    ]
+  });
+
+  replaceSectionActivities(7, "7.6", [
+    createActivity({
+      id: "ch07-project-lookup",
+      sectionId: "7.6",
+      type: "exercise",
+      title: "7.6 練習：陣列查表",
+      question: "使用陣列建立月份到季節的查表程式。",
+      hint: "month 需要轉成 month - 1 才能當索引。",
+      solution: `String[] seasons = {"冬", "冬", "春", "春", "春", "夏", "夏", "夏", "秋", "秋", "秋", "冬"};
+int month = 9;
+System.out.println(seasons[month - 1]);`,
+      explanation: "固定對應關係很適合用陣列查表，可以讓程式更簡潔。"
+    }),
+    createActivity({
+      id: "ch07-project-max-min",
+      sectionId: "7.6",
+      type: "exercise",
+      title: "7.6 練習：最大值與最小值",
+      question: "找出陣列中的最大值與最小值。",
+      hint: "先用第一個元素初始化 max 和 min。",
+      solution: `int max = nums[0];
+int min = nums[0];`,
+      explanation: "用陣列中的真實資料當初始值，會比隨便指定 0 更安全。"
+    }),
+    createActivity({
+      id: "ch07-project-search-2d",
+      sectionId: "7.6",
+      type: "exercise",
+      title: "7.6 練習：搜尋二維陣列",
+      question: "在二維陣列中搜尋 target，找到後印出列與欄。",
+      hint: "使用巢狀迴圈，外層列、內層欄。",
+      solution: `if (data[i][j] == target) {
+    System.out.println(i + "," + j);
+}`,
+      explanation: "二維陣列搜尋的重點是正確使用兩個索引。"
+    }),
+    createActivity({
+      id: "ch07-project-sorting",
+      sectionId: "7.6",
+      type: "homework",
+      title: "7.6 作業：排序陣列",
+      question: "使用比較與交換，把整數陣列由小到大排序。",
+      hint: "如果 nums[j] > nums[j + 1]，就交換兩個元素。",
+      solution: `int temp = nums[j];
+nums[j] = nums[j + 1];
+nums[j + 1] = temp;`,
+      explanation: "排序的基本動作是比較與交換。先學會概念，再追求效率。"
+    }),
+    createActivity({
+      id: "ch07-project-store-results",
+      sectionId: "7.6",
+      type: "exercise",
+      title: "7.6 練習：儲存計算結果",
+      question: "用陣列儲存 1 到 5 的平方結果。",
+      hint: "計算的數字是 i + 1，儲存位置是 i。",
+      solution: `results[i] = (i + 1) * (i + 1);`,
+      explanation: "陣列可以保存計算後的資料，讓結果能被重複使用。"
+    })
+  ]);
+
+  chapters.push(createChapter08());
+}
+
+function updateSection(chapterId, sectionId, data) {
+  const chapter = chapters.find((item) => item.id === chapterId);
+  const section = chapter?.sections.find((item) => item.sectionId === sectionId);
+  if (section) Object.assign(section, data);
+}
+
+function replaceSectionActivities(chapterId, sectionId, activities) {
+  const chapter = chapters.find((item) => item.id === chapterId);
+  if (!chapter) return;
+  chapter.activities = [
+    ...chapter.activities.filter((activity) => activity.sectionId !== sectionId),
+    ...activities
+  ];
+}
+
+function createChapter08() {
+  return {
     id: 8,
     code: "CH08",
     title: "物件導向程式設計（Object-Oriented Programming）",
     minutes: 135,
-    summary: "認識類別與物件，建立自己的類別，使用屬性、方法、參數、回傳值與方法多載。",
-    intro: "物件導向會把程式中的資料和行為整理在一起。這一章先打好最基礎的 OOP 觀念：類別像設計圖，物件像依照設計圖做出來的實體。",
+    summary: "認識類別與物件，建立自己的類別與物件，使用方法、參數、回傳值與方法多重定義。",
+    intro: "本章是 OOP 的入口。先把類別、物件、屬性與方法學穩，後續學封裝、繼承、多型時才會有清楚的基礎。",
     sections: [
       {
         sectionId: "8.1",
         title: "認識類別與物件",
         body: [
-          "先不要急著寫程式碼。你可以把 Class 想成設計圖，把 Object 想成依照設計圖做出來的實際東西。",
-          "以汽車為例，汽車設計圖是類別；小明的汽車、小華的汽車、我的汽車，都是物件。它們都像汽車，但每台車的顏色、品牌、速度可能不同。",
-          "以學生為例，學生是類別；Jimmy、Amy、John 是物件。學生通常有姓名、年齡、身高等屬性，也會有自我介紹、吃飯、睡覺等行為。",
-          "物件通常包含兩種內容：屬性（Attribute）代表物件擁有的資料，方法（Method）代表物件會做的事情。"
+          "類別是藍圖，物件是實體。汽車設計圖是 Class，依照設計圖做出來的實際汽車是 Object。",
+          "學生類別可以建立 Jimmy、Amy、John 等物件。每個學生物件可以有自己的姓名、年齡與成績。",
+          "屬性（Attribute）描述物件擁有的資料；方法（Method）描述物件可以做的事情。"
         ],
         code: {
-          title: "圖解：Class 建立 Object",
-          value: `Class
-  ↓
-建立
-  ↓
-Object`
+          title: "圖解：Class 與 Object",
+          value: `Class: Car 設計圖
+  ↓ new
+Object: 小明的汽車
+Object: 小華的汽車
+
+Class: Student
+  ↓ new
+Object: Jimmy
+Object: Amy
+Object: John`
         },
         codes: [
-          {
-            title: "範例 1：Student 類別概念圖",
-            value: `Class: Student
-
-屬性：
-- name
-- age
-- height
-
-方法：
-- introduce()
-- eat()
-- sleep()
-
-Objects:
-- Jimmy
-- Amy
-- John`
-          },
-          {
-            title: "範例 2：Car 類別概念圖",
-            value: `Class: Car
-
-屬性：
-- brand
-- color
-- speed
-
-方法：
-- drive()
-- brake()
-- showInfo()
-
-Objects:
-- 小明的汽車
-- 小華的汽車
-- 我的汽車`
-          },
-          {
-            title: "範例 3：生活中的類別與物件",
-            value: `類別：手機
-物件：我的手機、媽媽的手機、公司測試機
-
-類別：寵物
-物件：Momo、Lucky、Coffee
-
-類別：銀行帳戶
-物件：Jimmy 的帳戶、Amy 的帳戶`
-          }
+          { title: "範例 1：汽車", value: `類別：汽車
+屬性：品牌、顏色、速度
+方法：drive()、brake()
+物件：小明的汽車、小華的汽車` },
+          { title: "範例 2：學生", value: `類別：學生
+屬性：姓名、年齡、成績
+方法：showInfo()、study()
+物件：Jimmy、Amy、John` },
+          { title: "範例 3：書本", value: `類別：Book
+屬性：title、price
+方法：showInfo()
+物件：Java 入門、演算法筆記` },
+          { title: "範例 4：帳戶", value: `類別：BankAccount
+屬性：accountNumber、balance
+方法：deposit()、withdraw()
+物件：Jimmy 的帳戶、Amy 的帳戶` },
+          { title: "範例 5：寵物", value: `類別：Pet
+屬性：name、type
+方法：speak()
+物件：Momo、Lucky` }
         ]
       },
       {
         sectionId: "8.2",
         title: "定義類別與建立物件",
         body: [
-          "類別是物件的設計圖。你可以先在類別裡定義屬性，接著用 `new` 建立物件，最後透過物件名稱存取資料。",
-          "初學階段先把屬性想成物件的資料欄位。例如 Student 有 name 和 age；Book 有 title 和 price；Dog 有 name 和 breed。",
-          "建立物件的語法是 `Student s1 = new Student();`。左邊的 s1 是變數名稱，右邊的 new Student() 會建立一個新的 Student 物件。"
+          "`class` 用來定義類別。類別裡可以放屬性，建立物件時使用 `new`。",
+          "存取物件成員時使用點符號，例如 `s1.name` 或 `s1.showInfo()`。不同物件可以擁有不同資料。"
         ],
-        code: {
-          title: "範例 1：最簡單類別",
-          value: `class Student {
-
+        code: { title: "範例 1：最簡單的 Student 類別", value: `class Student {
 }
 
-// 圖解：
-// Student 是設計圖，目前還沒有屬性和方法。`
-        },
+// 解說：Student 是一張設計圖，目前尚未放入屬性。
+// 執行結果：此類別本身不會輸出內容。` },
         codes: [
-          {
-            title: "範例 2：加入屬性",
-            value: `class Student {
+          { title: "範例 2：加入屬性", value: `class Student {
     String name;
     int age;
 }
 
-// 圖解：
-// Student
-// - name
-// - age`
-          },
-          {
-            title: "範例 3：建立物件",
-            value: `Student s1 = new Student();
+// 解說：name 和 age 是 Student 物件的資料欄位。` },
+          { title: "範例 3：建立物件", value: `Student s1 = new Student();
 
 // 圖解：
-// Student
-//   ↓ new
-// s1`
-          },
-          {
-            title: "範例 4：設定資料",
-            value: `Student s1 = new Student();
-
-s1.name = "Jimmy";
-s1.age = 25;
-
-// 圖解：
-// s1.name -> Jimmy
-// s1.age  -> 25`
-          },
-          {
-            title: "範例 5：輸出資料",
-            value: `Student s1 = new Student();
+// Student 類別 -> new -> s1 物件` },
+          { title: "範例 4：設定物件資料", value: `Student s1 = new Student();
 s1.name = "Jimmy";
 s1.age = 25;
 
 System.out.println(s1.name);
-System.out.println(s1.age);
 
 // 執行結果：
-// Jimmy
-// 25`
-          },
-          {
-            title: "範例 6：建立多個物件",
-            value: `Student s1 = new Student();
-Student s2 = new Student();
+// Jimmy` },
+          { title: "範例 5：建立 Car 類別", value: `class Car {
+    String brand;
+    String color;
+}
 
-// 圖解：
-// Student -> s1
-// Student -> s2`
-          },
-          {
-            title: "範例 7：不同物件擁有不同資料",
-            value: `Student s1 = new Student();
-Student s2 = new Student();
+Car car = new Car();
+car.brand = "Toyota";
+car.color = "White";
 
-s1.name = "Jimmy";
-s1.age = 25;
-
-s2.name = "Amy";
-s2.age = 20;
-
-System.out.println(s1.name + " " + s1.age);
-System.out.println(s2.name + " " + s2.age);
+System.out.println(car.brand + " " + car.color);
 
 // 執行結果：
-// Jimmy 25
-// Amy 20`
-          },
-          {
-            title: "範例 8：Book 類別",
-            value: `class Book {
+// Toyota White` },
+          { title: "範例 6：建立 Book 類別", value: `class Book {
     String title;
     int price;
 }
 
-Book b1 = new Book();
-b1.title = "Java 入門";
-b1.price = 500;
+Book book = new Book();
+book.title = "Java 入門";
+book.price = 500;
 
-System.out.println(b1.title);
-System.out.println(b1.price);
+System.out.println(book.title + " " + book.price);
 
 // 執行結果：
-// Java 入門
-// 500`
-          },
-          {
-            title: "完整範例：學生資料管理",
-            value: `class Student {
+// Java 入門 500` },
+          { title: "範例 7：建立多個物件", value: `Student s1 = new Student();
+Student s2 = new Student();
+
+s1.name = "Jimmy";
+s2.name = "Amy";
+
+System.out.println(s1.name);
+System.out.println(s2.name);
+
+// 執行結果：
+// Jimmy
+// Amy` },
+          { title: "範例 8：不同物件不同資料", value: `Car car1 = new Car();
+Car car2 = new Car();
+
+car1.brand = "Toyota";
+car2.brand = "Honda";
+
+System.out.println(car1.brand);
+System.out.println(car2.brand);
+
+// 執行結果：
+// Toyota
+// Honda` },
+          { title: "範例 9：完整學生資料", value: `class Student {
     String name;
     int age;
     int score;
 }
 
-public class Main {
-    public static void main(String[] args) {
-        Student s1 = new Student();
-        s1.name = "Jimmy";
-        s1.age = 25;
-        s1.score = 90;
+Student s = new Student();
+s.name = "John";
+s.age = 18;
+s.score = 92;
 
-        System.out.println("姓名：" + s1.name);
-        System.out.println("年齡：" + s1.age);
-        System.out.println("成績：" + s1.score);
-    }
-}
+System.out.println(s.name + " " + s.age + " " + s.score);
 
 // 執行結果：
-// 姓名：Jimmy
-// 年齡：25
-// 成績：90`
-          }
+// John 18 92` }
         ]
       },
       {
         sectionId: "8.3",
         title: "方法的進階應用",
         body: [
-          "方法（Method）代表物件會做的事情。屬性保存資料，方法負責執行動作或計算結果。",
-          "方法可以沒有參數、沒有回傳值；也可以接收參數，或把計算結果回傳給呼叫它的地方。",
-          "參數（Parameter）像是方法執行時需要的輸入資料；回傳值（Return Value）則是方法執行後交回來的結果。"
+          "方法代表物件或類別會做的事情。方法呼叫（Method Call）就是請方法執行。",
+          "參數（Parameter）是傳入方法的資料；回傳值（Return Value）是方法交回來的結果。"
         ],
-        code: {
-          title: "圖解：參數與回傳值",
-          value: `呼叫方法
-  ↓ 傳入參數
-方法執行
-  ↓ 回傳結果
-取得結果`
-        },
+        code: { title: "圖解：Method Call、Parameter、Return Value", value: `呼叫 calc.add(3, 5)
+  ↓ 傳入參數 3 和 5
+方法執行 a + b
+  ↓
+回傳 8` },
         codes: [
-          {
-            title: "範例 1：無參數無回傳值",
-            value: `class Dog {
-    void bark() {
-        System.out.println("汪汪");
-    }
-}
-
-// bark() 不需要資料，也不回傳結果。`
-          },
-          {
-            title: "範例 2：呼叫方法",
-            value: `class Dog {
-    void bark() {
-        System.out.println("汪汪");
-    }
-}
-
-public class Main {
-    public static void main(String[] args) {
-        Dog dog = new Dog();
-        dog.bark();
-    }
-}
-
-// 執行結果：
-// 汪汪`
-          },
-          {
-            title: "範例 3：有參數",
-            value: `class Greeter {
-    void sayHello(String name) {
-        System.out.println("你好 " + name);
+          { title: "範例 1：greet() 無參數無回傳值", value: `class Greeter {
+    void greet() {
+        System.out.println("Hello Java");
     }
 }
 
 Greeter g = new Greeter();
-g.sayHello("Jimmy");
+g.greet();
 
 // 執行結果：
-// 你好 Jimmy`
-          },
-          {
-            title: "範例 4：有回傳值",
-            value: `class Calculator {
-    int add(int a, int b) {
-        return a + b;
-    }
+// Hello Java` },
+          { title: "範例 2：有參數", value: `void greet(String name) {
+    System.out.println("Hello " + name);
 }
 
-Calculator calc = new Calculator();
-int result = calc.add(3, 5);
-System.out.println(result);
-
-// 執行結果：
-// 8`
-          },
-          {
-            title: "範例 5：有參數有回傳值",
-            value: `class StudentTool {
-    boolean isPassed(int score) {
-        return score >= 60;
-    }
+// 呼叫：greet("Jimmy")
+// 執行結果：Hello Jimmy` },
+          { title: "範例 3：add() 有回傳值", value: `int add(int a, int b) {
+    return a + b;
 }
 
-StudentTool tool = new StudentTool();
-System.out.println(tool.isPassed(80));
+System.out.println(add(2, 3));
 
 // 執行結果：
-// true`
-          },
-          {
-            title: "範例 6：建立計算機類別",
-            value: `class Calculator {
-    int add(int a, int b) {
-        return a + b;
-    }
-
-    int subtract(int a, int b) {
-        return a - b;
-    }
+// 5` },
+          { title: "範例 4：calcBMI()", value: `double calcBMI(double height, double weight) {
+    return weight / (height * height);
 }
 
-Calculator calc = new Calculator();
-System.out.println(calc.add(10, 3));
-System.out.println(calc.subtract(10, 3));
+System.out.println(calcBMI(1.7, 65));
 
 // 執行結果：
-// 13
-// 7`
-          },
-          {
-            title: "範例 7：建立玩家角色類別",
-            value: `class Player {
-    String name;
-    int hp;
-
-    void showStatus() {
-        System.out.println(name + " HP: " + hp);
-    }
-}
-
-Player p1 = new Player();
-p1.name = "Hero";
-p1.hp = 100;
-p1.showStatus();
-
-// 執行結果：
-// Hero HP: 100`
-          },
-          {
-            title: "範例 8：回傳 BMI",
-            value: `class HealthTool {
-    double calcBMI(double height, double weight) {
-        return weight / (height * height);
-    }
-}
-
-HealthTool tool = new HealthTool();
-System.out.println(tool.calcBMI(1.7, 65));
-
-// 執行結果：
-// 22.49134948096886`
-          },
-          {
-            title: "範例 9：方法內使用屬性",
-            value: `class Student {
+// 22.49134948096886` },
+          { title: "範例 5：showInfo()", value: `class Student {
     String name;
     int score;
 
     void showInfo() {
-        System.out.println(name + " 的分數是 " + score);
+        System.out.println(name + "：" + score);
+    }
+}` },
+          { title: "範例 6：getArea() 正方形", value: `int getArea(int side) {
+    return side * side;
+}
+
+// getArea(5) 回傳 25` },
+          { title: "範例 7：getArea() 長方形", value: `int getArea(int width, int height) {
+    return width * height;
+}
+
+// getArea(4, 6) 回傳 24` },
+          { title: "範例 8：方法修改屬性", value: `class Player {
+    int hp;
+
+    void heal(int amount) {
+        hp += amount;
     }
 }
 
-Student s = new Student();
-s.name = "Amy";
-s.score = 95;
-s.showInfo();
+Player p = new Player();
+p.hp = 50;
+p.heal(20);
+System.out.println(p.hp);
 
 // 執行結果：
-// Amy 的分數是 95`
-          },
-          {
-            title: "範例 10：方法修改物件資料",
-            value: `class BankAccount {
-    int balance;
+// 70` },
+          { title: "範例 9：boolean 回傳值", value: `boolean isPassed(int score) {
+    return score >= 60;
+}
 
-    void deposit(int amount) {
-        balance += amount;
+System.out.println(isPassed(80));
+
+// 執行結果：
+// true` },
+          { title: "範例 10：組合多個方法", value: `class Calculator {
+    int add(int a, int b) {
+        return a + b;
+    }
+
+    void printResult(int value) {
+        System.out.println("結果：" + value);
     }
 }
 
-BankAccount account = new BankAccount();
-account.balance = 1000;
-account.deposit(500);
-System.out.println(account.balance);
+Calculator c = new Calculator();
+c.printResult(c.add(3, 4));
 
 // 執行結果：
-// 1500`
-          }
+// 結果：7` }
         ]
       },
       {
         sectionId: "8.4",
         title: "方法的多重定義（Overloading）",
         body: [
-          "方法多載（Overloading）指的是同一個類別中，可以有相同方法名稱，但參數不同的方法。",
-          "Java 會根據你呼叫時傳入的參數數量與型態，選擇對應的方法版本。例如 `add(1, 2)`、`add(1, 2, 3)`、`add(1.5, 2.5)` 可以是三個版本。",
-          "重要提醒：只有回傳型態不同，不算合法的 Overloading。Java 不能只靠回傳型態決定要呼叫哪個方法。"
+          "Overloading 是同名方法搭配不同參數列表。參數數量不同或參數型態不同，都可以形成合法多載。",
+          "只有回傳型態不同不合法，因為 Java 無法只靠回傳型態判斷你要呼叫哪一個方法。"
         ],
-        code: {
-          title: "圖解：同名方法，不同參數",
-          value: `add(1, 2)       -> 使用 int, int 版本
-add(1, 2, 3)    -> 使用 int, int, int 版本
-add(1.5, 2.5)   -> 使用 double, double 版本`
-        },
+        code: { title: "圖解：呼叫對應版本", value: `add(1, 2)     -> int add(int, int)
+add(1, 2, 3)  -> int add(int, int, int)
+add(1.5, 2.5) -> double add(double, double)` },
         codes: [
-          {
-            title: "範例 1：兩個 int 相加",
-            value: `int add(int a, int b) {
+          { title: "範例 1：兩個 int", value: `int add(int a, int b) {
     return a + b;
-}`
-          },
-          {
-            title: "範例 2：三個 int 相加",
-            value: `int add(int a, int b, int c) {
+}` },
+          { title: "範例 2：三個 int", value: `int add(int a, int b, int c) {
     return a + b + c;
-}`
-          },
-          {
-            title: "範例 3：兩個 double 相加",
-            value: `double add(double a, double b) {
+}` },
+          { title: "範例 3：兩個 double", value: `double add(double a, double b) {
     return a + b;
-}`
-          },
-          {
-            title: "完整範例：Calculator 多載",
-            value: `class Calculator {
+}` },
+          { title: "範例 4：合法 Overloading 完整版", value: `class Calculator {
     int add(int a, int b) {
         return a + b;
     }
@@ -3918,49 +4476,16 @@ add(1.5, 2.5)   -> 使用 double, double 版本`
     }
 }
 
-Calculator calc = new Calculator();
-System.out.println(calc.add(1, 2));
-System.out.println(calc.add(1, 2, 3));
-System.out.println(calc.add(1.5, 2.5));
+Calculator c = new Calculator();
+System.out.println(c.add(1, 2));
+System.out.println(c.add(1, 2, 3));
+System.out.println(c.add(1.5, 2.5));
 
 // 執行結果：
 // 3
 // 6
-// 4.0`
-          },
-          {
-            title: "範例 5：print 三種版本",
-            value: `class Printer {
-    void print(String text) {
-        System.out.println(text);
-    }
-
-    void print(int number) {
-        System.out.println(number);
-    }
-
-    void print(String text, int times) {
-        for (int i = 1; i <= times; i++) {
-            System.out.println(text);
-        }
-    }
-}
-
-Printer p = new Printer();
-p.print("Java");
-p.print(100);
-p.print("Hi", 2);
-
-// 執行結果：
-// Java
-// 100
-// Hi
-// Hi`
-          },
-          {
-            title: "範例 6：只有回傳型態不同不是合法多載",
-            value: `// 錯誤示意：
-int add(int a, int b) {
+// 4.0` },
+          { title: "範例 5：不合法 Overloading", value: `int add(int a, int b) {
     return a + b;
 }
 
@@ -3968,392 +4493,368 @@ double add(int a, int b) {
     return a + b;
 }
 
-// 原因：
-// 參數完全一樣，Java 無法只靠回傳型態分辨版本。`
-          },
-          {
-            title: "範例 7：area 兩種版本",
-            value: `class AreaTool {
-    int area(int side) {
-        return side * side;
-    }
-
-    int area(int width, int height) {
-        return width * height;
-    }
+// 錯誤原因：
+// 參數列表完全相同，只有回傳型態不同。` },
+          { title: "範例 6：print 多載", value: `void print(String text) {
+    System.out.println(text);
 }
 
-AreaTool tool = new AreaTool();
-System.out.println(tool.area(5));
-System.out.println(tool.area(4, 6));
+void print(int number) {
+    System.out.println(number);
+}
 
-// 執行結果：
-// 25
-// 24`
-          }
+void print(String text, int times) {
+    for (int i = 1; i <= times; i++) {
+        System.out.println(text);
+    }
+}` },
+          { title: "範例 7：area 多載", value: `int area(int side) {
+    return side * side;
+}
+
+int area(int width, int height) {
+    return width * height;
+}` }
         ]
       },
       {
         sectionId: "8.5",
         title: "綜合演練",
         body: [
-          "這一節用幾個小專案把類別、物件、屬性、方法和 Overloading 串起來。你會看到類別如何把資料和行為整理成一組。",
-          "請先觀察每個專案的類別名稱、屬性與方法，再看 main 裡如何建立物件和呼叫方法。這會幫你建立 OOP 的基本閱讀方式。"
+          "本節依照統一格式：問題說明 -> 解題思路 -> 流程圖 -> Hint -> Solution -> Explanation -> 延伸挑戰。",
+          "這些題目會帶你看到方法如何拆解問題，也為後續更完整的 OOP 設計鋪路。"
         ],
         code: {
-          title: "專案 1：學生管理系統",
-          value: `class Student {
-    String name;
-    int age;
-    int score;
+          title: "題目 1：用遞迴求階乘",
+          value: `問題說明：
+計算 n!，例如 5! = 5 x 4 x 3 x 2 x 1。
 
-    void showInfo() {
-        System.out.println(name + " " + age + " 歲，成績 " + score);
+解題思路：
+factorial(n) = n * factorial(n - 1)，直到 n == 1 停止。
+
+流程圖：
+factorial(5)
+  -> 5 * factorial(4)
+  -> 5 * 4 * factorial(3)
+  -> ...
+  -> 1
+
+Hint：
+遞迴一定要有停止條件。
+
+Solution：
+static int factorial(int n) {
+    if (n <= 1) {
+        return 1;
     }
+    return n * factorial(n - 1);
 }
 
-Student s = new Student();
-s.name = "Jimmy";
-s.age = 25;
-s.score = 90;
-s.showInfo();
+System.out.println(factorial(5));
 
-// 執行結果：
-// Jimmy 25 歲，成績 90`
+執行結果：
+120
+
+Explanation：
+每次呼叫都把問題縮小，直到 n <= 1 才開始一層一層回傳答案。
+
+延伸挑戰：
+改成使用迴圈版本，並比較可讀性。`
         },
         codes: [
           {
-            title: "專案 2：銀行帳戶系統",
-            value: `class BankAccount {
-    String accountNumber;
-    int balance;
+            title: "題目 2：Fibonacci 數列",
+            value: `問題說明：
+Fibonacci 規則是 F(0)=0、F(1)=1、F(n)=F(n-1)+F(n-2)。
 
-    void deposit(int amount) {
-        balance += amount;
-    }
+解題思路：
+遞迴版本接近定義；迴圈版本通常比較有效率。
 
-    void withdraw(int amount) {
-        balance -= amount;
-    }
+流程圖：
+fib(5)
+  -> fib(4) + fib(3)
+  -> 繼續拆小
 
-    void showBalance() {
-        System.out.println("餘額：" + balance);
+Hint：
+遞迴停止條件是 n <= 1。
+
+Solution：
+static int fibRecursive(int n) {
+    if (n <= 1) {
+        return n;
     }
+    return fibRecursive(n - 1) + fibRecursive(n - 2);
 }
 
-BankAccount account = new BankAccount();
-account.accountNumber = "A001";
-account.balance = 1000;
-account.deposit(500);
-account.withdraw(200);
-account.showBalance();
+static int fibLoop(int n) {
+    int a = 0;
+    int b = 1;
+    for (int i = 2; i <= n; i++) {
+        int next = a + b;
+        a = b;
+        b = next;
+    }
+    return n == 0 ? a : b;
+}
 
-// 執行結果：
-// 餘額：1300`
+System.out.println(fibRecursive(6));
+System.out.println(fibLoop(6));
+
+執行結果：
+8
+8
+
+Explanation：
+遞迴版本容易對照數學定義，但會重複計算；迴圈版本用變數保存前兩項，通常更適合實務。
+
+延伸挑戰：
+印出前 10 個 Fibonacci 數字。`
           },
           {
-            title: "專案 3：寵物系統",
-            value: `class Pet {
-    String name;
-    String type;
+            title: "題目 3：快速排序法（Quick Sort）",
+            value: `問題說明：
+使用 Quick Sort 將陣列由小到大排序。
 
-    void speak() {
-        System.out.println(name + " 發出聲音");
+解題思路：
+選一個 Pivot，把比 Pivot 小的放左邊，大的放右邊，再對左右兩邊做同樣的事。
+
+流程圖：
+[5, 2, 9, 1]
+選 pivot
+  ↓
+分成小於 pivot / 大於 pivot
+  ↓
+遞迴排序左右兩邊
+
+Hint：
+先理解 partition，再理解遞迴排序左右區間。
+
+Solution：
+static void quickSort(int[] arr, int left, int right) {
+    if (left >= right) return;
+
+    int pivot = arr[(left + right) / 2];
+    int i = left;
+    int j = right;
+
+    while (i <= j) {
+        while (arr[i] < pivot) i++;
+        while (arr[j] > pivot) j--;
+
+        if (i <= j) {
+            int temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+            i++;
+            j--;
+        }
     }
+
+    quickSort(arr, left, j);
+    quickSort(arr, i, right);
 }
 
-Pet pet = new Pet();
-pet.name = "Momo";
-pet.type = "Dog";
-pet.speak();
+int[] data = {5, 2, 9, 1};
+quickSort(data, 0, data.length - 1);
 
-// 執行結果：
-// Momo 發出聲音`
+執行結果：
+1 2 5 9
+
+Explanation：
+Pivot 是分界參考值。每次把資料分成較小問題，再用遞迴處理。
+
+延伸挑戰：
+在每次交換後印出陣列，觀察排序過程。`
           },
           {
-            title: "專案 4：Overloading 簡易計算機",
-            value: `class Calculator {
-    int add(int a, int b) {
-        return a + b;
+            title: "題目 4：河內之塔（Hanoi Tower）",
+            value: `問題說明：
+把 n 個盤子從 A 柱移到 C 柱，一次只能移一個盤子，大盤不能放在小盤上。
+
+解題思路：
+先把 n-1 個盤子移到輔助柱，再把最大盤移到目標柱，最後把 n-1 個盤子移到目標柱。
+
+流程圖：
+move(n, A, B, C)
+  ↓
+move(n-1, A, C, B)
+  ↓
+A -> C
+  ↓
+move(n-1, B, A, C)
+
+Hint：
+n == 1 時，只需要直接移動。
+
+Solution：
+static void hanoi(int n, char from, char helper, char to) {
+    if (n == 1) {
+        System.out.println(from + " -> " + to);
+        return;
     }
 
-    int add(int a, int b, int c) {
-        return a + b + c;
-    }
-
-    double add(double a, double b) {
-        return a + b;
-    }
+    hanoi(n - 1, from, to, helper);
+    System.out.println(from + " -> " + to);
+    hanoi(n - 1, helper, from, to);
 }
 
-Calculator calc = new Calculator();
-System.out.println(calc.add(2, 3));
-System.out.println(calc.add(2, 3, 4));
-System.out.println(calc.add(2.5, 3.5));
+hanoi(3, 'A', 'B', 'C');
 
-// 執行結果：
-// 5
-// 9
-// 6.0`
+執行結果：
+A -> C
+A -> B
+C -> B
+A -> C
+B -> A
+B -> C
+A -> C
+
+Explanation：
+河內之塔的核心是把大問題拆成兩個 n-1 的小問題，中間移動最大盤。
+
+延伸挑戰：
+計算 n 個盤子總共需要移動幾次。`
           }
         ]
       }
     ],
     activities: [
       createActivity({
-        id: "ch08-thought-class-object",
+        id: "ch08-thought-class-object-v2",
         sectionId: "8.1",
         type: "thought",
-        title: "思考題：判斷類別與物件",
-        question: "請判斷：汽車、我的汽車、學生、Jimmy，哪些比較像類別？哪些比較像物件？",
-        hint: "類別比較像分類或設計圖；物件比較像具體的一個實體。",
-        solution: "汽車、學生比較像類別；我的汽車、Jimmy 比較像物件。",
-        explanation: "類別描述共同特徵，物件是具體存在的一個例子。汽車可以有很多台，學生可以有很多位；我的汽車和 Jimmy 則是具體個體。"
+        title: "8.1 練習：判斷類別與物件",
+        question: "請判斷：汽車、我的汽車、學生、Jimmy、Book、Java 入門，哪些是類別？哪些是物件？",
+        hint: "類別像分類或藍圖，物件是具體的一個實體。",
+        solution: "汽車、學生、Book 比較像類別；我的汽車、Jimmy、Java 入門比較像物件。",
+        explanation: "類別描述共同特徵；物件是依照類別建立出的具體個體。"
       }),
       createActivity({
-        id: "ch08-exercise-define-classes",
+        id: "ch08-exercise-class-object-v2",
         sectionId: "8.2",
         type: "exercise",
-        title: "實作練習：建立自己的類別",
-        question: "建立 Book 類別、Dog 類別，並建立兩個 Student 物件，讓不同物件擁有不同資料。",
-        hint: "先定義 class，再使用 `new` 建立物件。設定資料時使用 `物件名稱.屬性名稱`。",
-        solution: `class Book {
-    String title;
-    int price;
-}
-
-class Dog {
-    String name;
-    String breed;
-}
-
-class Student {
-    String name;
-    int age;
-}
-
-Student s1 = new Student();
-s1.name = "Jimmy";
-s1.age = 25;
-
-Student s2 = new Student();
-s2.name = "Amy";
-s2.age = 20;`,
-        explanation: "每個物件都有自己的屬性資料。s1 和 s2 都是 Student，但它們可以保存不同的 name 和 age。"
-      }),
-      createActivity({
-        id: "ch08-exercise-methods",
-        sectionId: "8.3",
-        type: "exercise",
-        title: "實作練習：建立 greet、add、calcBMI 方法",
-        question: "建立三個方法：`greet()` 印出問候語、`add(int a, int b)` 回傳總和、`calcBMI(double height, double weight)` 回傳 BMI。",
-        hint: "沒有回傳值使用 void；有回傳值要寫回傳型態並使用 return。",
-        solution: `class Practice {
-    void greet() {
-        System.out.println("你好，歡迎學 Java");
-    }
-
-    int add(int a, int b) {
-        return a + b;
-    }
-
-    double calcBMI(double height, double weight) {
-        return weight / (height * height);
-    }
-}`,
-        explanation: "方法可以依照需求決定是否需要參數與回傳值。greet 只負責輸出，所以用 void；add 和 calcBMI 需要把計算結果交回來，所以使用 return。"
-      }),
-      createActivity({
-        id: "ch08-thought-return",
-        sectionId: "8.3",
-        type: "thought",
-        title: "思考題：什麼時候需要回傳值？",
-        question: "如果方法只要印出文字，和方法需要把加總結果交給別人使用，回傳值設計會有什麼不同？",
-        hint: "印出文字通常可以用 void；需要讓外面拿到結果時，方法就要 return。",
-        solution: "只印出文字的方法可以使用 void；如果加總結果後還要被其他程式使用，就應該回傳 int 或 double 等型態。",
-        explanation: "回傳值讓方法不只做完事情，還能把結果交給呼叫者。這會讓程式更容易重複使用和組合。"
-      }),
-      createActivity({
-        id: "ch08-exercise-overloading",
-        sectionId: "8.4",
-        type: "exercise",
-        title: "實作練習：print 與 area 多載",
-        question: "建立 `print()` 三種版本，以及 `area()` 兩種版本。print 可支援 String、int、String+次數；area 可支援正方形與長方形。",
-        hint: "多載的關鍵是方法名稱相同，但參數數量或型態不同。",
-        solution: `class Tool {
-    void print(String text) {
-        System.out.println(text);
-    }
-
-    void print(int number) {
-        System.out.println(number);
-    }
-
-    void print(String text, int times) {
-        for (int i = 1; i <= times; i++) {
-            System.out.println(text);
-        }
-    }
-
-    int area(int side) {
-        return side * side;
-    }
-
-    int area(int width, int height) {
-        return width * height;
-    }
-}`,
-        explanation: "這些方法名稱可以相同，因為參數清單不同。Java 會根據呼叫時傳入的參數選擇合適版本。"
-      }),
-      createActivity({
-        id: "ch08-homework-oop-projects",
-        sectionId: "8.5",
-        type: "homework",
-        title: "作業：完成四個 OOP 小專案",
-        question: "完成學生管理系統、銀行帳戶系統、寵物系統、Overloading 簡易計算機。",
-        hint: "每個專案先列出類別名稱、屬性、方法，再到 main 中建立物件並呼叫方法。",
+        title: "8.2 練習：建立 Student、Car、Book",
+        question: "建立 Student、Car、Book 類別，各建立至少一個物件並輸出屬性。",
+        hint: "先寫 class 與屬性，再用 new 建立物件。",
         solution: `class Student {
     String name;
-    int age;
-    int score;
-
-    void showInfo() {
-        System.out.println(name + " " + age + " " + score);
-    }
 }
 
-class BankAccount {
-    String accountNumber;
-    int balance;
-
-    void deposit(int amount) {
-        balance += amount;
-    }
-
-    void withdraw(int amount) {
-        balance -= amount;
-    }
-
-    void showBalance() {
-        System.out.println(balance);
-    }
+Student s = new Student();
+s.name = "Jimmy";
+System.out.println(s.name);`,
+        explanation: "建立物件後，使用點符號設定和讀取屬性。"
+      }),
+      createActivity({
+        id: "ch08-exercise-methods-v2",
+        sectionId: "8.3",
+        type: "exercise",
+        title: "8.3 練習：方法、參數與回傳值",
+        question: "建立 greet()、add()、calcBMI()、showInfo()、getArea() 方法。",
+        hint: "需要結果給外部使用的方法，要設定回傳型態並 return。",
+        solution: `int add(int a, int b) {
+    return a + b;
 }
 
-class Pet {
-    String name;
-    String type;
-
-    void speak() {
-        System.out.println(name + " 發出聲音");
-    }
-}
-
-class Calculator {
-    int add(int a, int b) {
-        return a + b;
-    }
-
-    int add(int a, int b, int c) {
-        return a + b + c;
-    }
+double calcBMI(double height, double weight) {
+    return weight / (height * height);
 }`,
-        explanation: "這份作業的重點是把資料與行為放在同一個類別中。Student、BankAccount、Pet、Calculator 都各自描述一種物件的資料和能力。"
+        explanation: "參數是輸入，return 是輸出。方法讓程式可以被重複呼叫。"
+      }),
+      createActivity({
+        id: "ch08-exercise-overloading-v2",
+        sectionId: "8.4",
+        type: "exercise",
+        title: "8.4 練習：Overloading",
+        question: "建立 add() 三種版本，並說明只有回傳型態不同為什麼不合法。",
+        hint: "合法多載要看參數列表，不是看回傳型態。",
+        solution: `int add(int a, int b) {
+    return a + b;
+}
+
+int add(int a, int b, int c) {
+    return a + b + c;
+}
+
+double add(double a, double b) {
+    return a + b;
+}`,
+        explanation: "Java 會用參數數量與型態選擇版本。若參數相同，只改回傳型態，呼叫時無法分辨。"
+      }),
+      createActivity({
+        id: "ch08-project-factorial",
+        sectionId: "8.5",
+        type: "exercise",
+        title: "8.5 題目 1：遞迴階乘",
+        question: "使用遞迴寫出 factorial(n)。",
+        hint: "停止條件是 n <= 1。",
+        solution: `static int factorial(int n) {
+    if (n <= 1) return 1;
+    return n * factorial(n - 1);
+}`,
+        explanation: "每次呼叫都讓 n 減 1，直到停止條件成立。"
+      }),
+      createActivity({
+        id: "ch08-project-fibonacci",
+        sectionId: "8.5",
+        type: "exercise",
+        title: "8.5 題目 2：Fibonacci 數列",
+        question: "完成 Fibonacci 的遞迴版本與迴圈版本。",
+        hint: "遞迴：F(n)=F(n-1)+F(n-2)。迴圈：保存前兩項。",
+        solution: `static int fib(int n) {
+    if (n <= 1) return n;
+    return fib(n - 1) + fib(n - 2);
+}`,
+        explanation: "遞迴版本接近定義；迴圈版本通常較有效率。"
+      }),
+      createActivity({
+        id: "ch08-project-quicksort",
+        sectionId: "8.5",
+        type: "homework",
+        title: "8.5 題目 3：Quick Sort",
+        question: "用 Pivot 概念完成 Quick Sort，並用自己的話說明分割流程。",
+        hint: "先讓左邊小於 pivot、右邊大於 pivot，再遞迴處理左右。",
+        solution: "可參考本節 Quick Sort 完整程式，重點是 partition 與遞迴左右區間。",
+        explanation: "Quick Sort 把大問題拆成左右兩個小問題，這正是遞迴的典型用法。"
+      }),
+      createActivity({
+        id: "ch08-project-hanoi",
+        sectionId: "8.5",
+        type: "homework",
+        title: "8.5 題目 4：河內之塔",
+        question: "完成 hanoi(n, from, helper, to)，印出移動步驟。",
+        hint: "把 n-1 個盤子先移到輔助柱，再移最大盤。",
+        solution: `static void hanoi(int n, char from, char helper, char to) {
+    if (n == 1) {
+        System.out.println(from + " -> " + to);
+        return;
+    }
+    hanoi(n - 1, from, to, helper);
+    System.out.println(from + " -> " + to);
+    hanoi(n - 1, helper, from, to);
+}`,
+        explanation: "河內之塔看似複雜，但每次都只處理：移走上方 n-1 個、移最大盤、再移回 n-1 個。"
       })
     ],
     quiz: [
-      {
-        question: "類別（Class）最像什麼？",
-        options: ["設計圖", "已經存在的一台車", "單一變數值", "執行結果"],
-        answer: 0,
-        explanation: "類別像設計圖，用來描述物件會有哪些屬性與方法。"
-      },
-      {
-        question: "物件（Object）最像什麼？",
-        options: ["依照設計圖建立出的實體", "只能放註解", "方法名稱", "分號"],
-        answer: 0,
-        explanation: "物件是依照類別建立出的具體實體，例如 Jimmy 是 Student 的一個物件。"
-      },
-      {
-        question: "物件中的屬性通常代表什麼？",
-        options: ["資料", "只能是迴圈", "只能是 import", "錯誤訊息"],
-        answer: 0,
-        explanation: "屬性保存物件的資料，例如姓名、年齡、成績。"
-      },
-      {
-        question: "物件中的方法通常代表什麼？",
-        options: ["物件會做的事情", "物件的檔案名稱", "只能保存數字", "陣列長度"],
-        answer: 0,
-        explanation: "方法描述物件可以執行的動作或計算。"
-      },
-      {
-        question: "建立 Student 物件的語法是哪一個？",
-        options: ["Student s1 = new Student();", "new = Student s1;", "class = new Student;", "Student.new(s1);"],
-        answer: 0,
-        explanation: "`new Student()` 會建立新的 Student 物件，並由 s1 參照它。"
-      },
-      {
-        question: "設定物件屬性常用哪個符號？",
-        options: [".", ":", "#", "->>"],
-        answer: 0,
-        explanation: "Java 使用點符號存取物件屬性與方法，例如 s1.name。"
-      },
-      {
-        question: "`void bark()` 代表什麼？",
-        options: ["沒有回傳值的方法", "一定會回傳 int", "只能當作屬性", "不能被呼叫"],
-        answer: 0,
-        explanation: "void 表示方法不回傳結果。"
-      },
-      {
-        question: "方法參數的用途是什麼？",
-        options: ["傳入方法需要的資料", "刪除物件", "改變 class 名稱", "停止編譯"],
-        answer: 0,
-        explanation: "參數讓呼叫者把資料交給方法使用。"
-      },
-      {
-        question: "有回傳值的方法需要使用哪個關鍵字交回結果？",
-        options: ["return", "class", "new", "void"],
-        answer: 0,
-        explanation: "return 會把結果從方法中交回呼叫者。"
-      },
-      {
-        question: "`int add(int a, int b)` 的回傳型態是什麼？",
-        options: ["int", "void", "String", "boolean[]"],
-        answer: 0,
-        explanation: "方法名稱前面的 int 代表此方法會回傳 int。"
-      },
-      {
-        question: "方法多載（Overloading）是什麼？",
-        options: ["同名方法但參數不同", "類別裡不能有方法", "只改回傳型態", "把物件刪除"],
-        answer: 0,
-        explanation: "Overloading 是同一個類別中方法名稱相同，但參數數量或型態不同。"
-      },
-      {
-        question: "哪一組可以形成合法 Overloading？",
-        options: ["add(int, int) 與 add(int, int, int)", "add(int, int) 與 add(int, int) 但只改回傳型態", "兩個完全相同的方法", "沒有參數的方法和變數"],
-        answer: 0,
-        explanation: "參數數量不同，因此 Java 可以分辨要呼叫哪一個版本。"
-      },
-      {
-        question: "只有回傳型態不同，是否算合法 Overloading？",
-        options: ["不算", "一定算", "只有 String 才算", "只有 int 才算"],
-        answer: 0,
-        explanation: "Java 不能只依靠回傳型態分辨同名方法，因此不算合法多載。"
-      },
-      {
-        question: "BankAccount 類別中的 deposit 方法通常做什麼？",
-        options: ["增加餘額", "建立 class 名稱", "刪除帳號欄位", "印出陣列索引"],
-        answer: 0,
-        explanation: "deposit 是存款，通常會把金額加到 balance。"
-      },
-      {
-        question: "本章專注在哪些 OOP 基礎？",
-        options: ["類別、物件、屬性、方法、Overloading", "封裝、繼承、多型全部深入", "只學陣列", "只學 HTML"],
-        answer: 0,
-        explanation: "本章先打基礎，聚焦在建立類別與物件、使用屬性與方法，以及方法多載。"
-      }
+      { question: "類別（Class）最像什麼？", options: ["藍圖或設計圖", "已建立的單一物件", "錯誤訊息", "分號"], answer: 0, explanation: "類別描述物件的共同結構，像藍圖。" },
+      { question: "物件（Object）是什麼？", options: ["由類別建立出的實體", "只能是 int", "不能有屬性", "只能存在註解中"], answer: 0, explanation: "物件是依照類別建立出的具體實體。" },
+      { question: "屬性（Attribute）通常代表什麼？", options: ["物件的資料", "只能是方法名稱", "只能是 package", "排序結果"], answer: 0, explanation: "屬性保存物件的資料。" },
+      { question: "方法（Method）通常代表什麼？", options: ["物件或類別會做的事情", "只能保存文字", "陣列索引", "JVM 記憶體"], answer: 0, explanation: "方法封裝一段可執行的動作或計算。" },
+      { question: "建立物件通常使用哪個關鍵字？", options: ["new", "return", "case", "break"], answer: 0, explanation: "`new` 會建立新的物件。" },
+      { question: "存取物件成員通常使用什麼符號？", options: [".", ":", "#", "$$"], answer: 0, explanation: "Java 使用點符號存取屬性與方法。" },
+      { question: "`void greet()` 表示什麼？", options: ["沒有回傳值的方法", "一定回傳 int", "建立物件", "多維陣列"], answer: 0, explanation: "void 表示方法不回傳結果。" },
+      { question: "Parameter 是什麼？", options: ["傳入方法的資料", "方法的檔案名稱", "class 的結束符號", "排序規則"], answer: 0, explanation: "參數讓方法接收外部資料。" },
+      { question: "Return Value 是什麼？", options: ["方法回傳給呼叫者的結果", "class 名稱", "物件地址的詳細 JVM 說明", "註解"], answer: 0, explanation: "return 會把結果交回呼叫方法的地方。" },
+      { question: "Method Call 是什麼？", options: ["呼叫方法執行", "刪除方法", "改變檔名", "建立 Scanner"], answer: 0, explanation: "例如 `dog.bark()` 就是一次方法呼叫。" },
+      { question: "Overloading 是什麼？", options: ["同名方法搭配不同參數列表", "只有回傳型態不同", "不能有參數", "把類別變成物件"], answer: 0, explanation: "合法多載必須有不同參數列表。" },
+      { question: "哪個是合法 Overloading？", options: ["add(int,int) 與 add(int,int,int)", "add(int,int) 與 double add(int,int)", "兩個完全相同 add", "只改變變數名稱"], answer: 0, explanation: "參數數量不同，因此可分辨版本。" },
+      { question: "遞迴一定需要什麼？", options: ["停止條件", "Reflection", "Generic", "JVM 調校"], answer: 0, explanation: "沒有停止條件可能無限呼叫。" },
+      { question: "Fibonacci 的基本規則是什麼？", options: ["前兩項相加得到下一項", "每次乘以 2", "只使用 switch", "永遠等於 1"], answer: 0, explanation: "F(n)=F(n-1)+F(n-2)。" },
+      { question: "Quick Sort 中 Pivot 的用途是什麼？", options: ["作為分割資料的參考值", "建立類別", "輸入 Scanner", "代表回傳型態"], answer: 0, explanation: "Pivot 用來把資料分成較小與較大的兩邊。" }
     ]
-  }
-];
+  };
+}
 
 const app = document.querySelector("#app");
 const mainNav = document.querySelector("[data-main-nav]");
