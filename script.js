@@ -4172,6 +4172,7 @@ nums[j + 1] = temp;`,
   chapters.push(createChapter08());
   enhanceChapter08MethodPath();
   chapters.push(createChapter09());
+  chapters.push(createChapter10());
 }
 
 function updateSection(chapterId, sectionId, data) {
@@ -6287,6 +6288,586 @@ Explanation：
       { question: "呼叫 static 方法常見格式是什麼？", options: ["ClassName.methodName()", "object only without dot", "case.method", "return.method"], answer: 0, explanation: "static 方法常以類別名稱呼叫，例如 `Math.max()`。" },
       { question: "`Math.PI` 比較像什麼？", options: ["類別層級的常數", "某個 Math 物件的姓名", "Constructor", "Setter"], answer: 0, explanation: "`Math.PI` 是常見的 static 常數概念。" },
       { question: "本章尚未深入哪個主題？", options: ["繼承與多型", "Constructor", "this", "Getter / Setter"], answer: 0, explanation: "繼承與多型是後續章節內容，本章先專注物件建構與封裝基礎。" }
+    ]
+  };
+}
+
+function createChapter10() {
+  return {
+    id: 10,
+    code: "CH10",
+    title: "字串（String）",
+    minutes: 135,
+    summary: "學會 String 建立、常用方法、不可變性、StringBuilder/StringBuffer 與 Regex 格式驗證。",
+    intro: "字串是程式最常處理的資料之一。姓名、帳號、Email、手機號碼、地址、CSV 資料，幾乎都會用 String 表示。本章會讓你從基本建立方式一路走到 Regex 驗證。",
+    goals: [
+      "了解 String 的本質",
+      "學會建立字串",
+      "學會使用 String 類別常用方法",
+      "了解 String 不可變性 Immutable",
+      "學會使用 StringBuilder 與 StringBuffer",
+      "學會使用 Regular Expression Regex",
+      "能夠進行格式驗證"
+    ],
+    sections: [
+      {
+        sectionId: "10.1",
+        title: "字串的產生",
+        body: [
+          "Java 中的字串不是基本型別，而是 `String` 類別的物件。你平常寫的 `\"Jimmy\"`，其實就是一個字串物件。",
+          "建立字串最常見的方式是直接使用雙引號，例如 `String name = \"Jimmy\";`。也可以使用 `new String(\"Jimmy\")` 建立，但初學階段多數情況使用雙引號即可。",
+          "字串可以使用 `+` 串接，可以用 `length()` 取得長度，也可以用 `charAt(index)` 取得指定位置的字元。請記得索引從 0 開始。",
+          "String 很重要的特性是 Immutable，也就是不可變。當你呼叫 `concat()`、`replace()` 這類方法時，原本的字串不會被改掉，而是產生新的字串結果。"
+        ],
+        code: {
+          title: "圖解：String 是物件",
+          value: `String name = "Jimmy";
+
+變數 name
+  ↓ 參考到
+String 物件："Jimmy"`
+        },
+        codes: [
+          {
+            title: "範例 1：用雙引號建立字串",
+            value: `String name = "Jimmy";
+System.out.println(name);
+
+// 執行結果：
+// Jimmy
+
+// 解說：
+// 這是最常見、最簡潔的建立字串方式。`
+          },
+          {
+            title: "範例 2：使用 new String 建立字串",
+            value: `String name = new String("Jimmy");
+System.out.println(name);
+
+// 執行結果：
+// Jimmy
+
+// 解說：
+// 這也能建立 String 物件，但通常不需要特別這樣寫。`
+          },
+          {
+            title: "範例 3：兩種建立方式的概念差異",
+            value: `String a = "Hello";
+String b = new String("Hello");
+
+System.out.println(a);
+System.out.println(b);
+
+// 執行結果：
+// Hello
+// Hello
+
+// 解說：
+// 兩者內容一樣，但建立物件的方式不同。
+// 初學時先記得：比較文字內容請用 equals()。`
+          },
+          {
+            title: "範例 4：字串連接",
+            value: `String firstName = "Jimmy";
+String lastName = "Lin";
+String fullName = firstName + " " + lastName;
+
+System.out.println(fullName);
+
+// 執行結果：
+// Jimmy Lin`
+          },
+          {
+            title: "範例 5：字串與數字串接",
+            value: `String name = "Jimmy";
+int age = 25;
+
+System.out.println(name + " 今年 " + age + " 歲");
+
+// 執行結果：
+// Jimmy 今年 25 歲`
+          },
+          {
+            title: "範例 6：取得字串長度",
+            value: `String name = "Jimmy";
+
+System.out.println(name.length());
+
+// 執行結果：
+// 5
+
+// 解說：
+// length() 會回傳字串中有幾個字元。`
+          },
+          {
+            title: "範例 7：取得第一個字元",
+            value: `String name = "Jimmy";
+
+System.out.println(name.charAt(0));
+
+// 執行結果：
+// J
+
+// 解說：
+// charAt(0) 取得索引 0 的字元，也就是第一個字元。`
+          },
+          {
+            title: "範例 8：String 不可變 Immutable",
+            value: `String s = "Hello";
+
+s.concat(" World");
+
+System.out.println(s);
+
+// 執行結果：
+// Hello
+
+// 解說：
+// concat() 產生了新字串，但你沒有接住結果。
+// 原本的 s 仍然指向 "Hello"。`
+          },
+          {
+            title: "範例 9：接住新字串結果",
+            value: `String s = "Hello";
+
+s = s.concat(" World");
+
+System.out.println(s);
+
+// 執行結果：
+// Hello World
+
+// 解說：
+// String 不是被原地修改，而是讓 s 改成參考新的字串結果。`
+          }
+        ]
+      },
+      {
+        sectionId: "10.2",
+        title: "String 類別的方法",
+        body: [
+          "String 類別提供很多常用方法，可以取得長度、擷取片段、搜尋文字、替換文字、轉換大小寫、切割資料。",
+          "方法名稱後面有小括號，例如 `length()`、`trim()`，代表你正在呼叫 String 物件提供的功能。",
+          "比較字串內容時請使用 `equals()`。`==` 比較的是兩個參考是否指向同一個物件；`equals()` 比較的是文字內容是否相同。",
+          "這一節的重點不是把所有方法一次背完，而是知道遇到文字處理時可以查 String 方法，並能看懂常見用法。"
+        ],
+        code: {
+          title: "== 與 equals() 差異",
+          value: `String a = "Hello";
+String b = new String("Hello");
+
+System.out.println(a == b);
+System.out.println(a.equals(b));
+
+// 執行結果：
+// false
+// true
+
+// 解說：
+// a == b 比較是否為同一個物件。
+// a.equals(b) 比較文字內容是否相同。`
+        },
+        codes: [
+          { title: "範例 1：length()", value: `String str = "Java";\nSystem.out.println(str.length());\n\n// 執行結果：\n// 4` },
+          { title: "範例 2：charAt()", value: `String str = "Java";\nSystem.out.println(str.charAt(2));\n\n// 執行結果：\n// v` },
+          { title: "範例 3：substring(begin, end)", value: `String str = "JavaScript";\nSystem.out.println(str.substring(1, 4));\n\n// 執行結果：\n// ava\n\n// 解說：\n// 從索引 1 取到索引 4 前一個位置。` },
+          { title: "範例 4：equals()", value: `String str = "ABC";\nSystem.out.println(str.equals("ABC"));\n\n// 執行結果：\n// true` },
+          { title: "範例 5：equalsIgnoreCase()", value: `String str = "Java";\nSystem.out.println(str.equalsIgnoreCase("java"));\n\n// 執行結果：\n// true` },
+          { title: "範例 6：compareTo()", value: `String a = "Apple";\nString b = "Banana";\nSystem.out.println(a.compareTo(b));\n\n// 執行結果：\n// 負數\n\n// 解說：\n// a 在字典順序上排在 b 前面。` },
+          { title: "範例 7：indexOf()", value: `String str = "banana";\nSystem.out.println(str.indexOf("na"));\n\n// 執行結果：\n// 2` },
+          { title: "範例 8：lastIndexOf()", value: `String str = "banana";\nSystem.out.println(str.lastIndexOf("na"));\n\n// 執行結果：\n// 4` },
+          { title: "範例 9：contains()", value: `String str = "I love Java";\nSystem.out.println(str.contains("Java"));\n\n// 執行結果：\n// true` },
+          { title: "範例 10：startsWith()", value: `String file = "Report.pdf";\nSystem.out.println(file.startsWith("Report"));\n\n// 執行結果：\n// true` },
+          { title: "範例 11：endsWith()", value: `String file = "Report.pdf";\nSystem.out.println(file.endsWith(".pdf"));\n\n// 執行結果：\n// true` },
+          { title: "範例 12：replace()", value: `String str = "Java is hard";\nSystem.out.println(str.replace("hard", "fun"));\n\n// 執行結果：\n// Java is fun` },
+          { title: "範例 13：toUpperCase()", value: `String str = "java";\nSystem.out.println(str.toUpperCase());\n\n// 執行結果：\n// JAVA` },
+          { title: "範例 14：toLowerCase()", value: `String str = "JAVA";\nSystem.out.println(str.toLowerCase());\n\n// 執行結果：\n// java` },
+          { title: "範例 15：trim()", value: `String str = "  Jimmy  ";\nSystem.out.println(str.trim());\n\n// 執行結果：\n// Jimmy` },
+          { title: "範例 16：split()", value: `String csv = "Amy,90,Pass";\nString[] parts = csv.split(",");\n\nSystem.out.println(parts[0]);\nSystem.out.println(parts[1]);\nSystem.out.println(parts[2]);\n\n// 執行結果：\n// Amy\n// 90\n// Pass` },
+          { title: "範例 17：生日字串擷取", value: `String birthday = "2001-08-15";\nString year = birthday.substring(0, 4);\nString month = birthday.substring(5, 7);\nString day = birthday.substring(8, 10);\n\nSystem.out.println(year);\nSystem.out.println(month);\nSystem.out.println(day);\n\n// 執行結果：\n// 2001\n// 08\n// 15` }
+        ]
+      },
+      {
+        sectionId: "10.3",
+        title: "StringBuffer 與 StringBuilder 類別",
+        body: [
+          "String 不可變，所以每次串接或修改字串時，通常會產生新的字串。如果你在迴圈裡頻繁修改字串，效能可能變差。",
+          "`StringBuilder` 和 `StringBuffer` 都是可修改的字串容器。它們可以使用 `append()`、`insert()`、`delete()`、`reverse()` 等方法改變內容。",
+          "初學時可以先這樣記：單執行緒或一般日常練習多用 `StringBuilder`；需要執行緒安全時才考慮 `StringBuffer`。",
+          "最後如果需要變回一般字串，可以呼叫 `toString()`。"
+        ],
+        code: {
+          title: "比較表：String / StringBuffer / StringBuilder",
+          value: `項目            String          StringBuffer       StringBuilder
+是否可修改      不可變          可修改             可修改
+執行效率        頻繁修改較差    較 String 好       通常最快
+執行緒安全      本身不可變      安全               不保證安全
+常見用途        少量文字        多執行緒修改       一般大量串接`
+        },
+        codes: [
+          { title: "範例 1：建立 StringBuilder", value: `StringBuilder sb = new StringBuilder();\nSystem.out.println(sb.length());\n\n// 執行結果：\n// 0` },
+          { title: "範例 2：append()", value: `StringBuilder sb = new StringBuilder();\nsb.append("Hello");\nsb.append(" Java");\n\nSystem.out.println(sb);\n\n// 執行結果：\n// Hello Java` },
+          { title: "範例 3：insert()", value: `StringBuilder sb = new StringBuilder("Java");\nsb.insert(0, "Hello ");\n\nSystem.out.println(sb);\n\n// 執行結果：\n// Hello Java` },
+          { title: "範例 4：delete()", value: `StringBuilder sb = new StringBuilder("Hello Java");\nsb.delete(0, 6);\n\nSystem.out.println(sb);\n\n// 執行結果：\n// Java` },
+          { title: "範例 5：reverse()", value: `StringBuilder sb = new StringBuilder("abc");\nsb.reverse();\n\nSystem.out.println(sb);\n\n// 執行結果：\n// cba` },
+          { title: "範例 6：toString()", value: `StringBuilder sb = new StringBuilder();\nsb.append("Jimmy");\n\nString name = sb.toString();\nSystem.out.println(name);\n\n// 執行結果：\n// Jimmy` },
+          { title: "範例 7：字串累加 100 次", value: `StringBuilder sb = new StringBuilder();\n\nfor (int i = 1; i <= 100; i++) {\n    sb.append(i).append(" ");\n}\n\nSystem.out.println(sb.toString());\n\n// 執行結果：\n// 1 2 3 ... 100` },
+          { title: "範例 8：StringBuffer 基本用法", value: `StringBuffer buffer = new StringBuffer();\nbuffer.append("Thread");\nbuffer.append(" Safe");\n\nSystem.out.println(buffer);\n\n// 執行結果：\n// Thread Safe` },
+          { title: "範例 9：組合個人資料", value: `StringBuilder sb = new StringBuilder();\nsb.append("姓名：").append("Jimmy").append("\\n");\nsb.append("年齡：").append(25).append("\\n");\nsb.append("技能：").append("Java");\n\nSystem.out.println(sb.toString());\n\n// 執行結果：\n// 姓名：Jimmy\n// 年齡：25\n// 技能：Java` }
+        ]
+      },
+      {
+        sectionId: "10.4",
+        title: "規則表示法（Regular Expression）",
+        body: [
+          "Regular Expression，常簡稱 Regex，是用一段規則描述文字格式。它常用來驗證格式、搜尋文字、替換文字。",
+          "初學 Regex 不需要一次背完整語法。先認識幾個常用符號：`.` 代表任一字元，`\\d` 代表數字，`\\w` 代表英數底線，`\\s` 代表空白，`+` 代表一次以上，`*` 代表零次以上，`?` 代表零次或一次。",
+          "`[]` 可以描述可接受的字元集合，`^` 代表開頭，`$` 代表結尾。做格式驗證時，通常會搭配 `^` 和 `$`，確保整段文字都符合規則。",
+          "在 Java 字串中，反斜線本身也需要跳脫，所以 Regex 的 `\\d+` 在 Java 程式裡要寫成 `\"\\\\d+\"`。"
+        ],
+        code: {
+          title: "Regex 圖解：手機格式",
+          value: `^09\\d{8}$
+│ │ │
+│ │ └─ 後面 8 個數字
+│ └─── 前面必須是 09
+└───── 從字串開頭開始比對，直到結尾`
+        },
+        codes: [
+          { title: "範例 1：檢查數字", value: `System.out.println("123".matches("\\\\d+"));\n\n// 執行結果：\n// true` },
+          { title: "範例 2：檢查不是數字", value: `System.out.println("ABC".matches("\\\\D+"));\n\n// 執行結果：\n// true` },
+          { title: "範例 3：檢查英文", value: `System.out.println("Java".matches("[A-Za-z]+"));\n\n// 執行結果：\n// true` },
+          { title: "範例 4：檢查英數底線", value: `System.out.println("user_01".matches("\\\\w+"));\n\n// 執行結果：\n// true` },
+          { title: "範例 5：檢查空白", value: `System.out.println("   ".matches("\\\\s+"));\n\n// 執行結果：\n// true` },
+          { title: "範例 6：任一字元 .", value: `System.out.println("cat".matches("c.t"));\n\n// 執行結果：\n// true` },
+          { title: "範例 7：+ 一次以上", value: `System.out.println("999".matches("9+"));\n\n// 執行結果：\n// true` },
+          { title: "範例 8：* 零次以上", value: `System.out.println("abbb".matches("ab*"));\n\n// 執行結果：\n// true` },
+          { title: "範例 9：? 零次或一次", value: `System.out.println("color".matches("colou?r"));\nSystem.out.println("colour".matches("colou?r"));\n\n// 執行結果：\n// true\n// true` },
+          { title: "範例 10：[] 字元集合", value: `System.out.println("A".matches("[ABC]"));\n\n// 執行結果：\n// true` },
+          { title: "範例 11：^ 與 $ 限制整段", value: `System.out.println("abc123".matches("^[a-z]+\\\\d+$"));\n\n// 執行結果：\n// true` },
+          { title: "範例 12：檢查手機號碼", value: `String phone = "0912345678";\nSystem.out.println(phone.matches("^09\\\\d{8}$"));\n\n// 執行結果：\n// true` },
+          { title: "範例 13：檢查 Email", value: `String email = "jimmy@example.com";\nSystem.out.println(email.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\\\.[A-Za-z]{2,}$"));\n\n// 執行結果：\n// true` },
+          { title: "範例 14：檢查學號", value: `String studentId = "S1234567";\nSystem.out.println(studentId.matches("^S\\\\d{7}$"));\n\n// 執行結果：\n// true` },
+          { title: "範例 15：檢查身分證字號格式", value: `String id = "A123456789";\nSystem.out.println(id.matches("^[A-Z][12]\\\\d{8}$"));\n\n// 執行結果：\n// true` },
+          { title: "範例 16：replaceAll() 替換多個空白", value: `String text = "Java    is   fun";\nSystem.out.println(text.replaceAll("\\\\s+", " "));\n\n// 執行結果：\n// Java is fun` }
+        ]
+      },
+      {
+        sectionId: "10.5",
+        title: "綜合演練",
+        body: [
+          "本節把 String 方法與 Regex 放進真實格式驗證情境。第一題先檢查格式，第二題進一步檢核台灣身分證字號的檢查碼。",
+          "請注意：格式正確不一定代表資料有效。格式驗證只確認長相；檢查碼驗證才會依照規則計算內容是否合理。"
+        ],
+        code: {
+          title: "題目 1：檢查身份證字號格式",
+          value: `問題說明：
+使用 Regular Expression 檢查身份證字號格式：
+- 第一碼英文
+- 第二碼為 1 或 2
+- 共 10 碼
+
+解題思路：
+使用 ^ 和 $ 限制整段字串。
+第一碼用 [A-Z]。
+第二碼用 [12]。
+後 8 碼用 \\d{8}。
+
+流程圖：
+輸入 ID
+  ↓
+轉成大寫
+  ↓
+matches("^[A-Z][12]\\\\d{8}$")
+  ↓
+true：格式正確
+false：格式錯誤
+
+Hint：
+Java 字串裡的 \\d 要寫成 "\\\\d"。
+
+Solution：
+String id = "A123456789";
+id = id.toUpperCase();
+
+boolean valid =
+    id.matches("^[A-Z][12]\\\\d{8}$");
+
+System.out.println(valid ? "格式正確" : "格式錯誤");
+
+執行結果：
+格式正確
+
+Explanation：
+Regex 只檢查字串長相。這題不會判斷檢查碼是否正確，只確認格式符合規則。`
+        },
+        codes: [
+          {
+            title: "題目 2：檢核身份證字號",
+            value: `問題說明：
+除了格式驗證外，還要驗證身分證字號檢查碼。
+
+解題思路：
+1. 先用 Regex 檢查格式。
+2. 將第一個英文字母轉成對應數字。
+3. 把英文代碼拆成十位數與個位數。
+4. 依權重加總。
+5. 加上最後一碼檢查碼後，總和若可被 10 整除，代表通過。
+
+英文字母轉數字：
+A=10, B=11, C=12, D=13, E=14, F=15, G=16, H=17, I=34, J=18,
+K=19, L=20, M=21, N=22, O=35, P=23, Q=24, R=25, S=26, T=27,
+U=28, V=29, W=32, X=30, Y=31, Z=33
+
+計算步驟圖解：
+A123456789
+A -> 10
+1 * 1 + 0 * 9
++ 1 * 8
++ 2 * 7
++ 3 * 6
++ 4 * 5
++ 5 * 4
++ 6 * 3
++ 7 * 2
++ 8 * 1
++ 9
+  ↓
+總和 % 10 == 0 才通過
+
+流程圖：
+輸入 ID
+  ↓
+格式驗證
+  ↓
+英文字母轉數字
+  ↓
+套用權重計算總和
+  ↓
+判斷 sum % 10 == 0
+
+Hint：
+可以先建立字母對應表字串，利用 indexOf 找出英文字母位置。
+
+Solution：
+static boolean isTaiwanId(String id) {
+    id = id.toUpperCase();
+
+    if (!id.matches("^[A-Z][12]\\\\d{8}$")) {
+        return false;
+    }
+
+    String letters = "ABCDEFGHJKLMNPQRSTUVXYWZIO";
+    int[] codes = {
+        10, 11, 12, 13, 14, 15, 16, 17, 18,
+        19, 20, 21, 22, 23, 24, 25, 26, 27,
+        28, 29, 30, 31, 32, 33, 34, 35
+    };
+
+    int index = letters.indexOf(id.charAt(0));
+    int code = codes[index];
+
+    int sum = (code / 10) + (code % 10) * 9;
+    int weight = 8;
+
+    for (int i = 1; i <= 8; i++) {
+        int digit = id.charAt(i) - '0';
+        sum += digit * weight;
+        weight--;
+    }
+
+    int checkCode = id.charAt(9) - '0';
+    sum += checkCode;
+
+    return sum % 10 == 0;
+}
+
+System.out.println(isTaiwanId("A123456789"));
+
+執行結果：
+true
+
+Explanation：
+第一碼英文代表地區代碼，必須先轉成數字再加入計算。
+中間 8 碼依序乘上 8 到 1 的權重。
+最後一碼是檢查碼，整體加總後能被 10 整除才算通過。
+
+延伸挑戰：
+把錯誤原因分成：格式錯誤、英文字母錯誤、檢查碼錯誤。`
+          }
+        ]
+      }
+    ],
+    activities: [
+      createActivity({
+        id: "ch10-exercise-create-string",
+        sectionId: "10.1",
+        type: "exercise",
+        title: "10.1 練習：建立與觀察字串",
+        question: "建立自己的姓名字串，印出長度、第一個字元，並串接姓名與年齡。",
+        hint: "使用 `length()`、`charAt(0)` 和 `+` 串接。",
+        solution: `String name = "Jimmy";
+int age = 25;
+
+System.out.println(name.length());
+System.out.println(name.charAt(0));
+System.out.println(name + " 今年 " + age + " 歲");`,
+        explanation: "這題練習 String 的基本建立、索引概念與字串串接。"
+      }),
+      createActivity({
+        id: "ch10-thought-immutable",
+        sectionId: "10.1",
+        type: "thought",
+        title: "10.1 思考題：為什麼 concat 後原字串沒變？",
+        question: "`String s = \"Hello\"; s.concat(\" World\");` 之後，為什麼 s 仍然是 Hello？",
+        hint: "想想 String 的 Immutable，以及方法回傳的新結果有沒有被變數接住。",
+        solution: "因為 String 不可變，concat 會產生新的字串結果，但原本的 s 沒有重新指定，所以仍然指向 \"Hello\"。",
+        explanation: "若要看到新結果，必須寫 `s = s.concat(\" World\");`。"
+      }),
+      createActivity({
+        id: "ch10-exercise-string-methods",
+        sectionId: "10.2",
+        type: "exercise",
+        title: "10.2 練習：使用 String 常用方法",
+        question: "完成包含文字判斷、生日擷取、CSV 切割、忽略大小寫比較的練習。",
+        hint: "會用到 `contains()`、`substring()`、`split()`、`equalsIgnoreCase()`。",
+        solution: `String text = "I love Java";
+System.out.println(text.contains("Java"));
+
+String birthday = "2001-08-15";
+System.out.println(birthday.substring(0, 4));
+
+String csv = "Amy,90,Pass";
+String[] parts = csv.split(",");
+System.out.println(parts[0]);
+
+System.out.println("java".equalsIgnoreCase("JAVA"));`,
+        explanation: "這些方法是日常文字處理最常見的組合。"
+      }),
+      createActivity({
+        id: "ch10-thought-equals",
+        sectionId: "10.2",
+        type: "thought",
+        title: "10.2 思考題：== 和 equals() 差在哪？",
+        question: "請說明 `a == b` 和 `a.equals(b)` 在字串比較上的差異。",
+        hint: "`==` 看參考是否相同；`equals()` 看文字內容是否相同。",
+        solution: "`==` 比較兩個變數是否指向同一個物件；`equals()` 比較字串內容是否相同。",
+        explanation: "寫 Java 字串內容比較時，通常應該使用 `equals()`。"
+      }),
+      createActivity({
+        id: "ch10-exercise-stringbuilder",
+        sectionId: "10.3",
+        type: "exercise",
+        title: "10.3 練習：使用 StringBuilder",
+        question: "建立姓名字串、反轉字串，並組合一段個人資料。",
+        hint: "使用 `append()`、`reverse()`、`toString()`。",
+        solution: `StringBuilder sb = new StringBuilder();
+sb.append("Jimmy");
+
+System.out.println(sb.reverse());
+
+StringBuilder card = new StringBuilder();
+card.append("姓名：").append("Jimmy").append("\\n");
+card.append("年齡：").append(25);
+
+System.out.println(card.toString());`,
+        explanation: "StringBuilder 適合逐步組合文字，尤其是多次 append 的情況。"
+      }),
+      createActivity({
+        id: "ch10-homework-profile-builder",
+        sectionId: "10.3",
+        type: "homework",
+        title: "10.3 作業：個人資料產生器",
+        question: "使用 StringBuilder 組合姓名、年齡、Email、手機，最後輸出完整資料卡。",
+        hint: "每一行 append 一個欄位，可以加入 `\\n` 換行。",
+        solution: `StringBuilder profile = new StringBuilder();
+profile.append("姓名：").append("Jimmy").append("\\n");
+profile.append("年齡：").append(25).append("\\n");
+profile.append("Email：").append("jimmy@example.com").append("\\n");
+profile.append("手機：").append("0912345678");
+
+System.out.println(profile.toString());`,
+        explanation: "這題把 StringBuilder 當成文字組裝工具，避免用很多 `+` 讓程式變亂。"
+      }),
+      createActivity({
+        id: "ch10-exercise-regex-validation",
+        sectionId: "10.4",
+        type: "exercise",
+        title: "10.4 練習：Regex 格式驗證",
+        question: "驗證手機號碼、Email、學號、身份證字號格式。",
+        hint: "手機可用 `^09\\\\d{8}$`，學號可假設為 S 加 7 個數字。",
+        solution: `System.out.println("0912345678".matches("^09\\\\d{8}$"));
+System.out.println("jimmy@example.com".matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\\\.[A-Za-z]{2,}$"));
+System.out.println("S1234567".matches("^S\\\\d{7}$"));
+System.out.println("A123456789".matches("^[A-Z][12]\\\\d{8}$"));`,
+        explanation: "Regex 適合處理「文字長相是否符合規則」的問題。"
+      }),
+      createActivity({
+        id: "ch10-thought-regex-anchor",
+        sectionId: "10.4",
+        type: "thought",
+        title: "10.4 思考題：為什麼驗證格式常用 ^ 和 $？",
+        question: "請說明 `^` 和 `$` 在格式驗證中的作用。",
+        hint: "`^` 是開頭，`$` 是結尾。",
+        solution: "`^` 限制從字串開頭開始，`$` 限制到字串結尾結束，兩者合用可確保整段文字都符合規則。",
+        explanation: "如果沒有頭尾限制，可能只有一部分符合規則，也被誤判成通過。"
+      }),
+      createActivity({
+        id: "ch10-project-id-format",
+        sectionId: "10.5",
+        type: "exercise",
+        title: "10.5 綜合練習：檢查身份證字號格式",
+        question: "使用 Regex 檢查身份證字號是否符合第一碼英文、第二碼 1 或 2、共 10 碼。",
+        hint: "規則可寫為 `^[A-Z][12]\\\\d{8}$`。",
+        solution: `String id = "A123456789";
+boolean valid = id.toUpperCase().matches("^[A-Z][12]\\\\d{8}$");
+System.out.println(valid);`,
+        explanation: "這題只做格式檢查，不做檢查碼計算。"
+      }),
+      createActivity({
+        id: "ch10-homework-id-checksum",
+        sectionId: "10.5",
+        type: "homework",
+        title: "10.5 作業：身份證字號檢查碼",
+        question: "完成 `isTaiwanId(String id)`，除了格式外，也檢查檢查碼。",
+        hint: "先格式檢查，再把英文字母轉數字，最後依權重加總。",
+        solution: `static boolean isTaiwanId(String id) {
+    id = id.toUpperCase();
+    if (!id.matches("^[A-Z][12]\\\\d{8}$")) return false;
+
+    String letters = "ABCDEFGHJKLMNPQRSTUVXYWZIO";
+    int[] codes = {10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35};
+    int code = codes[letters.indexOf(id.charAt(0))];
+
+    int sum = (code / 10) + (code % 10) * 9;
+    int weight = 8;
+    for (int i = 1; i <= 8; i++) {
+        sum += (id.charAt(i) - '0') * weight;
+        weight--;
+    }
+    sum += id.charAt(9) - '0';
+
+    return sum % 10 == 0;
+}`,
+        explanation: "完整驗證包含格式與檢查碼。格式像是外觀，檢查碼則是內容規則。"
+      })
+    ],
+    quiz: [
+      { question: "Java 中的 String 是什麼？", options: ["String 類別的物件", "只能是 int", "只能是 char", "不能呼叫方法"], answer: 0, explanation: "String 是類別，字串是 String 物件。" },
+      { question: "取得字串長度使用哪個方法？", options: ["length()", "size()", "count()", "long()"], answer: 0, explanation: "`length()` 會回傳字串長度。" },
+      { question: "`charAt(0)` 取得什麼？", options: ["第一個字元", "最後一個字元", "字串長度", "整個字串"], answer: 0, explanation: "字串索引從 0 開始。" },
+      { question: "String Immutable 代表什麼？", options: ["字串內容不可原地修改", "字串不能被印出", "字串只能是數字", "字串沒有方法"], answer: 0, explanation: "String 方法通常產生新字串，不會改動原本物件。" },
+      { question: "比較字串內容通常使用？", options: ["equals()", "==", "=", "compareObject()"], answer: 0, explanation: "`equals()` 比較文字內容。" },
+      { question: "`a == b` 對 String 通常比較什麼？", options: ["是否同一個物件參考", "文字長度", "是否都大寫", "是否包含空白"], answer: 0, explanation: "`==` 比較參考是否相同。" },
+      { question: "擷取字串片段可用哪個方法？", options: ["substring()", "splitAll()", "cut()", "part()"], answer: 0, explanation: "`substring()` 可擷取部分字串。" },
+      { question: "將 CSV 字串切割常用哪個方法？", options: ["split()", "divide()", "charAt()", "trimOnly()"], answer: 0, explanation: "`split()` 會依分隔規則切成陣列。" },
+      { question: "頻繁串接字串通常較適合？", options: ["StringBuilder", "每次都用 new String", "只用 charAt", "switch"], answer: 0, explanation: "StringBuilder 是可修改的字串容器，適合大量串接。" },
+      { question: "StringBuilder 最常用來加入內容的方法是？", options: ["append()", "pushText()", "addStringOnly()", "writeLine()"], answer: 0, explanation: "`append()` 會把內容加到尾端。" },
+      { question: "StringBuffer 和 StringBuilder 的主要差異之一是？", options: ["StringBuffer 較重視執行緒安全", "StringBuffer 不能修改", "StringBuilder 不能 append", "兩者都不是類別"], answer: 0, explanation: "StringBuffer 的方法通常具備同步特性，較重視執行緒安全。" },
+      { question: "Regex 常用來做什麼？", options: ["驗證格式", "建立物件建構子", "取代 class", "停止 JVM"], answer: 0, explanation: "Regex 常用於格式驗證、搜尋與替換。" },
+      { question: "Regex 中 `\\d` 代表什麼？", options: ["數字", "英文字母", "空白", "任意單字"], answer: 0, explanation: "`\\d` 代表數字字元。" },
+      { question: "Java 字串中的 Regex `\\d+` 要寫成？", options: ["\"\\\\d+\"", "\"\\d+\"", "\"/d+\"", "\"d+\""], answer: 0, explanation: "Java 字串裡反斜線也要跳脫，所以要寫 `\"\\\\d+\"`。" },
+      { question: "身份證字號格式檢查和檢查碼檢核的差異是？", options: ["格式只看長相，檢查碼會依規則計算", "兩者完全一樣", "檢查碼只看第一碼", "格式驗證不能用 Regex"], answer: 0, explanation: "格式驗證確認文字外觀，檢查碼驗證內容規則是否通過。" }
     ]
   };
 }
