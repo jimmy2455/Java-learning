@@ -3475,6 +3475,883 @@ for (int i = 0; i < classScores.length; i++) {
         explanation: "常見做法是用第一個元素初始化 max，再用迴圈比較每個元素。"
       }
     ]
+  },
+  {
+    id: 8,
+    code: "CH08",
+    title: "物件導向程式設計（Object-Oriented Programming）",
+    minutes: 135,
+    summary: "認識類別與物件，建立自己的類別，使用屬性、方法、參數、回傳值與方法多載。",
+    intro: "物件導向會把程式中的資料和行為整理在一起。這一章先打好最基礎的 OOP 觀念：類別像設計圖，物件像依照設計圖做出來的實體。",
+    sections: [
+      {
+        sectionId: "8.1",
+        title: "認識類別與物件",
+        body: [
+          "先不要急著寫程式碼。你可以把 Class 想成設計圖，把 Object 想成依照設計圖做出來的實際東西。",
+          "以汽車為例，汽車設計圖是類別；小明的汽車、小華的汽車、我的汽車，都是物件。它們都像汽車，但每台車的顏色、品牌、速度可能不同。",
+          "以學生為例，學生是類別；Jimmy、Amy、John 是物件。學生通常有姓名、年齡、身高等屬性，也會有自我介紹、吃飯、睡覺等行為。",
+          "物件通常包含兩種內容：屬性（Attribute）代表物件擁有的資料，方法（Method）代表物件會做的事情。"
+        ],
+        code: {
+          title: "圖解：Class 建立 Object",
+          value: `Class
+  ↓
+建立
+  ↓
+Object`
+        },
+        codes: [
+          {
+            title: "範例 1：Student 類別概念圖",
+            value: `Class: Student
+
+屬性：
+- name
+- age
+- height
+
+方法：
+- introduce()
+- eat()
+- sleep()
+
+Objects:
+- Jimmy
+- Amy
+- John`
+          },
+          {
+            title: "範例 2：Car 類別概念圖",
+            value: `Class: Car
+
+屬性：
+- brand
+- color
+- speed
+
+方法：
+- drive()
+- brake()
+- showInfo()
+
+Objects:
+- 小明的汽車
+- 小華的汽車
+- 我的汽車`
+          },
+          {
+            title: "範例 3：生活中的類別與物件",
+            value: `類別：手機
+物件：我的手機、媽媽的手機、公司測試機
+
+類別：寵物
+物件：Momo、Lucky、Coffee
+
+類別：銀行帳戶
+物件：Jimmy 的帳戶、Amy 的帳戶`
+          }
+        ]
+      },
+      {
+        sectionId: "8.2",
+        title: "定義類別與建立物件",
+        body: [
+          "類別是物件的設計圖。你可以先在類別裡定義屬性，接著用 `new` 建立物件，最後透過物件名稱存取資料。",
+          "初學階段先把屬性想成物件的資料欄位。例如 Student 有 name 和 age；Book 有 title 和 price；Dog 有 name 和 breed。",
+          "建立物件的語法是 `Student s1 = new Student();`。左邊的 s1 是變數名稱，右邊的 new Student() 會建立一個新的 Student 物件。"
+        ],
+        code: {
+          title: "範例 1：最簡單類別",
+          value: `class Student {
+
+}
+
+// 圖解：
+// Student 是設計圖，目前還沒有屬性和方法。`
+        },
+        codes: [
+          {
+            title: "範例 2：加入屬性",
+            value: `class Student {
+    String name;
+    int age;
+}
+
+// 圖解：
+// Student
+// - name
+// - age`
+          },
+          {
+            title: "範例 3：建立物件",
+            value: `Student s1 = new Student();
+
+// 圖解：
+// Student
+//   ↓ new
+// s1`
+          },
+          {
+            title: "範例 4：設定資料",
+            value: `Student s1 = new Student();
+
+s1.name = "Jimmy";
+s1.age = 25;
+
+// 圖解：
+// s1.name -> Jimmy
+// s1.age  -> 25`
+          },
+          {
+            title: "範例 5：輸出資料",
+            value: `Student s1 = new Student();
+s1.name = "Jimmy";
+s1.age = 25;
+
+System.out.println(s1.name);
+System.out.println(s1.age);
+
+// 執行結果：
+// Jimmy
+// 25`
+          },
+          {
+            title: "範例 6：建立多個物件",
+            value: `Student s1 = new Student();
+Student s2 = new Student();
+
+// 圖解：
+// Student -> s1
+// Student -> s2`
+          },
+          {
+            title: "範例 7：不同物件擁有不同資料",
+            value: `Student s1 = new Student();
+Student s2 = new Student();
+
+s1.name = "Jimmy";
+s1.age = 25;
+
+s2.name = "Amy";
+s2.age = 20;
+
+System.out.println(s1.name + " " + s1.age);
+System.out.println(s2.name + " " + s2.age);
+
+// 執行結果：
+// Jimmy 25
+// Amy 20`
+          },
+          {
+            title: "範例 8：Book 類別",
+            value: `class Book {
+    String title;
+    int price;
+}
+
+Book b1 = new Book();
+b1.title = "Java 入門";
+b1.price = 500;
+
+System.out.println(b1.title);
+System.out.println(b1.price);
+
+// 執行結果：
+// Java 入門
+// 500`
+          },
+          {
+            title: "完整範例：學生資料管理",
+            value: `class Student {
+    String name;
+    int age;
+    int score;
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Student s1 = new Student();
+        s1.name = "Jimmy";
+        s1.age = 25;
+        s1.score = 90;
+
+        System.out.println("姓名：" + s1.name);
+        System.out.println("年齡：" + s1.age);
+        System.out.println("成績：" + s1.score);
+    }
+}
+
+// 執行結果：
+// 姓名：Jimmy
+// 年齡：25
+// 成績：90`
+          }
+        ]
+      },
+      {
+        sectionId: "8.3",
+        title: "方法的進階應用",
+        body: [
+          "方法（Method）代表物件會做的事情。屬性保存資料，方法負責執行動作或計算結果。",
+          "方法可以沒有參數、沒有回傳值；也可以接收參數，或把計算結果回傳給呼叫它的地方。",
+          "參數（Parameter）像是方法執行時需要的輸入資料；回傳值（Return Value）則是方法執行後交回來的結果。"
+        ],
+        code: {
+          title: "圖解：參數與回傳值",
+          value: `呼叫方法
+  ↓ 傳入參數
+方法執行
+  ↓ 回傳結果
+取得結果`
+        },
+        codes: [
+          {
+            title: "範例 1：無參數無回傳值",
+            value: `class Dog {
+    void bark() {
+        System.out.println("汪汪");
+    }
+}
+
+// bark() 不需要資料，也不回傳結果。`
+          },
+          {
+            title: "範例 2：呼叫方法",
+            value: `class Dog {
+    void bark() {
+        System.out.println("汪汪");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Dog dog = new Dog();
+        dog.bark();
+    }
+}
+
+// 執行結果：
+// 汪汪`
+          },
+          {
+            title: "範例 3：有參數",
+            value: `class Greeter {
+    void sayHello(String name) {
+        System.out.println("你好 " + name);
+    }
+}
+
+Greeter g = new Greeter();
+g.sayHello("Jimmy");
+
+// 執行結果：
+// 你好 Jimmy`
+          },
+          {
+            title: "範例 4：有回傳值",
+            value: `class Calculator {
+    int add(int a, int b) {
+        return a + b;
+    }
+}
+
+Calculator calc = new Calculator();
+int result = calc.add(3, 5);
+System.out.println(result);
+
+// 執行結果：
+// 8`
+          },
+          {
+            title: "範例 5：有參數有回傳值",
+            value: `class StudentTool {
+    boolean isPassed(int score) {
+        return score >= 60;
+    }
+}
+
+StudentTool tool = new StudentTool();
+System.out.println(tool.isPassed(80));
+
+// 執行結果：
+// true`
+          },
+          {
+            title: "範例 6：建立計算機類別",
+            value: `class Calculator {
+    int add(int a, int b) {
+        return a + b;
+    }
+
+    int subtract(int a, int b) {
+        return a - b;
+    }
+}
+
+Calculator calc = new Calculator();
+System.out.println(calc.add(10, 3));
+System.out.println(calc.subtract(10, 3));
+
+// 執行結果：
+// 13
+// 7`
+          },
+          {
+            title: "範例 7：建立玩家角色類別",
+            value: `class Player {
+    String name;
+    int hp;
+
+    void showStatus() {
+        System.out.println(name + " HP: " + hp);
+    }
+}
+
+Player p1 = new Player();
+p1.name = "Hero";
+p1.hp = 100;
+p1.showStatus();
+
+// 執行結果：
+// Hero HP: 100`
+          },
+          {
+            title: "範例 8：回傳 BMI",
+            value: `class HealthTool {
+    double calcBMI(double height, double weight) {
+        return weight / (height * height);
+    }
+}
+
+HealthTool tool = new HealthTool();
+System.out.println(tool.calcBMI(1.7, 65));
+
+// 執行結果：
+// 22.49134948096886`
+          },
+          {
+            title: "範例 9：方法內使用屬性",
+            value: `class Student {
+    String name;
+    int score;
+
+    void showInfo() {
+        System.out.println(name + " 的分數是 " + score);
+    }
+}
+
+Student s = new Student();
+s.name = "Amy";
+s.score = 95;
+s.showInfo();
+
+// 執行結果：
+// Amy 的分數是 95`
+          },
+          {
+            title: "範例 10：方法修改物件資料",
+            value: `class BankAccount {
+    int balance;
+
+    void deposit(int amount) {
+        balance += amount;
+    }
+}
+
+BankAccount account = new BankAccount();
+account.balance = 1000;
+account.deposit(500);
+System.out.println(account.balance);
+
+// 執行結果：
+// 1500`
+          }
+        ]
+      },
+      {
+        sectionId: "8.4",
+        title: "方法的多重定義（Overloading）",
+        body: [
+          "方法多載（Overloading）指的是同一個類別中，可以有相同方法名稱，但參數不同的方法。",
+          "Java 會根據你呼叫時傳入的參數數量與型態，選擇對應的方法版本。例如 `add(1, 2)`、`add(1, 2, 3)`、`add(1.5, 2.5)` 可以是三個版本。",
+          "重要提醒：只有回傳型態不同，不算合法的 Overloading。Java 不能只靠回傳型態決定要呼叫哪個方法。"
+        ],
+        code: {
+          title: "圖解：同名方法，不同參數",
+          value: `add(1, 2)       -> 使用 int, int 版本
+add(1, 2, 3)    -> 使用 int, int, int 版本
+add(1.5, 2.5)   -> 使用 double, double 版本`
+        },
+        codes: [
+          {
+            title: "範例 1：兩個 int 相加",
+            value: `int add(int a, int b) {
+    return a + b;
+}`
+          },
+          {
+            title: "範例 2：三個 int 相加",
+            value: `int add(int a, int b, int c) {
+    return a + b + c;
+}`
+          },
+          {
+            title: "範例 3：兩個 double 相加",
+            value: `double add(double a, double b) {
+    return a + b;
+}`
+          },
+          {
+            title: "完整範例：Calculator 多載",
+            value: `class Calculator {
+    int add(int a, int b) {
+        return a + b;
+    }
+
+    int add(int a, int b, int c) {
+        return a + b + c;
+    }
+
+    double add(double a, double b) {
+        return a + b;
+    }
+}
+
+Calculator calc = new Calculator();
+System.out.println(calc.add(1, 2));
+System.out.println(calc.add(1, 2, 3));
+System.out.println(calc.add(1.5, 2.5));
+
+// 執行結果：
+// 3
+// 6
+// 4.0`
+          },
+          {
+            title: "範例 5：print 三種版本",
+            value: `class Printer {
+    void print(String text) {
+        System.out.println(text);
+    }
+
+    void print(int number) {
+        System.out.println(number);
+    }
+
+    void print(String text, int times) {
+        for (int i = 1; i <= times; i++) {
+            System.out.println(text);
+        }
+    }
+}
+
+Printer p = new Printer();
+p.print("Java");
+p.print(100);
+p.print("Hi", 2);
+
+// 執行結果：
+// Java
+// 100
+// Hi
+// Hi`
+          },
+          {
+            title: "範例 6：只有回傳型態不同不是合法多載",
+            value: `// 錯誤示意：
+int add(int a, int b) {
+    return a + b;
+}
+
+double add(int a, int b) {
+    return a + b;
+}
+
+// 原因：
+// 參數完全一樣，Java 無法只靠回傳型態分辨版本。`
+          },
+          {
+            title: "範例 7：area 兩種版本",
+            value: `class AreaTool {
+    int area(int side) {
+        return side * side;
+    }
+
+    int area(int width, int height) {
+        return width * height;
+    }
+}
+
+AreaTool tool = new AreaTool();
+System.out.println(tool.area(5));
+System.out.println(tool.area(4, 6));
+
+// 執行結果：
+// 25
+// 24`
+          }
+        ]
+      },
+      {
+        sectionId: "8.5",
+        title: "綜合演練",
+        body: [
+          "這一節用幾個小專案把類別、物件、屬性、方法和 Overloading 串起來。你會看到類別如何把資料和行為整理成一組。",
+          "請先觀察每個專案的類別名稱、屬性與方法，再看 main 裡如何建立物件和呼叫方法。這會幫你建立 OOP 的基本閱讀方式。"
+        ],
+        code: {
+          title: "專案 1：學生管理系統",
+          value: `class Student {
+    String name;
+    int age;
+    int score;
+
+    void showInfo() {
+        System.out.println(name + " " + age + " 歲，成績 " + score);
+    }
+}
+
+Student s = new Student();
+s.name = "Jimmy";
+s.age = 25;
+s.score = 90;
+s.showInfo();
+
+// 執行結果：
+// Jimmy 25 歲，成績 90`
+        },
+        codes: [
+          {
+            title: "專案 2：銀行帳戶系統",
+            value: `class BankAccount {
+    String accountNumber;
+    int balance;
+
+    void deposit(int amount) {
+        balance += amount;
+    }
+
+    void withdraw(int amount) {
+        balance -= amount;
+    }
+
+    void showBalance() {
+        System.out.println("餘額：" + balance);
+    }
+}
+
+BankAccount account = new BankAccount();
+account.accountNumber = "A001";
+account.balance = 1000;
+account.deposit(500);
+account.withdraw(200);
+account.showBalance();
+
+// 執行結果：
+// 餘額：1300`
+          },
+          {
+            title: "專案 3：寵物系統",
+            value: `class Pet {
+    String name;
+    String type;
+
+    void speak() {
+        System.out.println(name + " 發出聲音");
+    }
+}
+
+Pet pet = new Pet();
+pet.name = "Momo";
+pet.type = "Dog";
+pet.speak();
+
+// 執行結果：
+// Momo 發出聲音`
+          },
+          {
+            title: "專案 4：Overloading 簡易計算機",
+            value: `class Calculator {
+    int add(int a, int b) {
+        return a + b;
+    }
+
+    int add(int a, int b, int c) {
+        return a + b + c;
+    }
+
+    double add(double a, double b) {
+        return a + b;
+    }
+}
+
+Calculator calc = new Calculator();
+System.out.println(calc.add(2, 3));
+System.out.println(calc.add(2, 3, 4));
+System.out.println(calc.add(2.5, 3.5));
+
+// 執行結果：
+// 5
+// 9
+// 6.0`
+          }
+        ]
+      }
+    ],
+    activities: [
+      createActivity({
+        id: "ch08-thought-class-object",
+        sectionId: "8.1",
+        type: "thought",
+        title: "思考題：判斷類別與物件",
+        question: "請判斷：汽車、我的汽車、學生、Jimmy，哪些比較像類別？哪些比較像物件？",
+        hint: "類別比較像分類或設計圖；物件比較像具體的一個實體。",
+        solution: "汽車、學生比較像類別；我的汽車、Jimmy 比較像物件。",
+        explanation: "類別描述共同特徵，物件是具體存在的一個例子。汽車可以有很多台，學生可以有很多位；我的汽車和 Jimmy 則是具體個體。"
+      }),
+      createActivity({
+        id: "ch08-exercise-define-classes",
+        sectionId: "8.2",
+        type: "exercise",
+        title: "實作練習：建立自己的類別",
+        question: "建立 Book 類別、Dog 類別，並建立兩個 Student 物件，讓不同物件擁有不同資料。",
+        hint: "先定義 class，再使用 `new` 建立物件。設定資料時使用 `物件名稱.屬性名稱`。",
+        solution: `class Book {
+    String title;
+    int price;
+}
+
+class Dog {
+    String name;
+    String breed;
+}
+
+class Student {
+    String name;
+    int age;
+}
+
+Student s1 = new Student();
+s1.name = "Jimmy";
+s1.age = 25;
+
+Student s2 = new Student();
+s2.name = "Amy";
+s2.age = 20;`,
+        explanation: "每個物件都有自己的屬性資料。s1 和 s2 都是 Student，但它們可以保存不同的 name 和 age。"
+      }),
+      createActivity({
+        id: "ch08-exercise-methods",
+        sectionId: "8.3",
+        type: "exercise",
+        title: "實作練習：建立 greet、add、calcBMI 方法",
+        question: "建立三個方法：`greet()` 印出問候語、`add(int a, int b)` 回傳總和、`calcBMI(double height, double weight)` 回傳 BMI。",
+        hint: "沒有回傳值使用 void；有回傳值要寫回傳型態並使用 return。",
+        solution: `class Practice {
+    void greet() {
+        System.out.println("你好，歡迎學 Java");
+    }
+
+    int add(int a, int b) {
+        return a + b;
+    }
+
+    double calcBMI(double height, double weight) {
+        return weight / (height * height);
+    }
+}`,
+        explanation: "方法可以依照需求決定是否需要參數與回傳值。greet 只負責輸出，所以用 void；add 和 calcBMI 需要把計算結果交回來，所以使用 return。"
+      }),
+      createActivity({
+        id: "ch08-thought-return",
+        sectionId: "8.3",
+        type: "thought",
+        title: "思考題：什麼時候需要回傳值？",
+        question: "如果方法只要印出文字，和方法需要把加總結果交給別人使用，回傳值設計會有什麼不同？",
+        hint: "印出文字通常可以用 void；需要讓外面拿到結果時，方法就要 return。",
+        solution: "只印出文字的方法可以使用 void；如果加總結果後還要被其他程式使用，就應該回傳 int 或 double 等型態。",
+        explanation: "回傳值讓方法不只做完事情，還能把結果交給呼叫者。這會讓程式更容易重複使用和組合。"
+      }),
+      createActivity({
+        id: "ch08-exercise-overloading",
+        sectionId: "8.4",
+        type: "exercise",
+        title: "實作練習：print 與 area 多載",
+        question: "建立 `print()` 三種版本，以及 `area()` 兩種版本。print 可支援 String、int、String+次數；area 可支援正方形與長方形。",
+        hint: "多載的關鍵是方法名稱相同，但參數數量或型態不同。",
+        solution: `class Tool {
+    void print(String text) {
+        System.out.println(text);
+    }
+
+    void print(int number) {
+        System.out.println(number);
+    }
+
+    void print(String text, int times) {
+        for (int i = 1; i <= times; i++) {
+            System.out.println(text);
+        }
+    }
+
+    int area(int side) {
+        return side * side;
+    }
+
+    int area(int width, int height) {
+        return width * height;
+    }
+}`,
+        explanation: "這些方法名稱可以相同，因為參數清單不同。Java 會根據呼叫時傳入的參數選擇合適版本。"
+      }),
+      createActivity({
+        id: "ch08-homework-oop-projects",
+        sectionId: "8.5",
+        type: "homework",
+        title: "作業：完成四個 OOP 小專案",
+        question: "完成學生管理系統、銀行帳戶系統、寵物系統、Overloading 簡易計算機。",
+        hint: "每個專案先列出類別名稱、屬性、方法，再到 main 中建立物件並呼叫方法。",
+        solution: `class Student {
+    String name;
+    int age;
+    int score;
+
+    void showInfo() {
+        System.out.println(name + " " + age + " " + score);
+    }
+}
+
+class BankAccount {
+    String accountNumber;
+    int balance;
+
+    void deposit(int amount) {
+        balance += amount;
+    }
+
+    void withdraw(int amount) {
+        balance -= amount;
+    }
+
+    void showBalance() {
+        System.out.println(balance);
+    }
+}
+
+class Pet {
+    String name;
+    String type;
+
+    void speak() {
+        System.out.println(name + " 發出聲音");
+    }
+}
+
+class Calculator {
+    int add(int a, int b) {
+        return a + b;
+    }
+
+    int add(int a, int b, int c) {
+        return a + b + c;
+    }
+}`,
+        explanation: "這份作業的重點是把資料與行為放在同一個類別中。Student、BankAccount、Pet、Calculator 都各自描述一種物件的資料和能力。"
+      })
+    ],
+    quiz: [
+      {
+        question: "類別（Class）最像什麼？",
+        options: ["設計圖", "已經存在的一台車", "單一變數值", "執行結果"],
+        answer: 0,
+        explanation: "類別像設計圖，用來描述物件會有哪些屬性與方法。"
+      },
+      {
+        question: "物件（Object）最像什麼？",
+        options: ["依照設計圖建立出的實體", "只能放註解", "方法名稱", "分號"],
+        answer: 0,
+        explanation: "物件是依照類別建立出的具體實體，例如 Jimmy 是 Student 的一個物件。"
+      },
+      {
+        question: "物件中的屬性通常代表什麼？",
+        options: ["資料", "只能是迴圈", "只能是 import", "錯誤訊息"],
+        answer: 0,
+        explanation: "屬性保存物件的資料，例如姓名、年齡、成績。"
+      },
+      {
+        question: "物件中的方法通常代表什麼？",
+        options: ["物件會做的事情", "物件的檔案名稱", "只能保存數字", "陣列長度"],
+        answer: 0,
+        explanation: "方法描述物件可以執行的動作或計算。"
+      },
+      {
+        question: "建立 Student 物件的語法是哪一個？",
+        options: ["Student s1 = new Student();", "new = Student s1;", "class = new Student;", "Student.new(s1);"],
+        answer: 0,
+        explanation: "`new Student()` 會建立新的 Student 物件，並由 s1 參照它。"
+      },
+      {
+        question: "設定物件屬性常用哪個符號？",
+        options: [".", ":", "#", "->>"],
+        answer: 0,
+        explanation: "Java 使用點符號存取物件屬性與方法，例如 s1.name。"
+      },
+      {
+        question: "`void bark()` 代表什麼？",
+        options: ["沒有回傳值的方法", "一定會回傳 int", "只能當作屬性", "不能被呼叫"],
+        answer: 0,
+        explanation: "void 表示方法不回傳結果。"
+      },
+      {
+        question: "方法參數的用途是什麼？",
+        options: ["傳入方法需要的資料", "刪除物件", "改變 class 名稱", "停止編譯"],
+        answer: 0,
+        explanation: "參數讓呼叫者把資料交給方法使用。"
+      },
+      {
+        question: "有回傳值的方法需要使用哪個關鍵字交回結果？",
+        options: ["return", "class", "new", "void"],
+        answer: 0,
+        explanation: "return 會把結果從方法中交回呼叫者。"
+      },
+      {
+        question: "`int add(int a, int b)` 的回傳型態是什麼？",
+        options: ["int", "void", "String", "boolean[]"],
+        answer: 0,
+        explanation: "方法名稱前面的 int 代表此方法會回傳 int。"
+      },
+      {
+        question: "方法多載（Overloading）是什麼？",
+        options: ["同名方法但參數不同", "類別裡不能有方法", "只改回傳型態", "把物件刪除"],
+        answer: 0,
+        explanation: "Overloading 是同一個類別中方法名稱相同，但參數數量或型態不同。"
+      },
+      {
+        question: "哪一組可以形成合法 Overloading？",
+        options: ["add(int, int) 與 add(int, int, int)", "add(int, int) 與 add(int, int) 但只改回傳型態", "兩個完全相同的方法", "沒有參數的方法和變數"],
+        answer: 0,
+        explanation: "參數數量不同，因此 Java 可以分辨要呼叫哪一個版本。"
+      },
+      {
+        question: "只有回傳型態不同，是否算合法 Overloading？",
+        options: ["不算", "一定算", "只有 String 才算", "只有 int 才算"],
+        answer: 0,
+        explanation: "Java 不能只依靠回傳型態分辨同名方法，因此不算合法多載。"
+      },
+      {
+        question: "BankAccount 類別中的 deposit 方法通常做什麼？",
+        options: ["增加餘額", "建立 class 名稱", "刪除帳號欄位", "印出陣列索引"],
+        answer: 0,
+        explanation: "deposit 是存款，通常會把金額加到 balance。"
+      },
+      {
+        question: "本章專注在哪些 OOP 基礎？",
+        options: ["類別、物件、屬性、方法、Overloading", "封裝、繼承、多型全部深入", "只學陣列", "只學 HTML"],
+        answer: 0,
+        explanation: "本章先打基礎，聚焦在建立類別與物件、使用屬性與方法，以及方法多載。"
+      }
+    ]
   }
 ];
 
