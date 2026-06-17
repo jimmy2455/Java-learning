@@ -4174,6 +4174,7 @@ nums[j + 1] = temp;`,
   chapters.push(createChapter09());
   chapters.push(createChapter10());
   chapters.push(createChapter11());
+  chapters.push(createChapter12());
 }
 
 function updateSection(chapterId, sectionId, data) {
@@ -7362,6 +7363,558 @@ System.out.println(number + 10);`,
       { question: "int 的 Wrapper Class 是？", options: ["Integer", "IntObject", "NumberInt", "Char"], answer: 0, explanation: "int 對應 Integer。" },
       { question: "Varargs 語法是哪一個？", options: ["int... nums", "int nums...", "...int nums", "var int nums"], answer: 0, explanation: "Varargs 使用三個點寫在型態後方。" },
       { question: "Object... 可以接收不同型別資料的原因是？", options: ["所有物件都可視為 Object，基本型別可 Autoboxing", "Object 只能接 int", "Object 不是類別", "因為 Regex"], answer: 0, explanation: "Object 是共同父類別，Wrapper 又能包住基本型別。" }
+    ]
+  };
+}
+
+function createChapter12() {
+  return {
+    id: 12,
+    code: "CH12",
+    title: "抽象類別（Abstract Class）、介面（Interface）、內部類別（Inner Class）",
+    minutes: 165,
+    summary: "學會 abstract、interface、implements、介面繼承與 Inner Class，建立更完整的 OOP 結構。",
+    intro: "本章進入 OOP 較抽象但非常實用的設計工具。你會看到抽象類別如何規範子類別、介面如何描述能力、內部類別如何讓相關類別放在一起。",
+    goals: [
+      "了解抽象類別的用途",
+      "學會使用 abstract",
+      "了解介面的用途",
+      "學會 implements",
+      "了解介面繼承",
+      "了解內部類別",
+      "能夠設計較完整的 OOP 結構"
+    ],
+    sections: [
+      {
+        sectionId: "12.1",
+        title: "抽象類別（Abstract Class）",
+        body: [
+          "假設有 Animal、Dog、Cat、Bird。所有動物都會 eat()，但 speak() 的聲音不同。這時父類別可以提供共同方法，也可以要求子類別一定要實作自己的 speak()。",
+          "抽象類別使用 `abstract class` 宣告。它可以有一般方法，也可以有抽象方法。抽象方法只有規格，沒有方法內容，子類別必須覆寫。",
+          "抽象類別不能直接建立物件，因為它代表尚未完成的概念。Animal 太抽象，你通常會建立 Dog、Cat、Bird 這類具體物件。",
+          "把抽象類別想成半成品藍圖：共同邏輯已經寫好，但某些細節留給子類別完成。"
+        ],
+        code: {
+          title: "UML 風格圖：Animal 抽象類別",
+          value: `<<abstract>> Animal
++ eat()
++ abstract speak()
+        ▲
+        │
+  ┌─────┼─────┐
+  Dog   Cat   Bird`
+        },
+        codes: [
+          { title: "範例 1：abstract class", value: `abstract class Animal {\n    void eat() {\n        System.out.println(\"進食\");\n    }\n}\n\n// 解說：\n// 抽象類別可以有一般方法。` },
+          { title: "範例 2：抽象方法", value: `abstract class Animal {\n    abstract void speak();\n}\n\n// 解說：\n// 抽象方法沒有方法內容，子類別必須完成。` },
+          { title: "範例 3：完整 Animal 抽象類別", value: `abstract class Animal {\n    void eat() {\n        System.out.println(\"進食\");\n    }\n\n    abstract void speak();\n}` },
+          { title: "範例 4：Dog 實作 speak()", value: `class Dog extends Animal {\n    @Override\n    void speak() {\n        System.out.println(\"汪汪\");\n    }\n}\n\nDog dog = new Dog();\ndog.eat();\ndog.speak();\n\n// 執行結果：\n// 進食\n// 汪汪` },
+          { title: "範例 5：Cat 實作 speak()", value: `class Cat extends Animal {\n    @Override\n    void speak() {\n        System.out.println(\"喵喵\");\n    }\n}\n\nAnimal cat = new Cat();\ncat.speak();\n\n// 執行結果：\n// 喵喵` },
+          { title: "範例 6：抽象類別不能 new", value: `abstract class Animal {\n    abstract void speak();\n}\n\n// Animal a = new Animal();\n// 錯誤：Animal 是抽象類別，不能直接建立物件。\n\n// 解說：\n// 因為 speak() 尚未有具體實作。` },
+          { title: "範例 7：Shape 抽象類別", value: `abstract class Shape {\n    abstract double area();\n\n    void printArea() {\n        System.out.println(area());\n    }\n}\n\nclass Circle extends Shape {\n    double radius;\n\n    Circle(double radius) {\n        this.radius = radius;\n    }\n\n    @Override\n    double area() {\n        return 3.14 * radius * radius;\n    }\n}\n\nnew Circle(2).printArea();\n\n// 執行結果：\n// 12.56` },
+          { title: "範例 8：Employee 抽象類別", value: `abstract class Employee {\n    String name;\n\n    Employee(String name) {\n        this.name = name;\n    }\n\n    abstract int getSalary();\n}\n\nclass Engineer extends Employee {\n    Engineer(String name) {\n        super(name);\n    }\n\n    @Override\n    int getSalary() {\n        return 60000;\n    }\n}` },
+          { title: "範例 9：Vehicle 抽象類別", value: `abstract class Vehicle {\n    abstract void move();\n\n    void stop() {\n        System.out.println(\"停止\");\n    }\n}\n\nclass Car extends Vehicle {\n    @Override\n    void move() {\n        System.out.println(\"汽車行駛\");\n    }\n}` },
+          { title: "範例 10：普通類別 vs 抽象類別", value: `項目             普通類別              抽象類別\n可否 new          可以                  不可以\n可有一般方法      可以                  可以\n可有抽象方法      不可以                可以\n適合用途          具體物件              半成品藍圖或共同規格` },
+          { title: "範例 11：抽象父類別搭配多型", value: `Animal[] animals = {\n    new Dog(),\n    new Cat()\n};\n\nfor (Animal animal : animals) {\n    animal.speak();\n}\n\n// 執行結果：\n// 汪汪\n// 喵喵` }
+        ]
+      },
+      {
+        sectionId: "12.2",
+        title: "介面（Interface）",
+        body: [
+          "Java 類別只能單一繼承。如果 Bird 已經繼承 Animal，但它還有 Fly 的能力，要怎麼表達？這時可以使用 Interface。",
+          "介面描述一種能力或規格，例如 Flyable 代表會飛，Movable 代表可移動，Printable 代表可列印。",
+          "類別使用 `implements` 實作介面。不同類別可以共享同一種能力，例如 Bird 和 Airplane 都可以 implements Flyable。",
+          "介面可以讓不同繼承體系的類別用同一種方式被操作，這是 OOP 設計中非常重要的彈性來源。"
+        ],
+        code: {
+          title: "UML 風格圖：不同類別共享能力",
+          value: `<<interface>> Flyable
++ fly()
+        ▲
+        │ implements
+  ┌─────┴─────┐
+ Bird      Airplane`
+        },
+        codes: [
+          { title: "範例 1：定義 Flyable 介面", value: `interface Flyable {\n    void fly();\n}\n\n// 解說：\n// 介面描述「會飛」這種能力。` },
+          { title: "範例 2：Bird implements Flyable", value: `class Bird implements Flyable {\n    @Override\n    public void fly() {\n        System.out.println(\"鳥在飛\");\n    }\n}\n\nnew Bird().fly();\n\n// 執行結果：\n// 鳥在飛` },
+          { title: "範例 3：Airplane implements Flyable", value: `class Airplane implements Flyable {\n    @Override\n    public void fly() {\n        System.out.println(\"飛機起飛\");\n    }\n}\n\nnew Airplane().fly();\n\n// 執行結果：\n// 飛機起飛` },
+          { title: "範例 4：同一介面操作不同物件", value: `Flyable f1 = new Bird();\nFlyable f2 = new Airplane();\n\nf1.fly();\nf2.fly();\n\n// 執行結果：\n// 鳥在飛\n// 飛機起飛` },
+          { title: "範例 5：多個介面", value: `interface Walkable {\n    void walk();\n}\n\nclass Robot implements Flyable, Walkable {\n    public void fly() {\n        System.out.println(\"機器人飛行\");\n    }\n\n    public void walk() {\n        System.out.println(\"機器人走路\");\n    }\n}` },
+          { title: "範例 6：Movable 介面", value: `interface Movable {\n    void move();\n}\n\nclass Car implements Movable {\n    public void move() {\n        System.out.println(\"汽車移動\");\n    }\n}` },
+          { title: "範例 7：Printable 介面", value: `interface Printable {\n    void print();\n}\n\nclass Report implements Printable {\n    public void print() {\n        System.out.println(\"列印報表\");\n    }\n}` },
+          { title: "範例 8：default 方法", value: `interface Flyable {\n    void fly();\n\n    default void land() {\n        System.out.println(\"降落\");\n    }\n}\n\nclass Bird implements Flyable {\n    public void fly() {\n        System.out.println(\"鳥在飛\");\n    }\n}\n\nBird bird = new Bird();\nbird.land();\n\n// 執行結果：\n// 降落` },
+          { title: "範例 9：static 方法", value: `interface MathHelper {\n    static int square(int n) {\n        return n * n;\n    }\n}\n\nSystem.out.println(MathHelper.square(5));\n\n// 執行結果：\n// 25` },
+          { title: "範例 10：介面中的常數", value: `interface Config {\n    int MAX_USERS = 100;\n}\n\nSystem.out.println(Config.MAX_USERS);\n\n// 執行結果：\n// 100\n\n// 解說：\n// 介面欄位預設是 public static final。` },
+          { title: "範例 11：Abstract Class vs Interface", value: `項目               Abstract Class          Interface\n可否建立物件        不可                    不可\n一般方法            可以                    default / static 可以\n成員變數            可以有物件欄位          通常是常數\n多重繼承            類別只能 extends 一個   可 implements 多個介面\n適合用途            共同父類別              能力或規格` },
+          { title: "範例 12：介面作為方法參數", value: `static void startFlying(Flyable target) {\n    target.fly();\n}\n\nstartFlying(new Bird());\nstartFlying(new Airplane());\n\n// 執行結果：\n// 鳥在飛\n// 飛機起飛` },
+          { title: "範例 13：Animal + Flyable", value: `abstract class Animal {\n    abstract void eat();\n}\n\nclass Bird extends Animal implements Flyable {\n    void eat() {\n        System.out.println(\"鳥吃東西\");\n    }\n\n    public void fly() {\n        System.out.println(\"鳥飛翔\");\n    }\n}` }
+        ]
+      },
+      {
+        sectionId: "12.3",
+        title: "介面的繼承",
+        body: [
+          "介面也可以繼承介面，而且介面可以一次繼承多個介面。這和類別只能單一繼承不同。",
+          "例如 Bird 介面可以同時 extends Animal、Flyable，代表實作 Bird 的類別必須符合這些介面的規格。",
+          "介面繼承常用來組合多種能力，讓程式可以用更抽象的方式描述物件。",
+          "類別繼承通常表示 is-a；介面繼承更像能力規格的組合。"
+        ],
+        code: {
+          title: "圖解：多重介面繼承",
+          value: `Animal      Flyable
+   │          │
+   └────┬─────┘
+        ↓
+      Bird
+        ↓ implements
+    Sparrow`
+        },
+        codes: [
+          { title: "範例 1：Animal 介面", value: `interface Animal {\n    void eat();\n}` },
+          { title: "範例 2：Flyable 介面", value: `interface Flyable {\n    void fly();\n}` },
+          { title: "範例 3：Bird 介面繼承多個介面", value: `interface Bird extends Animal, Flyable {\n    void buildNest();\n}` },
+          { title: "範例 4：實作 Bird 介面", value: `class Sparrow implements Bird {\n    public void eat() {\n        System.out.println(\"麻雀吃米\");\n    }\n\n    public void fly() {\n        System.out.println(\"麻雀飛行\");\n    }\n\n    public void buildNest() {\n        System.out.println(\"麻雀築巢\");\n    }\n}` },
+          { title: "範例 5：使用介面多型", value: `Bird bird = new Sparrow();\nbird.eat();\nbird.fly();\nbird.buildNest();\n\n// 執行結果：\n// 麻雀吃米\n// 麻雀飛行\n// 麻雀築巢` },
+          { title: "範例 6：Vehicle / Movable / CarInterface", value: `interface Vehicle {\n    void start();\n}\n\ninterface Movable {\n    void move();\n}\n\ninterface CarInterface extends Vehicle, Movable {\n    void openTrunk();\n}` },
+          { title: "範例 7：實作 CarInterface", value: `class Sedan implements CarInterface {\n    public void start() {\n        System.out.println(\"啟動汽車\");\n    }\n\n    public void move() {\n        System.out.println(\"汽車前進\");\n    }\n\n    public void openTrunk() {\n        System.out.println(\"打開後車廂\");\n    }\n}` },
+          { title: "範例 8：介面繼承 vs 類別繼承", value: `類別繼承：\nclass Dog extends Animal\n- 只能直接繼承一個類別\n- 常表示 Dog 是一種 Animal\n\n介面繼承：\ninterface Bird extends Animal, Flyable\n- 可繼承多個介面\n- 常表示多種能力或規格的組合` },
+          { title: "範例 9：方法接收父介面", value: `static void moveSomething(Movable movable) {\n    movable.move();\n}\n\nmoveSomething(new Sedan());\n\n// 執行結果：\n// 汽車前進` }
+        ]
+      },
+      {
+        sectionId: "12.4",
+        title: "內部類別（Inner Class）",
+        body: [
+          "有些類別只屬於另一個類別，例如 Computer 裡的 CPU、Car 裡的 Engine。這些類別若只在外部類別內有意義，就可以設計成內部類別。",
+          "內部類別（Inner Class）定義在另一個類別裡面。它能讓關係密切的類別放在一起，提升程式組織性。",
+          "常見內部類別包含成員內部類別、區域內部類別、匿名內部類別。匿名內部類別很常用在 Listener 或 Runnable 這類一次性實作。",
+          "初學時不用背很多語法細節，先理解它的用途：把只為某個外部類別服務的小類別收在一起。"
+        ],
+        code: {
+          title: "圖解：Outer Class 與 Inner Class",
+          value: `Outer Class: Car
+  ↓ contains
+Inner Class: Engine
+
+Car.Engine engine`
+        },
+        codes: [
+          { title: "範例 1：Car + Engine", value: `class Car {\n    class Engine {\n        void start() {\n            System.out.println(\"引擎啟動\");\n        }\n    }\n}` },
+          { title: "範例 2：建立成員內部類別物件", value: `Car car = new Car();\nCar.Engine engine = car.new Engine();\nengine.start();\n\n// 執行結果：\n// 引擎啟動` },
+          { title: "範例 3：Computer + CPU", value: `class Computer {\n    class CPU {\n        void calculate() {\n            System.out.println(\"CPU 計算中\");\n        }\n    }\n}\n\nComputer computer = new Computer();\nComputer.CPU cpu = computer.new CPU();\ncpu.calculate();\n\n// 執行結果：\n// CPU 計算中` },
+          { title: "範例 4：內部類別使用外部欄位", value: `class Car {\n    String model = \"Prius\";\n\n    class Engine {\n        void showCar() {\n            System.out.println(model + \" 的引擎\");\n        }\n    }\n}` },
+          { title: "範例 5：School + Student", value: `class School {\n    String schoolName = \"Java School\";\n\n    class Student {\n        void show() {\n            System.out.println(\"學生屬於 \" + schoolName);\n        }\n    }\n}` },
+          { title: "範例 6：區域內部類別", value: `class Printer {\n    void print() {\n        class Message {\n            void show() {\n                System.out.println(\"列印訊息\");\n            }\n        }\n\n        Message msg = new Message();\n        msg.show();\n    }\n}\n\nnew Printer().print();\n\n// 執行結果：\n// 列印訊息` },
+          { title: "範例 7：匿名內部類別 Runnable", value: `Runnable task = new Runnable() {\n    @Override\n    public void run() {\n        System.out.println(\"任務執行\");\n    }\n};\n\ntask.run();\n\n// 執行結果：\n// 任務執行` },
+          { title: "範例 8：匿名內部類別實作介面", value: `interface ClickListener {\n    void onClick();\n}\n\nClickListener listener = new ClickListener() {\n    public void onClick() {\n        System.out.println(\"按鈕被點擊\");\n    }\n};\n\nlistener.onClick();\n\n// 執行結果：\n// 按鈕被點擊` },
+          { title: "範例 9：static nested class", value: `class Outer {\n    static class Helper {\n        void help() {\n            System.out.println(\"協助處理\");\n        }\n    }\n}\n\nOuter.Helper helper = new Outer.Helper();\nhelper.help();\n\n// 執行結果：\n// 協助處理` },
+          { title: "範例 10：Inner Class 使用時機", value: `適合：\n- Engine 只服務 Car\n- CPU 只服務 Computer\n- Listener 只在某個事件中使用一次\n\n不適合：\n- 類別會被很多地方獨立使用\n- 內部類別變得太大太複雜` },
+          { title: "範例 11：Car.Engine UML 風格關係", value: `Car\n- model\n+ start()\n  └─ Engine\n     + start()\n\n解說：\nEngine 被收在 Car 裡，表示它和 Car 的關係非常密切。` }
+        ]
+      },
+      {
+        sectionId: "12.5",
+        title: "綜合演練",
+        body: [
+          "本節把抽象類別、介面、內部類別放進兩個常見設計情境：Shape 繪圖與 Button 監聽器。",
+          "重點不是把語法背起來，而是看懂它們分別解決什麼設計問題：抽象類別建立共同骨架，介面擔任溝通契約，內部類別保存與外部類別緊密相關的實作。"
+        ],
+        code: {
+          title: "題目 1：撰寫通用於多種類別的程式",
+          value: `問題說明：
+設計 Shape 抽象類別，讓 Circle、Rectangle、Triangle 都能提供 draw()。
+
+UML 概念圖：
+<<abstract>> Shape
++ abstract draw()
+        ▲
+        │
+ ┌──────┼────────┐
+ Circle Rectangle Triangle
+
+解題思路：
+Shape 定義共通操作 draw()。
+每種圖形自己決定如何畫。
+主程式使用 Shape[] 統一處理不同物件。
+
+Hint：
+把 draw() 設計成抽象方法，子類別使用 @Override。
+
+Solution：
+abstract class Shape {
+    abstract void draw();
+}
+
+class Circle extends Shape {
+    void draw() {
+        System.out.println("畫圓形");
+    }
+}
+
+class Rectangle extends Shape {
+    void draw() {
+        System.out.println("畫矩形");
+    }
+}
+
+class Triangle extends Shape {
+    void draw() {
+        System.out.println("畫三角形");
+    }
+}
+
+Shape[] shapes = {
+    new Circle(),
+    new Rectangle(),
+    new Triangle()
+};
+
+for (Shape shape : shapes) {
+    shape.draw();
+}
+
+執行結果：
+畫圓形
+畫矩形
+畫三角形
+
+Explanation：
+主程式不需要知道每個圖形的細節，只要知道它們都是 Shape，而且都有 draw()。這就是抽象類別與多型的力量。`
+        },
+        codes: [
+          {
+            title: "題目 2：擔任物件之間的溝通橋樑",
+            value: `問題說明：
+使用 Interface 與匿名內部類別，讓 Button 按下後通知 ClickListener。
+
+UML 概念圖：
+Button
+- ClickListener listener
++ setClickListener(listener)
++ click()
+
+<<interface>> ClickListener
++ onClick()
+
+Button ──通知──> ClickListener
+
+解題思路：
+ClickListener 是溝通契約。
+Button 不知道按下後要做什麼，只負責通知 listener。
+呼叫端用匿名內部類別提供按下後的行為。
+
+Hint：
+匿名內部類別語法是 new InterfaceName(){ ... }。
+
+Solution：
+interface ClickListener {
+    void onClick();
+}
+
+class Button {
+    private ClickListener listener;
+
+    void setClickListener(ClickListener listener) {
+        this.listener = listener;
+    }
+
+    void click() {
+        if (listener != null) {
+            listener.onClick();
+        }
+    }
+}
+
+Button button = new Button();
+
+button.setClickListener(new ClickListener() {
+    public void onClick() {
+        System.out.println("按鈕被點擊，開始儲存資料");
+    }
+});
+
+button.click();
+
+執行結果：
+按鈕被點擊，開始儲存資料
+
+Explanation：
+介面讓 Button 和外部行為解耦。Button 只認得 ClickListener，不需要知道真正執行的是儲存、登入還是送出表單。匿名內部類別適合這種一次性實作。`
+          }
+        ]
+      }
+    ],
+    activities: [
+      createActivity({
+        id: "ch12-exercise-shape-abstract",
+        sectionId: "12.1",
+        type: "exercise",
+        title: "12.1 練習：Shape 抽象類別",
+        question: "建立 `Shape` 抽象類別，宣告 `area()` 抽象方法，再建立 `Circle` 實作它。",
+        hint: "Shape 使用 `abstract class`，area 使用 `abstract double area();`。",
+        solution: `abstract class Shape {
+    abstract double area();
+}
+
+class Circle extends Shape {
+    double radius;
+
+    Circle(double radius) {
+        this.radius = radius;
+    }
+
+    double area() {
+        return 3.14 * radius * radius;
+    }
+}`,
+        explanation: "Shape 定義所有圖形都該有 area()，Circle 負責提供自己的計算方式。"
+      }),
+      createActivity({
+        id: "ch12-exercise-employee-abstract",
+        sectionId: "12.1",
+        type: "exercise",
+        title: "12.1 練習：Employee 抽象類別",
+        question: "建立 `Employee` 抽象類別，宣告 `getSalary()`，再建立 `Engineer` 實作。",
+        hint: "薪水計算可能因職位不同，所以適合做成抽象方法。",
+        solution: `abstract class Employee {
+    abstract int getSalary();
+}
+
+class Engineer extends Employee {
+    int getSalary() {
+        return 60000;
+    }
+}`,
+        explanation: "抽象類別可以規範每種員工都要能回傳薪水，但各職位自行決定計算方式。"
+      }),
+      createActivity({
+        id: "ch12-thought-abstract-new",
+        sectionId: "12.1",
+        type: "thought",
+        title: "12.1 思考題：為什麼抽象類別不能 new？",
+        question: "請用 Animal 的 speak() 說明為什麼抽象類別不能直接建立物件。",
+        hint: "如果 speak() 沒有內容，直接 new Animal 後呼叫 speak() 會發生什麼問題？",
+        solution: "抽象類別可能包含尚未實作的抽象方法，例如 Animal 的 speak() 沒有具體聲音，因此不能直接建立物件。",
+        explanation: "抽象類別是半成品藍圖，必須由具體子類別完成缺少的行為。"
+      }),
+      createActivity({
+        id: "ch12-exercise-flyable",
+        sectionId: "12.2",
+        type: "exercise",
+        title: "12.2 練習：Flyable",
+        question: "建立 `Flyable` 介面，讓 `Bird` 與 `Airplane` 都實作 `fly()`。",
+        hint: "類別使用 `implements Flyable`。",
+        solution: `interface Flyable {
+    void fly();
+}
+
+class Bird implements Flyable {
+    public void fly() {
+        System.out.println("鳥在飛");
+    }
+}
+
+class Airplane implements Flyable {
+    public void fly() {
+        System.out.println("飛機起飛");
+    }
+}`,
+        explanation: "Bird 和 Airplane 不是同一種父類別，但都可以共享 Flyable 能力規格。"
+      }),
+      createActivity({
+        id: "ch12-exercise-movable-printable",
+        sectionId: "12.2",
+        type: "exercise",
+        title: "12.2 練習：Movable 與 Printable",
+        question: "建立 `Movable`、`Printable` 介面，讓一個類別同時實作兩種能力。",
+        hint: "多個介面用逗號分隔。",
+        solution: `interface Movable {
+    void move();
+}
+
+interface Printable {
+    void print();
+}
+
+class ReportRobot implements Movable, Printable {
+    public void move() {
+        System.out.println("移動");
+    }
+
+    public void print() {
+        System.out.println("列印報表");
+    }
+}`,
+        explanation: "介面讓一個類別能組合多種能力，彌補類別單一繼承限制。"
+      }),
+      createActivity({
+        id: "ch12-thought-abstract-interface",
+        sectionId: "12.2",
+        type: "thought",
+        title: "12.2 思考題：抽象類別和介面怎麼選？",
+        question: "Animal 和 Flyable 哪個比較適合抽象類別？哪個比較適合介面？",
+        hint: "Animal 像共同父類別；Flyable 像一種能力。",
+        solution: "Animal 較適合抽象類別，因為 Dog、Cat、Bird 都是一種 Animal。Flyable 較適合介面，因為不同類別都可能有會飛的能力。",
+        explanation: "抽象類別偏向 is-a 的共同骨架；介面偏向 can-do 的能力規格。"
+      }),
+      createActivity({
+        id: "ch12-exercise-interface-inheritance",
+        sectionId: "12.3",
+        type: "exercise",
+        title: "12.3 練習：介面繼承",
+        question: "建立 `Vehicle`、`Movable`、`CarInterface`，讓 `CarInterface` 同時繼承前兩者。",
+        hint: "介面繼承介面使用 `extends`，多個介面用逗號分隔。",
+        solution: `interface Vehicle {
+    void start();
+}
+
+interface Movable {
+    void move();
+}
+
+interface CarInterface extends Vehicle, Movable {
+    void openTrunk();
+}`,
+        explanation: "介面可以多重繼承，用來組合多個規格。"
+      }),
+      createActivity({
+        id: "ch12-homework-car-interface",
+        sectionId: "12.3",
+        type: "homework",
+        title: "12.3 作業：實作 CarInterface",
+        question: "建立 `Sedan` 類別實作 `CarInterface`，完成 start、move、openTrunk。",
+        hint: "實作介面時要完成所有繼承來的方法。",
+        solution: `class Sedan implements CarInterface {
+    public void start() {
+        System.out.println("啟動汽車");
+    }
+
+    public void move() {
+        System.out.println("汽車前進");
+    }
+
+    public void openTrunk() {
+        System.out.println("打開後車廂");
+    }
+}`,
+        explanation: "CarInterface 繼承 Vehicle 和 Movable，所以 Sedan 必須完成三個方法。"
+      }),
+      createActivity({
+        id: "ch12-exercise-inner-computer",
+        sectionId: "12.4",
+        type: "exercise",
+        title: "12.4 練習：Computer + CPU",
+        question: "建立 `Computer` 外部類別和 `CPU` 內部類別，讓 CPU 印出計算中。",
+        hint: "建立物件時使用 `Computer.CPU cpu = computer.new CPU();`。",
+        solution: `class Computer {
+    class CPU {
+        void calculate() {
+            System.out.println("CPU 計算中");
+        }
+    }
+}`,
+        explanation: "CPU 在這個例子中只屬於 Computer，因此可以放成內部類別。"
+      }),
+      createActivity({
+        id: "ch12-exercise-car-engine",
+        sectionId: "12.4",
+        type: "exercise",
+        title: "12.4 練習：Car + Engine",
+        question: "建立 `Car` 與內部類別 `Engine`，讓 Engine 可以啟動。",
+        hint: "Engine 放在 Car 的大括號裡。",
+        solution: `class Car {
+    class Engine {
+        void start() {
+            System.out.println("引擎啟動");
+        }
+    }
+}`,
+        explanation: "Inner Class 適合描述和外部類別關係緊密的小型類別。"
+      }),
+      createActivity({
+        id: "ch12-thought-anonymous-inner",
+        sectionId: "12.4",
+        type: "thought",
+        title: "12.4 思考題：匿名內部類別適合什麼情境？",
+        question: "為什麼 ClickListener 或 Runnable 常使用匿名內部類別？",
+        hint: "思考它們是不是常常只用一次。",
+        solution: "因為 Listener 或 Runnable 常是一次性行為，使用匿名內部類別可以直接在需要的地方提供實作，不必另外命名一個類別。",
+        explanation: "匿名內部類別適合短小、一次性、和當下情境高度相關的實作。"
+      }),
+      createActivity({
+        id: "ch12-project-shape",
+        sectionId: "12.5",
+        type: "exercise",
+        title: "12.5 綜合練習：Shape 通用繪圖",
+        question: "使用抽象類別 Shape，讓 Circle、Rectangle、Triangle 都能 draw()，並用陣列統一呼叫。",
+        hint: "使用 `Shape[]` 保存不同子類別物件。",
+        solution: `abstract class Shape {
+    abstract void draw();
+}
+
+class Circle extends Shape {
+    void draw() {
+        System.out.println("畫圓形");
+    }
+}
+
+class Rectangle extends Shape {
+    void draw() {
+        System.out.println("畫矩形");
+    }
+}`,
+        explanation: "抽象類別定義共通操作，多型讓主程式統一處理不同圖形。"
+      }),
+      createActivity({
+        id: "ch12-project-button-listener",
+        sectionId: "12.5",
+        type: "homework",
+        title: "12.5 作業：Button + ClickListener",
+        question: "建立 Button，透過 ClickListener 介面與匿名內部類別處理點擊行為。",
+        hint: "Button 保存一個 ClickListener 欄位，click() 時呼叫 onClick()。",
+        solution: `interface ClickListener {
+    void onClick();
+}
+
+class Button {
+    private ClickListener listener;
+
+    void setClickListener(ClickListener listener) {
+        this.listener = listener;
+    }
+
+    void click() {
+        if (listener != null) {
+            listener.onClick();
+        }
+    }
+}`,
+        explanation: "Interface 擔任溝通橋樑，匿名內部類別提供一次性的按鈕行為。"
+      })
+    ],
+    quiz: [
+      { question: "抽象類別使用哪個關鍵字宣告？", options: ["abstract", "interface", "implements", "inner"], answer: 0, explanation: "`abstract class` 用來宣告抽象類別。" },
+      { question: "抽象方法的特色是？", options: ["沒有方法內容", "一定有完整大括號內容", "只能 static", "不能被子類別實作"], answer: 0, explanation: "抽象方法只有規格，沒有實作內容。" },
+      { question: "抽象類別可以直接 new 嗎？", options: ["不可以", "可以", "只要加 final 就可以", "只在 main 可以"], answer: 0, explanation: "抽象類別可能有未完成方法，因此不能直接建立物件。" },
+      { question: "抽象類別是否可以有一般方法？", options: ["可以", "不可以", "只能有欄位", "只能有註解"], answer: 0, explanation: "抽象類別可以有一般方法與抽象方法。" },
+      { question: "Dog extends Animal 後必須實作 Animal 的抽象方法嗎？", options: ["是，除非 Dog 也宣告成 abstract", "不需要", "只能刪掉方法", "只能改成 interface"], answer: 0, explanation: "具體子類別必須完成抽象方法。" },
+      { question: "介面通常用來描述什麼？", options: ["能力或規格", "只能描述建構子", "只能描述記憶體", "只能描述 CSS"], answer: 0, explanation: "介面常描述某種能力，例如 Flyable。" },
+      { question: "類別實作介面使用哪個關鍵字？", options: ["implements", "extendsOnly", "abstracts", "inner"], answer: 0, explanation: "類別使用 implements 實作介面。" },
+      { question: "Bird 和 Airplane 都會飛，適合共用哪種設計？", options: ["Flyable 介面", "同一個 Dog 父類別", "只用 private", "只用 String"], answer: 0, explanation: "不同類別可以共享同一能力介面。" },
+      { question: "一個類別可以 implements 多個介面嗎？", options: ["可以", "不可以", "只能在抽象類別中", "只能在 Object 中"], answer: 0, explanation: "Java 類別可實作多個介面。" },
+      { question: "介面中的 default 方法代表？", options: ["介面提供預設實作", "一定不能被呼叫", "只能是建構子", "只能回傳 int"], answer: 0, explanation: "default 方法讓介面能提供預設行為。" },
+      { question: "介面可以繼承多個介面嗎？", options: ["可以", "不可以", "只能繼承 Object", "只能繼承 class"], answer: 0, explanation: "介面可以 extends 多個介面。" },
+      { question: "介面繼承和類別繼承的差異之一是？", options: ["介面可多重繼承，類別只能單一繼承", "類別可以繼承多個 class", "介面不能有方法", "完全沒有差異"], answer: 0, explanation: "Java 類別單一繼承，但介面可多重繼承。" },
+      { question: "CarInterface extends Vehicle, Movable 代表？", options: ["CarInterface 組合兩個介面規格", "CarInterface 是普通類別", "語法一定錯", "只能建立物件"], answer: 0, explanation: "介面可以組合多個父介面。" },
+      { question: "Inner Class 是什麼？", options: ["定義在另一個類別內的類別", "只能在 HTML 裡的 class", "不能有方法", "JavaScript 函式"], answer: 0, explanation: "內部類別定義於外部類別之中。" },
+      { question: "Car.Engine 常表示什麼關係？", options: ["Engine 與 Car 關係緊密", "Engine 一定是 Car 的父類別", "Car 不能建立 Engine", "Engine 是 interface"], answer: 0, explanation: "內部類別適合描述只屬於外部類別的概念。" },
+      { question: "建立成員內部類別物件常見語法是？", options: ["outer.new Inner()", "new Outer.Inner.StaticOnly()", "implements Inner()", "abstract new"], answer: 0, explanation: "非 static 成員內部類別需要透過外部物件建立。" },
+      { question: "匿名內部類別適合哪種情境？", options: ["一次性介面實作", "大型共用類別", "資料庫本體", "完全不能執行的程式"], answer: 0, explanation: "匿名內部類別常用於短小、一次性的行為。" },
+      { question: "Button + ClickListener 中，ClickListener 的角色是？", options: ["溝通契約", "資料庫", "抽象欄位", "數學運算子"], answer: 0, explanation: "Button 透過 Listener 通知外部行為。" },
+      { question: "Shape、Circle、Rectangle 的範例主要展示？", options: ["抽象類別與多型", "Regex", "Scanner", "檔案輸入"], answer: 0, explanation: "Shape 定義共通 draw()，子類別提供實作。" },
+      { question: "本章較不建議一開始深入哪個方向？", options: ["過度抽象的框架設計", "Animal 案例", "Button Listener", "Shape 案例"], answer: 0, explanation: "初學階段先用生活化案例理解概念即可。" }
     ]
   };
 }
