@@ -4171,6 +4171,7 @@ nums[j + 1] = temp;`,
 
   chapters.push(createChapter08());
   enhanceChapter08MethodPath();
+  chapters.push(createChapter09());
 }
 
 function updateSection(chapterId, sectionId, data) {
@@ -5514,6 +5515,782 @@ double add(double a, double b) {
   };
 }
 
+function createChapter09() {
+  return {
+    id: 9,
+    code: "CH09",
+    title: "物件的建構",
+    minutes: 135,
+    summary: "學會 Constructor、this、封裝、Getter/Setter 與 static，設計更完整的 Java 類別。",
+    intro: "CH08 讓你會建立類別與物件；CH09 會讓物件建立得更乾淨、資料更安全，並理解哪些資料屬於物件、哪些資料屬於類別本身。",
+    goals: [
+      "了解建構方法 Constructor",
+      "學會使用 this",
+      "了解封裝與資訊隱藏",
+      "學會 private 與 public",
+      "了解 Getter / Setter",
+      "學會 static 成員",
+      "能夠設計較完整的類別"
+    ],
+    sections: [
+      {
+        sectionId: "9.1",
+        title: "建構方法（Constructor）",
+        body: [
+          "在 CH08 中，我們建立 Student 物件後，常常要一行一行設定資料。物件少的時候還好，物件一多就容易漏設定，或讓程式變得很重複。",
+          "建構方法（Constructor）就是在建立物件時自動執行的方法。它常用來準備物件的初始資料，讓 `new Student(\"Jimmy\", 25)` 建立物件時就把姓名與年齡放好。",
+          "Constructor 有三個重要特性：名稱與類別相同、沒有回傳型態、建立物件時會自動執行。注意：沒有回傳型態不等於寫 `void`，寫了 `void Student()` 就變成一般方法，不是 Constructor。",
+          "`this` 代表目前這個物件。當參數名稱和屬性名稱相同時，例如 `this.name = name;`，左邊的 `this.name` 是物件屬性，右邊的 `name` 是傳進來的參數。"
+        ],
+        code: {
+          title: "問題起點：每次都手動設定很麻煩",
+          value: `Student s1 = new Student();
+s1.name = "Jimmy";
+s1.age = 25;
+
+Student s2 = new Student();
+s2.name = "Amy";
+s2.age = 22;`
+        },
+        codes: [
+          {
+            title: "範例 1：預設建構方法",
+            value: `class Student {
+    Student() {
+        System.out.println("建立學生物件");
+    }
+}
+
+Student s1 = new Student();
+
+// 執行結果：
+// 建立學生物件`
+          },
+          {
+            title: "範例 2：建立物件時自動執行 Constructor",
+            value: `class Book {
+    Book() {
+        System.out.println("一本書被建立了");
+    }
+}
+
+Book b1 = new Book();
+Book b2 = new Book();
+
+// 執行結果：
+// 一本書被建立了
+// 一本書被建立了`
+          },
+          {
+            title: "範例 3：帶參數建構方法",
+            value: `class Student {
+    String name;
+    int age;
+
+    Student(String n, int a) {
+        name = n;
+        age = a;
+    }
+}`
+          },
+          {
+            title: "範例 4：使用帶參數 Constructor 建立物件",
+            value: `Student s1 = new Student("Jimmy", 25);
+
+System.out.println(s1.name);
+System.out.println(s1.age);
+
+// 執行結果：
+// Jimmy
+// 25`
+          },
+          {
+            title: "範例 5：使用 this 初始化資料",
+            value: `class Student {
+    String name;
+    int age;
+
+    Student(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+}`
+          },
+          {
+            title: "範例 6：this 圖解",
+            value: `new Student("Jimmy", 25)
+  ↓
+建立一個 Student 物件
+  ↓
+this 指向這個新物件
+  ↓
+this.name = "Jimmy"
+this.age = 25`
+          },
+          {
+            title: "範例 7：Car 類別 Constructor",
+            value: `class Car {
+    String brand;
+    int year;
+
+    Car(String brand, int year) {
+        this.brand = brand;
+        this.year = year;
+    }
+
+    void showInfo() {
+        System.out.println(brand + " / " + year);
+    }
+}
+
+Car car = new Car("Toyota", 2024);
+car.showInfo();
+
+// 執行結果：
+// Toyota / 2024`
+          },
+          {
+            title: "範例 8：常見錯誤 void Student()",
+            value: `class Student {
+    void Student() {
+        System.out.println("這不是 Constructor");
+    }
+}
+
+Student s1 = new Student();
+
+// 說明：
+// void Student() 是一般方法。
+// 真正的 Constructor 不寫回傳型態，連 void 都不能寫。`
+          }
+        ]
+      },
+      {
+        sectionId: "9.2",
+        title: "封裝與資訊隱藏",
+        body: [
+          "封裝（Encapsulation）是把資料和操作資料的方法放在同一個類別中，並且控制外部程式可以怎麼使用它。",
+          "資訊隱藏（Information Hiding）則是把不該被外部直接修改的資料藏起來。最常見的做法是把屬性設成 `private`，再提供 `public` 的 Getter / Setter。",
+          "這樣做不是為了讓程式變麻煩，而是為了保護資料。例如銀行帳戶餘額不能讓外部任意改成負數，應該透過方法檢查後再修改。",
+          "`private` 表示只有類別內部可以直接使用；`public` 表示外部程式可以呼叫。Getter 負責讀取資料，Setter 負責在合理檢查後修改資料。"
+        ],
+        code: {
+          title: "錯誤設計：公開 balance",
+          value: `class BankAccount {
+    public int balance;
+}
+
+BankAccount account = new BankAccount();
+account.balance = -1000000;
+
+// 問題：
+// 外部程式可以直接把餘額改成不合理的數字。`
+        },
+        codes: [
+          {
+            title: "範例 1：使用 private 隱藏資料",
+            value: `class BankAccount {
+    private int balance;
+}
+
+// 外部不能直接寫：
+// account.balance = 1000;`
+          },
+          {
+            title: "範例 2：Getter 讀取資料",
+            value: `class BankAccount {
+    private int balance = 1000;
+
+    public int getBalance() {
+        return balance;
+    }
+}
+
+BankAccount account = new BankAccount();
+System.out.println(account.getBalance());
+
+// 執行結果：
+// 1000`
+          },
+          {
+            title: "範例 3：Setter 檢查後修改資料",
+            value: `class BankAccount {
+    private int balance;
+
+    public void setBalance(int money) {
+        if (money >= 0) {
+            balance = money;
+        }
+    }
+
+    public int getBalance() {
+        return balance;
+    }
+}`
+          },
+          {
+            title: "範例 4：Setter 擋下不合理資料",
+            value: `BankAccount account = new BankAccount();
+account.setBalance(-500);
+
+System.out.println(account.getBalance());
+
+// 執行結果：
+// 0
+// 因為 -500 沒有通過檢查。`
+          },
+          {
+            title: "範例 5：完整 Student 封裝",
+            value: `class Student {
+    private String name;
+    private int score;
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setScore(int score) {
+        if (score >= 0 && score <= 100) {
+            this.score = score;
+        }
+    }
+
+    public int getScore() {
+        return score;
+    }
+}`
+          },
+          {
+            title: "範例 6：外部透過 Setter / Getter 操作",
+            value: `Student s = new Student();
+s.setName("Amy");
+s.setScore(95);
+
+System.out.println(s.getName());
+System.out.println(s.getScore());
+
+// 執行結果：
+// Amy
+// 95`
+          },
+          {
+            title: "範例 7：封裝圖解",
+            value: `外部程式
+  ↓ 呼叫 public setter
+setScore(95)
+  ↓ 檢查資料
+private int score
+  ↓ 呼叫 public getter
+getScore() 回傳資料`
+          },
+          {
+            title: "範例 8：Product 價格保護",
+            value: `class Product {
+    private String name;
+    private int price;
+
+    Product(String name, int price) {
+        this.name = name;
+        setPrice(price);
+    }
+
+    public void setPrice(int price) {
+        if (price >= 0) {
+            this.price = price;
+        }
+    }
+
+    public int getPrice() {
+        return price;
+    }
+}
+
+Product p = new Product("Keyboard", -300);
+System.out.println(p.getPrice());
+
+// 執行結果：
+// 0`
+          }
+        ]
+      },
+      {
+        sectionId: "9.3",
+        title: "static 共享成員變數",
+        body: [
+          "一般成員屬於物件，每個物件各自擁有一份。例如 `s1.name` 和 `s2.name` 可以不同，因為它們是不同物件的資料。",
+          "`static` 成員屬於類別本身，不屬於某一個物件。所有物件會共享同一份 static 變數，所以它很適合拿來記錄「整個類別共同的資料」。",
+          "例如想知道目前建立了幾位學生，可以使用 `static int count`。每次 Constructor 執行時讓 `count++`，最後透過 `Student.count` 讀取。",
+          "static 方法也屬於類別，可以用 `ClassName.methodName()` 呼叫。像 `Math.PI`、`Math.max()` 就是常見的類別層級用法。"
+        ],
+        code: {
+          title: "一般成員 vs static 成員圖解",
+          value: `一般成員：
+s1.name = "Jimmy"
+s2.name = "Amy"
+每個物件各自擁有
+
+static 成員：
+Student.count = 2
+所有 Student 物件共享同一份`
+        },
+        codes: [
+          {
+            title: "範例 1：宣告 static 變數",
+            value: `class Student {
+    static int count = 0;
+}`
+          },
+          {
+            title: "範例 2：Constructor 中累加 count",
+            value: `class Student {
+    static int count = 0;
+
+    Student() {
+        count++;
+    }
+}`
+          },
+          {
+            title: "範例 3：建立三個物件後輸出 Student.count",
+            value: `Student s1 = new Student();
+Student s2 = new Student();
+Student s3 = new Student();
+
+System.out.println(Student.count);
+
+// 執行結果：
+// 3`
+          },
+          {
+            title: "範例 4：static 方法",
+            value: `class Student {
+    static int count = 0;
+
+    Student() {
+        count++;
+    }
+
+    static void showCount() {
+        System.out.println("學生數量：" + count);
+    }
+}
+
+new Student();
+new Student();
+Student.showCount();
+
+// 執行結果：
+// 學生數量：2`
+          },
+          {
+            title: "範例 5：Math 類別概念",
+            value: `System.out.println(Math.PI);
+System.out.println(Math.max(10, 20));
+
+// 執行結果：
+// 3.141592653589793
+// 20`
+          },
+          {
+            title: "範例 6：工具類別 Utility",
+            value: `class Utility {
+    static int max(int a, int b) {
+        return a > b ? a : b;
+    }
+}
+
+System.out.println(Utility.max(8, 3));
+
+// 執行結果：
+// 8`
+          },
+          {
+            title: "範例 7：一般成員與 static 成員表格",
+            value: `項目             一般成員              static 成員
+所屬對象         物件                  類別
+呼叫方式         object.name           ClassName.name
+資料份數         每個物件一份          類別共享一份
+適合用途         姓名、年齡、分數      count、工具方法、常數`
+          },
+          {
+            title: "範例 8：static 常數",
+            value: `class CircleTool {
+    static final double PI = 3.14159;
+
+    static double area(double radius) {
+        return PI * radius * radius;
+    }
+}
+
+System.out.println(CircleTool.area(2));
+
+// 執行結果：
+// 12.56636`
+          }
+        ]
+      },
+      {
+        sectionId: "9.4",
+        title: "綜合演練",
+        body: [
+          "本節把 Constructor、this、封裝、Getter/Setter、static 與 Overloading 放進實際類別設計中。",
+          "請照著「問題說明 -> 解題思路 -> 流程圖 -> Hint -> Solution -> Explanation -> 延伸挑戰」閱讀，不要只複製答案。真正重要的是你知道每個關鍵字出現的理由。"
+        ],
+        code: {
+          title: "題目 1：提供輔助工具的類別",
+          value: `問題說明：
+建立 Utility 類別，提供求最大值、最小值、平均值的 static 方法。
+
+解題思路：
+工具方法不需要保存物件狀態，因此適合設計成 static。
+呼叫時使用 Utility.max(...)，不需要 new Utility()。
+
+流程圖：
+資料 8, 3, 10
+  ↓
+Utility.max()
+Utility.min()
+Utility.average()
+  ↓
+輸出最大、最小、平均
+
+Hint：
+平均值建議回傳 double，避免整數除法造成小數消失。
+
+Solution：
+class Utility {
+    static int max(int a, int b, int c) {
+        int result = a;
+        if (b > result) result = b;
+        if (c > result) result = c;
+        return result;
+    }
+
+    static int min(int a, int b, int c) {
+        int result = a;
+        if (b < result) result = b;
+        if (c < result) result = c;
+        return result;
+    }
+
+    static double average(int a, int b, int c) {
+        return (a + b + c) / 3.0;
+    }
+}
+
+System.out.println(Utility.max(8, 3, 10));
+System.out.println(Utility.min(8, 3, 10));
+System.out.println(Utility.average(8, 3, 10));
+
+執行結果：
+10
+3
+7.0
+
+Explanation：
+Utility 不需要建立物件，因為它只是提供計算功能。static 方法讓這種工具類別更直覺。
+
+延伸挑戰：
+改成接收 int[]，計算任意數量的最大值、最小值與平均值。`
+        },
+        codes: [
+          {
+            title: "題目 2：善用多重定義",
+            value: `問題說明：
+建立 Calculator 類別，提供三種 add 方法：
+add(int, int)
+add(int, int, int)
+add(double, double)
+
+解題思路：
+三個方法做的事情都叫「加法」，但參數數量或型態不同。
+這正是 Overloading 的適合場景。
+
+流程圖：
+add(1, 2)       -> 使用 int, int 版本
+add(1, 2, 3)    -> 使用 int, int, int 版本
+add(1.5, 2.5)   -> 使用 double, double 版本
+
+Hint：
+合法 Overloading 看的是參數列表，不是只看回傳型態。
+
+Solution：
+class Calculator {
+    int add(int a, int b) {
+        return a + b;
+    }
+
+    int add(int a, int b, int c) {
+        return a + b + c;
+    }
+
+    double add(double a, double b) {
+        return a + b;
+    }
+}
+
+Calculator calc = new Calculator();
+System.out.println(calc.add(1, 2));
+System.out.println(calc.add(1, 2, 3));
+System.out.println(calc.add(1.5, 2.5));
+
+執行結果：
+3
+6
+4.0
+
+Explanation：
+使用者只要記得 add 這個名稱，Java 會依照參數自動選擇合適的方法版本。
+
+延伸挑戰：
+加入 add(int[] nums)，計算陣列所有數字總和。`
+          }
+        ]
+      }
+    ],
+    activities: [
+      createActivity({
+        id: "ch09-exercise-book-constructor",
+        sectionId: "9.1",
+        type: "exercise",
+        title: "9.1 練習：建立 Book 類別與 Constructor",
+        question: "建立 `Book` 類別，包含 `title`、`price`，並使用 Constructor 初始化資料。",
+        hint: "Constructor 名稱必須和類別相同，而且不要寫 void。",
+        solution: `class Book {
+    String title;
+    int price;
+
+    Book(String title, int price) {
+        this.title = title;
+        this.price = price;
+    }
+}`,
+        explanation: "`this.title` 是物件的屬性，右邊的 `title` 是 Constructor 參數。"
+      }),
+      createActivity({
+        id: "ch09-exercise-car-this",
+        sectionId: "9.1",
+        type: "exercise",
+        title: "9.1 練習：建立 Car 類別並使用 this",
+        question: "建立 `Car` 類別，包含 `brand`、`year`，使用 `this` 完成初始化。",
+        hint: "參數名稱可以和屬性名稱相同，使用 `this` 區分。",
+        solution: `class Car {
+    String brand;
+    int year;
+
+    Car(String brand, int year) {
+        this.brand = brand;
+        this.year = year;
+    }
+}`,
+        explanation: "`this` 指向目前正在建立的 Car 物件，所以能明確設定該物件的資料。"
+      }),
+      createActivity({
+        id: "ch09-thought-constructor-void",
+        sectionId: "9.1",
+        type: "thought",
+        title: "9.1 思考題：為什麼 void Student() 不是 Constructor？",
+        question: "請說明 `Student()` 和 `void Student()` 的差異。",
+        hint: "觀察 Constructor 的三個特性：名稱相同、沒有回傳型態、自動執行。",
+        solution: "`Student()` 是 Constructor；`void Student()` 因為有回傳型態 void，所以它只是一般方法。",
+        explanation: "Constructor 的語法規則很嚴格。只要寫了回傳型態，即使是 void，也不再是 Constructor。"
+      }),
+      createActivity({
+        id: "ch09-exercise-person-encapsulation",
+        sectionId: "9.2",
+        type: "exercise",
+        title: "9.2 練習：建立 Person 類別",
+        question: "建立 `Person` 類別，將 `name`、`age` 設為 private，並提供 Getter / Setter。",
+        hint: "Setter 可以檢查 age 是否大於等於 0。",
+        solution: `class Person {
+    private String name;
+    private int age;
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setAge(int age) {
+        if (age >= 0) {
+            this.age = age;
+        }
+    }
+
+    public int getAge() {
+        return age;
+    }
+}`,
+        explanation: "private 保護資料，public 方法提供受控的讀寫入口。"
+      }),
+      createActivity({
+        id: "ch09-exercise-product-encapsulation",
+        sectionId: "9.2",
+        type: "exercise",
+        title: "9.2 練習：建立 Product 類別",
+        question: "建立 `Product` 類別，保護價格不可小於 0。",
+        hint: "在 `setPrice` 中使用 if 判斷。",
+        solution: `class Product {
+    private int price;
+
+    public void setPrice(int price) {
+        if (price >= 0) {
+            this.price = price;
+        }
+    }
+
+    public int getPrice() {
+        return price;
+    }
+}`,
+        explanation: "Setter 的價值在於可以加入檢查，避免外部直接放入不合理資料。"
+      }),
+      createActivity({
+        id: "ch09-homework-student-manager",
+        sectionId: "9.2",
+        type: "homework",
+        title: "9.2 作業：學生資料管理類別",
+        question: "設計 `Student` 類別，包含 private name、score，並確保 score 只能是 0 到 100。",
+        hint: "Constructor 可以呼叫 Setter，讓初始化時也套用檢查規則。",
+        solution: `class Student {
+    private String name;
+    private int score;
+
+    Student(String name, int score) {
+        this.name = name;
+        setScore(score);
+    }
+
+    public void setScore(int score) {
+        if (score >= 0 && score <= 100) {
+            this.score = score;
+        }
+    }
+
+    public int getScore() {
+        return score;
+    }
+}`,
+        explanation: "Constructor 負責建立時初始化，Setter 負責保護修改規則。兩者可以一起使用。"
+      }),
+      createActivity({
+        id: "ch09-exercise-static-count",
+        sectionId: "9.3",
+        type: "exercise",
+        title: "9.3 練習：計算建立物件數量",
+        question: "在 `Student` 類別中使用 static count，統計建立了幾個物件。",
+        hint: "在 Constructor 中寫 `count++;`。",
+        solution: `class Student {
+    static int count = 0;
+
+    Student() {
+        count++;
+    }
+}`,
+        explanation: "count 是 static，因此所有 Student 物件共享同一份數字。"
+      }),
+      createActivity({
+        id: "ch09-exercise-utility-static",
+        sectionId: "9.3",
+        type: "exercise",
+        title: "9.3 練習：建立 Utility static 方法",
+        question: "建立 `Utility.square(int n)`，回傳 n 的平方。",
+        hint: "static 方法可以用 `Utility.square(5)` 呼叫。",
+        solution: `class Utility {
+    static int square(int n) {
+        return n * n;
+    }
+}`,
+        explanation: "square 不需要物件狀態，只依賴傳入參數，因此適合設計成 static。"
+      }),
+      createActivity({
+        id: "ch09-thought-static-member",
+        sectionId: "9.3",
+        type: "thought",
+        title: "9.3 思考題：什麼資料適合 static？",
+        question: "姓名適合 static 嗎？建立物件數量適合 static 嗎？請說明理由。",
+        hint: "思考資料是每個物件不同，還是整個類別共享。",
+        solution: "姓名不適合 static，因為每個學生姓名不同。建立物件數量適合 static，因為它是整個 Student 類別共同統計的資料。",
+        explanation: "判斷 static 的重點是資料歸屬。屬於單一物件就用一般成員；屬於整個類別就可以考慮 static。"
+      }),
+      createActivity({
+        id: "ch09-project-utility",
+        sectionId: "9.4",
+        type: "exercise",
+        title: "9.4 綜合練習：Utility 工具類別",
+        question: "完成 Utility 類別，提供 max、min、average 三個 static 方法。",
+        hint: "先固定接收三個 int，平均值回傳 double。",
+        solution: `class Utility {
+    static int max(int a, int b, int c) {
+        int result = a;
+        if (b > result) result = b;
+        if (c > result) result = c;
+        return result;
+    }
+
+    static int min(int a, int b, int c) {
+        int result = a;
+        if (b < result) result = b;
+        if (c < result) result = c;
+        return result;
+    }
+
+    static double average(int a, int b, int c) {
+        return (a + b + c) / 3.0;
+    }
+}`,
+        explanation: "這題練習 static 方法。工具類別常常不需要建立物件，直接用類別名稱呼叫即可。"
+      }),
+      createActivity({
+        id: "ch09-project-calculator-overloading",
+        sectionId: "9.4",
+        type: "homework",
+        title: "9.4 作業：Calculator 多重定義",
+        question: "建立 Calculator 類別，完成三種 add 方法並測試呼叫結果。",
+        hint: "三個 add 的參數列表必須不同。",
+        solution: `class Calculator {
+    int add(int a, int b) {
+        return a + b;
+    }
+
+    int add(int a, int b, int c) {
+        return a + b + c;
+    }
+
+    double add(double a, double b) {
+        return a + b;
+    }
+}`,
+        explanation: "Overloading 讓同一個概念可以使用同一個方法名稱，呼叫時依參數自動分派。"
+      })
+    ],
+    quiz: [
+      { question: "Constructor 的名稱必須和什麼相同？", options: ["類別名稱", "檔案副檔名", "main 方法", "package 名稱"], answer: 0, explanation: "Constructor 名稱必須與類別名稱完全相同。" },
+      { question: "Constructor 是否有回傳型態？", options: ["沒有", "一定是 void", "一定是 int", "一定是 String"], answer: 0, explanation: "Constructor 不寫回傳型態，連 void 都不能寫。" },
+      { question: "什麼時候 Constructor 會自動執行？", options: ["建立物件時", "按下存檔時", "寫註解時", "import 時"], answer: 0, explanation: "使用 new 建立物件時，Constructor 會被呼叫。" },
+      { question: "`this.name = name;` 中的 this.name 代表什麼？", options: ["目前物件的屬性", "固定字串", "class 檔名", "迴圈變數"], answer: 0, explanation: "`this` 指向目前物件，因此 `this.name` 是物件屬性。" },
+      { question: "`void Student(){}` 為什麼不是 Constructor？", options: ["因為寫了回傳型態 void", "因為名字太短", "因為不能有大括號", "因為沒有 static"], answer: 0, explanation: "Constructor 不可寫任何回傳型態。" },
+      { question: "封裝主要想保護什麼？", options: ["物件資料的合理使用", "只能保護註解", "刪除所有方法", "禁止建立物件"], answer: 0, explanation: "封裝讓資料透過受控方法被讀取或修改。" },
+      { question: "`private` 成員可以在哪裡直接存取？", options: ["同一個類別內部", "任何外部程式", "只能在 HTML", "只能在 switch"], answer: 0, explanation: "private 限制成員只能在類別內部直接使用。" },
+      { question: "Getter 通常負責什麼？", options: ["讀取資料", "刪除 class", "建立 package", "一定修改資料"], answer: 0, explanation: "Getter 通常用來回傳私有屬性的值。" },
+      { question: "Setter 的好處是什麼？", options: ["修改前可以檢查資料", "會讓程式不用編譯", "只能輸出文字", "一定讓資料變成 static"], answer: 0, explanation: "Setter 可以加入驗證規則，避免不合理資料進入物件。" },
+      { question: "`public` 方法代表什麼？", options: ["外部程式可以呼叫", "只能類別內部呼叫", "不能被執行", "只用在陣列"], answer: 0, explanation: "public 是公開存取權限。" },
+      { question: "static 成員屬於誰？", options: ["類別本身", "某一個特定物件", "某一行註解", "只能屬於 Scanner"], answer: 0, explanation: "static 成員屬於類別，不屬於單一物件。" },
+      { question: "哪個情境適合 static 變數？", options: ["統計建立物件數量", "每個學生自己的姓名", "每個帳戶自己的餘額", "每本書自己的書名"], answer: 0, explanation: "建立物件數量是整個類別共享的資料，適合 static。" },
+      { question: "呼叫 static 方法常見格式是什麼？", options: ["ClassName.methodName()", "object only without dot", "case.method", "return.method"], answer: 0, explanation: "static 方法常以類別名稱呼叫，例如 `Math.max()`。" },
+      { question: "`Math.PI` 比較像什麼？", options: ["類別層級的常數", "某個 Math 物件的姓名", "Constructor", "Setter"], answer: 0, explanation: "`Math.PI` 是常見的 static 常數概念。" },
+      { question: "本章尚未深入哪個主題？", options: ["繼承與多型", "Constructor", "this", "Getter / Setter"], answer: 0, explanation: "繼承與多型是後續章節內容，本章先專注物件建構與封裝基礎。" }
+    ]
+  };
+}
+
 const app = document.querySelector("#app");
 const mainNav = document.querySelector("[data-main-nav]");
 const siteHeader = document.querySelector("[data-site-header]");
@@ -6213,6 +6990,7 @@ function renderChapter(id, requestedView = null) {
             <span class="chapter-kicker">${chapter.code}</span>
             <h1>${chapter.title}</h1>
             <p>${chapter.intro}</p>
+            ${renderChapterGoals(chapter)}
             <div class="chapter-meta">
               <span class="pill">${chapter.minutes} 分鐘</span>
               <span class="pill ${completed ? "done" : ""}">${completed ? "已完成" : "尚未完成"}</span>
@@ -6227,6 +7005,19 @@ function renderChapter(id, requestedView = null) {
         `}
       </article>
     </div>
+  `;
+}
+
+function renderChapterGoals(chapter) {
+  if (!chapter.goals?.length) return "";
+
+  return `
+    <section class="chapter-goals" aria-label="本章學習目標">
+      <h2>本章學習目標</h2>
+      <ul>
+        ${chapter.goals.map((goal) => `<li>${goal}</li>`).join("")}
+      </ul>
+    </section>
   `;
 }
 
