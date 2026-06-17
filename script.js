@@ -4170,6 +4170,7 @@ nums[j + 1] = temp;`,
   ]);
 
   chapters.push(createChapter08());
+  enhanceChapter08MethodPath();
 }
 
 function updateSection(chapterId, sectionId, data) {
@@ -4185,6 +4186,663 @@ function replaceSectionActivities(chapterId, sectionId, activities) {
     ...chapter.activities.filter((activity) => activity.sectionId !== sectionId),
     ...activities
   ];
+}
+
+function enhanceChapter08MethodPath() {
+  updateSection(8, "8.3", {
+    title: "方法的進階應用",
+    body: [
+      "本節是 8.5 綜合演練的前置準備。學完這一節，你會把方法、方法呼叫、遞迴、匿名陣列串成一條完整路徑。",
+      "先從一般方法開始：方法可以沒有參數、沒有回傳值；也可以接收參數，或把計算結果回傳給呼叫它的地方。",
+      "接著你會看到方法可以呼叫其他方法，甚至可以呼叫自己。方法呼叫自己就稱為遞迴（Recursion）。",
+      "最後補上匿名陣列（Anonymous Array），讓你能在呼叫方法時直接傳入一組臨時資料。"
+    ],
+    code: {
+      title: "學習路徑圖：Method 到 Recursion",
+      value: `方法 Method
+  ↓
+方法呼叫 Method Call
+  ↓
+方法呼叫其他方法
+  ↓
+方法呼叫自己 Recursion
+  ↓
+遞迴演算法：factorial、Fibonacci、Quick Sort、Hanoi`
+    },
+    codes: [
+      {
+        title: "基礎 1：無參數無回傳值",
+        value: `static void greet() {
+    System.out.println("Hello Java");
+}
+
+greet();
+
+// 執行結果：
+// Hello Java`
+      },
+      {
+        title: "基礎 2：有參數",
+        value: `static void greet(String name) {
+    System.out.println("Hello " + name);
+}
+
+greet("Jimmy");
+
+// 執行結果：
+// Hello Jimmy`
+      },
+      {
+        title: "基礎 3：有回傳值",
+        value: `static int add(int a, int b) {
+    return a + b;
+}
+
+System.out.println(add(2, 3));
+
+// 執行結果：
+// 5`
+      },
+      {
+        title: "基礎 4：有參數有回傳值 calcBMI()",
+        value: `static double calcBMI(double height, double weight) {
+    return weight / (height * height);
+}
+
+System.out.println(calcBMI(1.7, 65));
+
+// 執行結果：
+// 22.49134948096886`
+      },
+      {
+        title: "基礎 5：showInfo() 使用物件屬性",
+        value: `class Student {
+    String name;
+    int score;
+
+    void showInfo() {
+        System.out.println(name + "：" + score);
+    }
+}
+
+Student s = new Student();
+s.name = "Amy";
+s.score = 95;
+s.showInfo();
+
+// 執行結果：
+// Amy：95`
+      },
+      {
+        title: "基礎 6：getArea() 回傳計算結果",
+        value: `static int getArea(int width, int height) {
+    return width * height;
+}
+
+int area = getArea(4, 6);
+System.out.println(area);
+
+// 執行結果：
+// 24`
+      },
+      {
+        title: "8.3.1 方法呼叫方法：基本範例",
+        value: `static void hello() {
+    System.out.println("Hello");
+}
+
+static void greet() {
+    hello();
+}
+
+greet();
+
+// 執行結果：
+// Hello`
+      },
+      {
+        title: "8.3.1 圖解：方法呼叫流程",
+        value: `main()
+  ↓ 呼叫
+greet()
+  ↓ 呼叫
+hello()
+  ↓ 輸出
+Hello
+  ↓ 返回
+greet()
+  ↓ 返回
+main()`
+      },
+      {
+        title: "8.3.1 方法分工：先計算再輸出",
+        value: `static int add(int a, int b) {
+    return a + b;
+}
+
+static void printSum(int a, int b) {
+    int result = add(a, b);
+    System.out.println("總和：" + result);
+}
+
+printSum(3, 5);
+
+// 執行結果：
+// 總和：8`
+      },
+      {
+        title: "8.3.2 遞迴概念：像俄羅斯娃娃",
+        value: `遞迴可以想成俄羅斯娃娃：
+
+打開第 5 層娃娃
+  ↓
+看到第 4 層娃娃
+  ↓
+看到第 3 層娃娃
+  ↓
+...
+  ↓
+看到最小娃娃後停止
+
+程式中的遞迴也是：
+方法呼叫自己，但每次問題要變小，直到停止條件。`
+      },
+      {
+        title: "8.3.2 遞迴兩大重點",
+        value: `Base Case（停止條件）
+  遇到這個條件時，不再繼續呼叫自己。
+
+Recursive Call（遞迴呼叫）
+  方法呼叫自己，並把問題縮小。
+
+圖解：
+method(3)
+  ↓ recursive call
+method(2)
+  ↓ recursive call
+method(1)
+  ↓ base case 停止`
+      },
+      {
+        title: "8.3.2 範例 1：倒數計時",
+        value: `static void countDown(int n) {
+    if (n == 0) {
+        return;
+    }
+
+    System.out.println(n);
+    countDown(n - 1);
+}
+
+countDown(3);
+
+// 執行結果：
+// 3
+// 2
+// 1`
+      },
+      {
+        title: "8.3.2 倒數呼叫流程圖",
+        value: `countDown(3)
+  ↓ 印出 3
+countDown(2)
+  ↓ 印出 2
+countDown(1)
+  ↓ 印出 1
+countDown(0)
+  ↓ n == 0，return 停止`
+      },
+      {
+        title: "8.3.2 範例 2：遞迴加總",
+        value: `static int sum(int n) {
+    if (n == 1) {
+        return 1;
+    }
+
+    return n + sum(n - 1);
+}
+
+System.out.println(sum(5));
+
+// 執行結果：
+// 15`
+      },
+      {
+        title: "8.3.2 範例 3：遞迴階乘",
+        value: `static int factorial(int n) {
+    if (n == 1) {
+        return 1;
+    }
+
+    return n * factorial(n - 1);
+}
+
+System.out.println(factorial(5));
+
+// 執行結果：
+// 120`
+      },
+      {
+        title: "factorial(5) 完整呼叫流程圖",
+        value: `factorial(5)
+  ↓
+5 * factorial(4)
+  ↓
+5 * 4 * factorial(3)
+  ↓
+5 * 4 * 3 * factorial(2)
+  ↓
+5 * 4 * 3 * 2 * factorial(1)
+  ↓
+5 * 4 * 3 * 2 * 1
+  ↓
+120`
+      },
+      {
+        title: "常見錯誤：沒有停止條件",
+        value: `static void test() {
+    test();
+}
+
+test();
+
+// 問題：
+// test() 一直呼叫 test()
+// 呼叫層數越堆越多，最後可能 Stack Overflow。`
+      },
+      {
+        title: "Stack Overflow 概念圖",
+        value: `test()
+  ↓
+test()
+  ↓
+test()
+  ↓
+test()
+  ↓
+一直堆疊，沒有停止
+  ↓
+Stack Overflow
+
+簡單理解：
+方法呼叫太多層，程式沒有空間繼續記住每一層呼叫。`
+      },
+      {
+        title: "8.3.3 一般陣列",
+        value: `int[] nums = {1, 2, 3};
+
+System.out.println(nums[0]);
+
+// 執行結果：
+// 1`
+      },
+      {
+        title: "8.3.3 匿名陣列：建立後立即使用",
+        value: `System.out.println(
+    new int[]{10, 20, 30}[0]
+);
+
+// 執行結果：
+// 10`
+      },
+      {
+        title: "8.3.3 匿名陣列作為方法參數",
+        value: `static void printArray(int[] nums) {
+    for (int n : nums) {
+        System.out.println(n);
+    }
+}
+
+printArray(
+    new int[]{1, 2, 3, 4, 5}
+);
+
+// 執行結果：
+// 1
+// 2
+// 3
+// 4
+// 5`
+      },
+      {
+        title: "8.3.3 一般陣列 vs 匿名陣列",
+        value: `一般陣列：
+int[] nums = {1, 2, 3};
+printArray(nums);
+
+適合：
+資料之後還會重複使用。
+
+匿名陣列：
+printArray(new int[]{1, 2, 3});
+
+適合：
+資料只在這次方法呼叫中臨時使用。`
+      }
+    ]
+  });
+
+  replaceSectionActivities(8, "8.3", [
+    createActivity({
+      id: "ch08-exercise-recursive-countdown",
+      sectionId: "8.3",
+      type: "exercise",
+      title: "8.3 練習 1：建立遞迴倒數程式",
+      question: "建立 `countDown(int n)`，從 n 印到 1，當 n == 0 時停止。",
+      hint: "先寫停止條件 `if (n == 0) return;`，再印出 n，最後呼叫 `countDown(n - 1)`。",
+      solution: `static void countDown(int n) {
+    if (n == 0) {
+        return;
+    }
+
+    System.out.println(n);
+    countDown(n - 1);
+}`,
+      explanation: "每一次呼叫都讓 n 減 1，問題會越來越小。當 n 變成 0，就觸發 Base Case 停止。"
+    }),
+    createActivity({
+      id: "ch08-exercise-recursive-factorial",
+      sectionId: "8.3",
+      type: "exercise",
+      title: "8.3 練習 2：建立遞迴階乘程式",
+      question: "建立 `factorial(int n)`，使用遞迴回傳 n!。",
+      hint: "停止條件可以是 `n == 1`，遞迴呼叫是 `n * factorial(n - 1)`。",
+      solution: `static int factorial(int n) {
+    if (n == 1) {
+        return 1;
+    }
+
+    return n * factorial(n - 1);
+}`,
+      explanation: "階乘的遞迴結構是 n! = n * (n - 1)!。這題練習回傳值與遞迴呼叫。"
+    }),
+    createActivity({
+      id: "ch08-exercise-anonymous-array",
+      sectionId: "8.3",
+      type: "exercise",
+      title: "8.3 練習 3：使用匿名陣列呼叫方法",
+      question: "建立接收 `int[]` 的 `printArray` 方法，並使用 `new int[]{...}` 匿名陣列呼叫。",
+      hint: "方法參數型態寫 `int[] nums`，呼叫時直接傳入 `new int[]{1, 2, 3}`。",
+      solution: `static void printArray(int[] nums) {
+    for (int n : nums) {
+        System.out.println(n);
+    }
+}
+
+printArray(new int[]{1, 2, 3});`,
+      explanation: "匿名陣列適合只使用一次的資料。它沒有變數名稱，但仍然是一個真正的陣列物件。"
+    })
+  ]);
+
+  updateSection(8, "8.5", {
+    title: "綜合演練",
+    body: [
+      "本節延續 8.3 的學習路徑：方法 -> 方法呼叫 -> 遞迴 -> 遞迴演算法。",
+      "每題都會先列出【前置知識】，讓你知道會用到哪些概念。不要急著複製程式碼，先看問題如何被拆小。"
+    ],
+    code: {
+      title: "題目 1：用遞迴求階乘",
+      value: `【前置知識】
+- 方法呼叫
+- 參數 n
+- 回傳值 int
+- 遞迴 Base Case
+- Recursive Call
+
+問題說明：
+計算 n!，例如 5! = 5 x 4 x 3 x 2 x 1。
+
+解題思路：
+factorial(n) 可以拆成 n * factorial(n - 1)。
+當 n == 1 時，不需要再拆，直接回傳 1。
+
+流程圖：
+factorial(5)
+  ↓
+5 * factorial(4)
+  ↓
+5 * 4 * factorial(3)
+  ↓
+5 * 4 * 3 * factorial(2)
+  ↓
+5 * 4 * 3 * 2 * factorial(1)
+  ↓
+5 * 4 * 3 * 2 * 1
+  ↓
+120
+
+Hint：
+先寫停止條件，再寫遞迴呼叫。
+
+Solution：
+static int factorial(int n) {
+    if (n == 1) {
+        return 1;
+    }
+
+    return n * factorial(n - 1);
+}
+
+System.out.println(factorial(5));
+
+執行結果：
+120
+
+Explanation：
+每次呼叫都把 n 變小，直到 n == 1 停止。回傳時再一層一層乘回來。
+
+延伸挑戰：
+加入 n == 0 時回傳 1 的處理。`
+    },
+    codes: [
+      {
+        title: "題目 2：Fibonacci 數列",
+        value: `【前置知識】
+- 方法呼叫方法
+- 遞迴呼叫兩次
+- 參數 n
+- 回傳值 int
+- 迴圈版本比較
+
+問題說明：
+Fibonacci 規則是 F(0)=0、F(1)=1、F(n)=F(n-1)+F(n-2)。
+
+解題思路：
+遞迴版本接近定義，但會重複計算。
+迴圈版本用變數保存前兩項，通常效率較好。
+
+遞迴流程圖：
+fib(5)
+  ↓
+fib(4) + fib(3)
+  ↓
+fib(3)+fib(2) + fib(2)+fib(1)
+
+Hint：
+遞迴停止條件是 n <= 1。
+
+Solution：
+static int fibRecursive(int n) {
+    if (n <= 1) {
+        return n;
+    }
+    return fibRecursive(n - 1) + fibRecursive(n - 2);
+}
+
+static int fibLoop(int n) {
+    int a = 0;
+    int b = 1;
+
+    for (int i = 2; i <= n; i++) {
+        int next = a + b;
+        a = b;
+        b = next;
+    }
+
+    return n == 0 ? a : b;
+}
+
+System.out.println(fibRecursive(6));
+System.out.println(fibLoop(6));
+
+執行結果：
+8
+8
+
+比較：
+- 程式碼複雜度：遞迴版較接近定義，較容易看出規則；迴圈版需要理解 a、b、next 的更新。
+- 執行效率：遞迴版會重複計算同一批值；迴圈版通常比較快，也比較穩定。
+
+Explanation：
+Fibonacci 適合展示遞迴的直覺，也適合提醒學生：遞迴好懂，不代表一定最有效率。
+
+延伸挑戰：
+印出前 10 個 Fibonacci 數字。`
+      },
+      {
+        title: "題目 3：快速排序法（Quick Sort）",
+        value: `【前置知識】
+- 方法呼叫方法
+- 遞迴處理左右區間
+- 參數：陣列、left、right
+- 匿名陣列可用來快速測試排序
+
+問題說明：
+使用 Quick Sort 將陣列由小到大排序。
+
+Pivot 概念圖解：
+資料：[5, 2, 9, 1, 6]
+選 pivot = 9
+  ↓
+左邊放比較小的資料
+右邊放比較大的資料
+  ↓
+再分別排序左右兩邊
+
+視覺化流程：
+[5, 2, 9, 1, 6]
+       ↑ pivot
+  ↓ 分割
+[5, 2, 1, 6] [9]
+  ↓ 遞迴排序左邊
+[1, 2, 5, 6] [9]
+
+Hint：
+先理解「分割」，再理解「遞迴排序左右」。
+
+Solution：
+static void quickSort(int[] arr, int left, int right) {
+    if (left >= right) {
+        return;
+    }
+
+    int pivot = arr[(left + right) / 2];
+    int i = left;
+    int j = right;
+
+    while (i <= j) {
+        while (arr[i] < pivot) i++;
+        while (arr[j] > pivot) j--;
+
+        if (i <= j) {
+            int temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+            i++;
+            j--;
+        }
+    }
+
+    quickSort(arr, left, j);
+    quickSort(arr, i, right);
+}
+
+int[] data = new int[]{5, 2, 9, 1, 6};
+quickSort(data, 0, data.length - 1);
+
+for (int n : data) {
+    System.out.println(n);
+}
+
+執行結果：
+1
+2
+5
+6
+9
+
+Explanation：
+Quick Sort 的核心是 Pivot 和遞迴。Pivot 幫我們把問題切成左右兩邊，遞迴則負責繼續排序更小的區間。
+
+延伸挑戰：
+在每次交換時印出陣列，觀察排序過程。`
+      },
+      {
+        title: "題目 4：河內之塔（Hanoi Tower）",
+        value: `【前置知識】
+- 方法呼叫自己
+- 參數：盤子數量、來源柱、輔助柱、目標柱
+- Base Case：只剩一個盤子
+- Recursive Call：移動 n - 1 個盤子
+
+問題說明：
+把 n 個盤子從 A 柱移到 C 柱，一次只能移一個盤子，大盤不能放在小盤上。
+
+步驟拆解圖解：
+目標：把 3 個盤子 A -> C
+
+Step 1：
+先把上面 2 個盤子 A -> B
+
+Step 2：
+把最大盤 A -> C
+
+Step 3：
+再把 2 個盤子 B -> C
+
+遞迴流程：
+move(3, A, B, C)
+  ↓
+move(2, A, C, B)
+  ↓
+A -> C
+  ↓
+move(2, B, A, C)
+
+Hint：
+把 n 個盤子想成「上面 n - 1 個」和「最大的一個」。
+
+Solution：
+static void hanoi(int n, char from, char helper, char to) {
+    if (n == 1) {
+        System.out.println(from + " -> " + to);
+        return;
+    }
+
+    hanoi(n - 1, from, to, helper);
+    System.out.println(from + " -> " + to);
+    hanoi(n - 1, helper, from, to);
+}
+
+hanoi(3, 'A', 'B', 'C');
+
+執行結果：
+A -> C
+A -> B
+C -> B
+A -> C
+B -> A
+B -> C
+A -> C
+
+Explanation：
+河內之塔的關鍵是拆解。你不用一次想完全部步驟，只要相信方法能移動 n - 1 個盤子，問題就會變小。
+
+延伸挑戰：
+計算 n 個盤子總共需要移動幾次。`
+      }
+    ]
+  });
 }
 
 function createChapter08() {
