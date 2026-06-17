@@ -4173,6 +4173,7 @@ nums[j + 1] = temp;`,
   enhanceChapter08MethodPath();
   chapters.push(createChapter09());
   chapters.push(createChapter10());
+  chapters.push(createChapter11());
 }
 
 function updateSection(chapterId, sectionId, data) {
@@ -6868,6 +6869,499 @@ System.out.println(valid);`,
       { question: "Regex 中 `\\d` 代表什麼？", options: ["數字", "英文字母", "空白", "任意單字"], answer: 0, explanation: "`\\d` 代表數字字元。" },
       { question: "Java 字串中的 Regex `\\d+` 要寫成？", options: ["\"\\\\d+\"", "\"\\d+\"", "\"/d+\"", "\"d+\""], answer: 0, explanation: "Java 字串裡反斜線也要跳脫，所以要寫 `\"\\\\d+\"`。" },
       { question: "身份證字號格式檢查和檢查碼檢核的差異是？", options: ["格式只看長相，檢查碼會依規則計算", "兩者完全一樣", "檢查碼只看第一碼", "格式驗證不能用 Regex"], answer: 0, explanation: "格式驗證確認文字外觀，檢查碼驗證內容規則是否通過。" }
+    ]
+  };
+}
+
+function createChapter11() {
+  return {
+    id: 11,
+    code: "CH11",
+    title: "繼承（Inheritance）",
+    minutes: 150,
+    summary: "學會 extends、方法覆寫、多型、Object 類別、Wrapper Class 與 Varargs。",
+    intro: "繼承讓類別之間可以形成「一般到特殊」的關係。本章從 Animal、Vehicle、Employee 這些生活化例子開始，慢慢理解程式碼重用、Override 與 Polymorphism。",
+    goals: [
+      "了解什麼是繼承",
+      "學會使用 extends",
+      "學會方法覆寫 Override",
+      "了解多型 Polymorphism",
+      "了解 Object 類別",
+      "認識 Varargs",
+      "能夠設計具有繼承關係的類別"
+    ],
+    sections: [
+      {
+        sectionId: "11.1",
+        title: "什麼是繼承？",
+        body: [
+          "繼承（Inheritance）可以想成把共同特徵放在父類別，讓子類別直接使用。Animal 可以放 name、age，Dog 和 Cat 就不用重複寫同樣欄位。",
+          "生活中也常見類似分類：交通工具 Vehicle 下面可以有 Car、Motorcycle；員工 Employee 下面可以有 Engineer、Sales。",
+          "繼承的主要目的不是炫技，而是避免重複程式碼，提高重用性，並讓類別關係更清楚。",
+          "Java 使用 `extends` 表示繼承，例如 `class Dog extends Animal {}`。Dog 是子類別，Animal 是父類別。"
+        ],
+        code: {
+          title: "圖解：父類別與子類別",
+          value: `Animal
+  ↓
+Dog
+
+Animal
+  ↓
+Cat
+
+共同資料放 Animal：
+String name;
+int age;`
+        },
+        codes: [
+          { title: "範例 1：沒有繼承時重複欄位", value: `class Dog {\n    String name;\n    int age;\n}\n\nclass Cat {\n    String name;\n    int age;\n}\n\n// 解說：\n// Dog 和 Cat 都重複寫 name、age。` },
+          { title: "範例 2：建立 Animal 父類別", value: `class Animal {\n    String name;\n    int age;\n}\n\n// 解說：\n// 共同資料集中放在 Animal。` },
+          { title: "範例 3：Dog 繼承 Animal", value: `class Dog extends Animal {\n}\n\n// 解說：\n// Dog 會擁有 Animal 的 name、age。` },
+          { title: "範例 4：Cat 繼承 Animal", value: `class Cat extends Animal {\n}\n\n// 解說：\n// Cat 也會擁有 Animal 的 name、age。` },
+          { title: "範例 5：建立 Dog 物件並存取繼承成員", value: `Dog dog = new Dog();\ndog.name = "Lucky";\ndog.age = 3;\n\nSystem.out.println(dog.name);\nSystem.out.println(dog.age);\n\n// 執行結果：\n// Lucky\n// 3` },
+          { title: "範例 6：子類別可以加入自己的成員", value: `class Dog extends Animal {\n    String breed;\n}\n\nDog dog = new Dog();\ndog.name = "Lucky";\ndog.breed = "柴犬";\n\nSystem.out.println(dog.name + \" 是 \" + dog.breed);\n\n// 執行結果：\n// Lucky 是 柴犬` },
+          { title: "範例 7：Vehicle 與 Car", value: `class Vehicle {\n    String brand;\n\n    void move() {\n        System.out.println(\"交通工具移動\");\n    }\n}\n\nclass Car extends Vehicle {\n}\n\nCar car = new Car();\ncar.brand = \"Toyota\";\ncar.move();\n\n// 執行結果：\n// 交通工具移動` },
+          { title: "範例 8：Employee 與 Engineer", value: `class Employee {\n    String name;\n    int salary;\n}\n\nclass Engineer extends Employee {\n    String skill;\n}\n\nEngineer e = new Engineer();\ne.name = \"Amy\";\ne.skill = \"Java\";\n\nSystem.out.println(e.name + \" 會 \" + e.skill);\n\n// 執行結果：\n// Amy 會 Java` },
+          { title: "範例 9：繼承關係不是擁有關係", value: `class Animal {}\nclass Dog extends Animal {}\n\n// Dog is an Animal：狗是一種動物。\n// 不要把「狗有一個動物」誤寫成繼承。` }
+        ]
+      },
+      {
+        sectionId: "11.2",
+        title: "方法的繼承、重新定義、與多形",
+        body: [
+          "子類別不只會繼承父類別欄位，也會繼承父類別方法。Animal 有 `speak()`，Dog 若沒有另外寫，就可以直接使用。",
+          "如果子類別需要不同版本的方法，可以使用 Override（方法覆寫）。覆寫時方法名稱、參數列表與回傳型態要相容，常搭配 `@Override` 讓編譯器幫你檢查。",
+          "多型（Polymorphism）讓父類別型別的參考變數指向子類別物件，例如 `Animal animal = new Dog();`。同樣呼叫 `speak()`，實際執行結果會依物件真正型別決定。",
+          "`super` 可以呼叫父類別方法；`super()` 可以在子類別 Constructor 中呼叫父類別 Constructor。"
+        ],
+        code: {
+          title: "圖解：編譯型別與實際物件型別",
+          value: `Animal animal = new Dog();
+
+編譯型別：Animal
+  ↓ 決定你能呼叫哪些方法
+實際物件型別：Dog
+  ↓ 決定覆寫方法的執行結果`
+        },
+        codes: [
+          { title: "範例 1：父類別方法", value: `class Animal {\n    void speak() {\n        System.out.println(\"動物發出聲音\");\n    }\n}` },
+          { title: "範例 2：Dog 繼承後直接使用", value: `class Dog extends Animal {\n}\n\nDog dog = new Dog();\ndog.speak();\n\n// 執行結果：\n// 動物發出聲音` },
+          { title: "範例 3：Override 覆寫 speak()", value: `class Dog extends Animal {\n    @Override\n    void speak() {\n        System.out.println(\"汪汪\");\n    }\n}\n\nDog dog = new Dog();\ndog.speak();\n\n// 執行結果：\n// 汪汪` },
+          { title: "範例 4：Cat 覆寫 speak()", value: `class Cat extends Animal {\n    @Override\n    void speak() {\n        System.out.println(\"喵喵\");\n    }\n}\n\nCat cat = new Cat();\ncat.speak();\n\n// 執行結果：\n// 喵喵` },
+          { title: "範例 5：多型 Dog", value: `Animal animal = new Dog();\nanimal.speak();\n\n// 執行結果：\n// 汪汪` },
+          { title: "範例 6：多型 Cat", value: `Animal animal = new Cat();\nanimal.speak();\n\n// 執行結果：\n// 喵喵` },
+          { title: "範例 7：同一個方法，傳入不同子類別", value: `static void makeSound(Animal animal) {\n    animal.speak();\n}\n\nmakeSound(new Dog());\nmakeSound(new Cat());\n\n// 執行結果：\n// 汪汪\n// 喵喵` },
+          { title: "範例 8：super 呼叫父類別方法", value: `class Dog extends Animal {\n    @Override\n    void speak() {\n        super.speak();\n        System.out.println(\"汪汪\");\n    }\n}\n\nnew Dog().speak();\n\n// 執行結果：\n// 動物發出聲音\n// 汪汪` },
+          { title: "範例 9：super() 呼叫父類別 Constructor", value: `class Animal {\n    String name;\n\n    Animal(String name) {\n        this.name = name;\n    }\n}\n\nclass Dog extends Animal {\n    Dog(String name) {\n        super(name);\n    }\n}\n\nDog dog = new Dog(\"Lucky\");\nSystem.out.println(dog.name);\n\n// 執行結果：\n// Lucky` },
+          { title: "範例 10：Employee → Engineer 覆寫工作方法", value: `class Employee {\n    void work() {\n        System.out.println(\"員工工作\");\n    }\n}\n\nclass Engineer extends Employee {\n    @Override\n    void work() {\n        System.out.println(\"工程師寫程式\");\n    }\n}\n\nEmployee e = new Engineer();\ne.work();\n\n// 執行結果：\n// 工程師寫程式` },
+          { title: "範例 11：Override 常見錯誤", value: `class Animal {\n    void speak() {}\n}\n\nclass Dog extends Animal {\n    @Override\n    void speak(String text) {}\n}\n\n// 問題：\n// 參數列表不同，這不是覆寫，而是新方法。\n// @Override 會讓編譯器提醒你錯誤。` }
+        ]
+      },
+      {
+        sectionId: "11.3",
+        title: "繼承的注意事項",
+        body: [
+          "繼承很方便，但也有規則。Java 類別只能單一繼承，也就是一個類別只能直接 extends 一個父類別。",
+          "`private` 成員不能被子類別直接存取；Constructor 不會被繼承，但子類別 Constructor 可以用 `super()` 呼叫父類別 Constructor。",
+          "`final` 方法不能被覆寫；`final` 類別不能被繼承。這些限制通常代表設計者不希望某些行為被改變。",
+          "學繼承時要特別注意：不是所有共用程式碼都該用繼承。只有在「子類別是一種父類別」時，繼承才比較合理。"
+        ],
+        code: {
+          title: "可繼承與不可繼承整理",
+          value: `可繼承：
+- public / protected / package 可見的欄位與方法
+- 父類別一般方法
+
+不可直接繼承或不可直接使用：
+- private 成員
+- Constructor
+- final 方法不可覆寫
+- final 類別不可被繼承`
+        },
+        codes: [
+          { title: "範例 1：合法單一繼承", value: `class Animal {}\nclass Dog extends Animal {}\n\n// Dog 直接繼承一個父類別，合法。` },
+          { title: "範例 2：不合法多重繼承", value: `class Animal {}\nclass Pet {}\n\nclass Dog extends Animal, Pet {}\n\n// 錯誤：\n// Java 類別不能同時 extends 多個類別。` },
+          { title: "範例 3：private 不能直接存取", value: `class Animal {\n    private String name;\n}\n\nclass Dog extends Animal {\n    void show() {\n        // System.out.println(name); // 錯誤\n    }\n}` },
+          { title: "範例 4：透過 Getter 存取 private 資料", value: `class Animal {\n    private String name = \"Lucky\";\n\n    public String getName() {\n        return name;\n    }\n}\n\nclass Dog extends Animal {\n    void show() {\n        System.out.println(getName());\n    }\n}\n\nnew Dog().show();\n\n// 執行結果：\n// Lucky` },
+          { title: "範例 5：Constructor 不會被繼承", value: `class Animal {\n    Animal(String name) {}\n}\n\nclass Dog extends Animal {\n    Dog(String name) {\n        super(name);\n    }\n}\n\n// 解說：\n// Dog 不會自動擁有 Animal(String name)，\n// 必須自己寫 Constructor 並呼叫 super(name)。` },
+          { title: "範例 6：final 方法不能覆寫", value: `class Animal {\n    final void breathe() {\n        System.out.println(\"呼吸\");\n    }\n}\n\nclass Dog extends Animal {\n    // void breathe() {} // 錯誤：final 方法不能覆寫\n}` },
+          { title: "範例 7：final 類別不能被繼承", value: `final class MathTool {\n}\n\n// class MyTool extends MathTool {}\n// 錯誤：final class 不能被繼承。` },
+          { title: "範例 8：不要亂用繼承", value: `class Car {}\nclass Engine {}\n\n// 不建議：class Engine extends Car\n// 因為 Engine 不是一種 Car。\n// 比較像是 Car 擁有 Engine。` },
+          { title: "範例 9：繼承判斷口訣", value: `Dog is an Animal：適合繼承\nCar is a Vehicle：適合繼承\nCar has an Engine：不適合用繼承，適合用成員屬性` }
+        ]
+      },
+      {
+        sectionId: "11.4",
+        title: "Object 類別與基本資料類別",
+        body: [
+          "Java 中所有類別最終都繼承自 `Object`。即使你沒有寫 `extends Object`，Java 也會讓你的類別間接或直接擁有 Object 的基本方法。",
+          "常見 Object 方法包含 `toString()`、`equals()`、`getClass()`。其中 `toString()` 很常覆寫，讓物件印出更友善的文字。",
+          "基本型別像 `int`、`double` 不是物件，但 Java 提供 Wrapper Class，例如 `Integer`、`Double`、`Character`、`Boolean`，讓基本資料也能用物件方式處理。",
+          "Autoboxing 是基本型別自動包成 Wrapper；Unboxing 是 Wrapper 自動取回基本型別值。"
+        ],
+        code: {
+          title: "圖解：Object 在最上層",
+          value: `Object
+  ↓
+Animal
+  ↓
+Dog
+
+所以 Dog 也擁有 Object 的基本方法。`
+        },
+        codes: [
+          { title: "範例 1：所有類別都繼承 Object", value: `class Student {\n}\n\nStudent s = new Student();\nSystem.out.println(s.getClass());\n\n// 執行結果：\n// class Student` },
+          { title: "範例 2：預設 toString()", value: `class Student {\n}\n\nStudent s = new Student();\nSystem.out.println(s);\n\n// 執行結果類似：\n// Student@1a2b3c` },
+          { title: "範例 3：覆寫 toString()", value: `class Student {\n    String name = \"Jimmy\";\n\n    @Override\n    public String toString() {\n        return \"Student name=\" + name;\n    }\n}\n\nSystem.out.println(new Student());\n\n// 執行結果：\n// Student name=Jimmy` },
+          { title: "範例 4：覆寫 equals() 的直覺目的", value: `class Student {\n    String id;\n\n    Student(String id) {\n        this.id = id;\n    }\n\n    @Override\n    public boolean equals(Object obj) {\n        Student other = (Student) obj;\n        return this.id.equals(other.id);\n    }\n}\n\nSystem.out.println(new Student(\"S01\").equals(new Student(\"S01\")));\n\n// 執行結果：\n// true` },
+          { title: "範例 5：getClass()", value: `Dog dog = new Dog();\nSystem.out.println(dog.getClass());\n\n// 執行結果：\n// class Dog` },
+          { title: "範例 6：Wrapper Class 對照表", value: `int     -> Integer\ndouble  -> Double\nchar    -> Character\nboolean -> Boolean` },
+          { title: "範例 7：Autoboxing", value: `Integer x = 10;\nSystem.out.println(x);\n\n// 執行結果：\n// 10\n\n// 解說：\n// int 10 自動包成 Integer。` },
+          { title: "範例 8：Unboxing", value: `Integer x = 10;\nint y = x;\n\nSystem.out.println(y + 5);\n\n// 執行結果：\n// 15` },
+          { title: "範例 9：Wrapper 方法 parseInt()", value: `String text = \"123\";\nint number = Integer.parseInt(text);\n\nSystem.out.println(number + 1);\n\n// 執行結果：\n// 124` },
+          { title: "範例 10：Double.parseDouble()", value: `String text = \"3.14\";\ndouble pi = Double.parseDouble(text);\n\nSystem.out.println(pi * 2);\n\n// 執行結果：\n// 6.28` },
+          { title: "範例 11：Object 參考可以接任何物件", value: `Object obj = \"Hello\";\nSystem.out.println(obj.toString());\n\n// 執行結果：\n// Hello` }
+        ]
+      },
+      {
+        sectionId: "11.5",
+        title: "綜合演練",
+        body: [
+          "本節補上 Varargs，讓你能寫出可接收不定數量參數的方法。這和陣列、Object 類別、多型都有關係。",
+          "請注意：Varargs 本質上可以看成方法參數中的陣列語法糖。它讓呼叫更簡潔，但方法內部仍然可以像陣列一樣走訪。"
+        ],
+        code: {
+          title: "題目 1：傳遞不定數量參數，使用陣列",
+          value: `問題說明：
+建立 sum 方法，接收 int[]，計算所有數字總和。
+
+解題思路：
+陣列可以保存任意數量的 int。
+呼叫時可用匿名陣列 new int[]{...}。
+
+流程圖：
+new int[]{1,2,3,4,5}
+  ↓
+sum(int[] nums)
+  ↓
+for 迴圈累加
+  ↓
+15
+
+Hint：
+方法參數寫 int[] nums。
+
+Solution：
+static int sum(int[] nums) {
+    int total = 0;
+
+    for (int n : nums) {
+        total += n;
+    }
+
+    return total;
+}
+
+System.out.println(sum(new int[]{1, 2, 3, 4, 5}));
+
+執行結果：
+15
+
+優點：
+資料結構清楚，可以先建立陣列再傳入。
+
+缺點：
+呼叫時要寫 new int[]{...}，比較長。
+
+Explanation：
+陣列方式很直覺，也和 CH07 連得上。缺點是呼叫語法稍微繁瑣。`
+        },
+        codes: [
+          {
+            title: "題目 2：傳遞不定數量參數，Varargs 機制",
+            value: `問題說明：
+使用 int... nums 改寫 sum 方法，讓呼叫更自然。
+
+解題思路：
+Varargs 寫在方法參數中，呼叫時可以直接傳入多個值。
+方法內部仍然把 nums 當成陣列走訪。
+
+Hint：
+Varargs 語法是 型態... 名稱，例如 int... nums。
+
+Solution：
+static int sum(int... nums) {
+    int total = 0;
+
+    for (int n : nums) {
+        total += n;
+    }
+
+    return total;
+}
+
+System.out.println(sum(1, 2, 3, 4, 5));
+
+執行結果：
+15
+
+陣列 vs Varargs：
+陣列：sum(new int[]{1,2,3})
+Varargs：sum(1,2,3)
+
+Explanation：
+Varargs 讓呼叫端更簡潔，適合像加總、印出多個值這類參數數量不固定的方法。`
+          },
+          {
+            title: "題目 3：傳遞任意型別的參數 Object...",
+            value: `問題說明：
+建立 show 方法，可以接收任意型別、任意數量的資料。
+
+解題思路：
+所有類別都繼承 Object。
+基本型別會透過 Autoboxing 變成 Wrapper 物件。
+所以 Object... 可以接收 String、Integer、Boolean 等資料。
+
+Hint：
+方法參數寫 Object... values。
+
+Solution：
+static void show(Object... values) {
+    for (Object value : values) {
+        System.out.println(value);
+    }
+}
+
+show(
+    "Jimmy",
+    25,
+    true
+);
+
+執行結果：
+Jimmy
+25
+true
+
+Explanation：
+Object... 的彈性很高，但也要小心：彈性越高，型別檢查越少。初學時先用它理解 Object 與 Varargs 的關係即可。`
+          }
+        ]
+      }
+    ],
+    activities: [
+      createActivity({
+        id: "ch11-exercise-vehicle-inheritance",
+        sectionId: "11.1",
+        type: "exercise",
+        title: "11.1 練習：Vehicle 繼承設計",
+        question: "建立 `Vehicle` 類別，再建立 `Car` 與 `Motorcycle` 繼承它。",
+        hint: "把共同欄位 `brand` 放在 Vehicle，Car 和 Motorcycle 使用 extends。",
+        solution: `class Vehicle {
+    String brand;
+}
+
+class Car extends Vehicle {
+}
+
+class Motorcycle extends Vehicle {
+}`,
+        explanation: "Car 和 Motorcycle 都是一種 Vehicle，因此適合用繼承表示。"
+      }),
+      createActivity({
+        id: "ch11-thought-inheritance-purpose",
+        sectionId: "11.1",
+        type: "thought",
+        title: "11.1 思考題：繼承解決什麼問題？",
+        question: "請用 Dog / Cat / Animal 說明繼承如何減少重複程式碼。",
+        hint: "思考 Dog 與 Cat 共同擁有哪些欄位或方法。",
+        solution: "Dog 和 Cat 都有 name、age，也都可能有 eat()。把共同內容放在 Animal，Dog 和 Cat 繼承後就不用重複撰寫。",
+        explanation: "繼承讓共同內容集中在父類別，子類別只補上自己的特殊內容。"
+      }),
+      createActivity({
+        id: "ch11-exercise-override-animal",
+        sectionId: "11.2",
+        type: "exercise",
+        title: "11.2 練習：Animal → Dog / Cat 覆寫 speak()",
+        question: "建立 Animal、Dog、Cat，讓 Dog 輸出汪汪，Cat 輸出喵喵。",
+        hint: "在子類別中使用 `@Override` 覆寫 `speak()`。",
+        solution: `class Animal {
+    void speak() {
+        System.out.println("動物發出聲音");
+    }
+}
+
+class Dog extends Animal {
+    @Override
+    void speak() {
+        System.out.println("汪汪");
+    }
+}
+
+class Cat extends Animal {
+    @Override
+    void speak() {
+        System.out.println("喵喵");
+    }
+}`,
+        explanation: "Override 讓子類別保留同一個方法名稱，但提供自己的行為。"
+      }),
+      createActivity({
+        id: "ch11-exercise-employee-engineer",
+        sectionId: "11.2",
+        type: "exercise",
+        title: "11.2 練習：Employee → Engineer",
+        question: "建立 Employee 的 work()，再讓 Engineer 覆寫成工程師寫程式。",
+        hint: "可以使用 `Employee e = new Engineer();` 觀察多型。",
+        solution: `class Employee {
+    void work() {
+        System.out.println("員工工作");
+    }
+}
+
+class Engineer extends Employee {
+    @Override
+    void work() {
+        System.out.println("工程師寫程式");
+    }
+}`,
+        explanation: "父類別參考可以指向子類別物件，呼叫覆寫方法時看實際物件型別。"
+      }),
+      createActivity({
+        id: "ch11-thought-polymorphism",
+        sectionId: "11.2",
+        type: "thought",
+        title: "11.2 思考題：多型看哪一個型別？",
+        question: "`Animal animal = new Dog(); animal.speak();` 為什麼輸出 Dog 的版本？",
+        hint: "編譯型別決定能呼叫什麼；實際物件型別決定覆寫方法結果。",
+        solution: "因為實際物件是 Dog，所以呼叫被覆寫的 speak() 時會執行 Dog 的版本。",
+        explanation: "這就是多型最重要的直覺：同一個父類別型別，執行時可以表現出不同子類別行為。"
+      }),
+      createActivity({
+        id: "ch11-exercise-inheritance-rules",
+        sectionId: "11.3",
+        type: "exercise",
+        title: "11.3 練習：判斷繼承是否合法",
+        question: "判斷 `class Dog extends Animal, Pet`、`final class Tool` 被繼承、Override final 方法是否可行。",
+        hint: "Java 類別單一繼承；final class 不能被繼承；final method 不能被覆寫。",
+        solution: "三者都不可行。Dog 不能同時 extends 兩個類別；final class 不能被繼承；final 方法不能覆寫。",
+        explanation: "這些規則是 Java 為了降低類別關係複雜度與保護設計意圖而設下的限制。"
+      }),
+      createActivity({
+        id: "ch11-homework-private-getter",
+        sectionId: "11.3",
+        type: "homework",
+        title: "11.3 作業：private 與 Getter",
+        question: "建立 Animal 的 private name，讓 Dog 透過 getName() 顯示名稱。",
+        hint: "private 不能在子類別直接用，請提供 public getter。",
+        solution: `class Animal {
+    private String name = "Lucky";
+
+    public String getName() {
+        return name;
+    }
+}
+
+class Dog extends Animal {
+    void showName() {
+        System.out.println(getName());
+    }
+}`,
+        explanation: "private 成員被封裝起來，子類別也要透過父類別提供的方法存取。"
+      }),
+      createActivity({
+        id: "ch11-exercise-object-tostring",
+        sectionId: "11.4",
+        type: "exercise",
+        title: "11.4 練習：覆寫 toString()",
+        question: "建立 Student 類別並覆寫 toString()，讓 `System.out.println(student)` 印出姓名。",
+        hint: "方法簽名是 `public String toString()`。",
+        solution: `class Student {
+    String name = "Jimmy";
+
+    @Override
+    public String toString() {
+        return "Student: " + name;
+    }
+}`,
+        explanation: "println 物件時會使用 toString() 的結果。覆寫它可以讓輸出更友善。"
+      }),
+      createActivity({
+        id: "ch11-exercise-wrapper",
+        sectionId: "11.4",
+        type: "exercise",
+        title: "11.4 練習：Wrapper 與轉型",
+        question: "將字串 `\"123\"` 轉成 int，再加 10 輸出。",
+        hint: "使用 `Integer.parseInt()`。",
+        solution: `String text = "123";
+int number = Integer.parseInt(text);
+System.out.println(number + 10);`,
+        explanation: "Wrapper Class 提供許多實用方法，例如把文字轉成數字。"
+      }),
+      createActivity({
+        id: "ch11-project-varargs-array",
+        sectionId: "11.5",
+        type: "exercise",
+        title: "11.5 綜合練習：陣列加總",
+        question: "建立 `sum(int[] nums)`，用陣列接收不定數量資料並加總。",
+        hint: "用 enhanced for 走訪陣列。",
+        solution: `static int sum(int[] nums) {
+    int total = 0;
+    for (int n : nums) total += n;
+    return total;
+}`,
+        explanation: "陣列方式清楚，但呼叫時需要準備陣列或匿名陣列。"
+      }),
+      createActivity({
+        id: "ch11-project-varargs",
+        sectionId: "11.5",
+        type: "exercise",
+        title: "11.5 綜合練習：Varargs 加總",
+        question: "使用 `int... nums` 改寫加總方法，讓呼叫方式變成 `sum(1,2,3)`。",
+        hint: "方法內部仍然可以把 nums 當陣列走訪。",
+        solution: `static int sum(int... nums) {
+    int total = 0;
+    for (int n : nums) total += n;
+    return total;
+}`,
+        explanation: "Varargs 讓呼叫端更簡潔，適合參數數量不固定的情境。"
+      }),
+      createActivity({
+        id: "ch11-homework-object-varargs",
+        sectionId: "11.5",
+        type: "homework",
+        title: "11.5 作業：Object... 顯示任意資料",
+        question: "建立 `show(Object... values)`，印出所有傳入資料。",
+        hint: "Object 可以接住各種物件；基本型別會 Autoboxing。",
+        solution: `static void show(Object... values) {
+    for (Object value : values) {
+        System.out.println(value);
+    }
+}`,
+        explanation: "Object... 彈性高，但實務上要謹慎使用，避免型別太鬆散造成維護困難。"
+      })
+    ],
+    quiz: [
+      { question: "Java 中表示繼承使用哪個關鍵字？", options: ["extends", "inherits", "superclass", "parent"], answer: 0, explanation: "Java 使用 `extends` 表示類別繼承。" },
+      { question: "繼承的主要目的之一是？", options: ["避免重複程式碼", "刪除所有方法", "只能建立字串", "讓程式不能重用"], answer: 0, explanation: "共同內容放父類別，子類別重用。" },
+      { question: "Dog extends Animal 表示？", options: ["Dog 是一種 Animal", "Animal 是一種 Dog", "Dog 擁有 Animal 檔案", "Dog 不能用 Animal 成員"], answer: 0, explanation: "繼承適合 is-a 關係。" },
+      { question: "子類別是否可以加入自己的成員？", options: ["可以", "不可以", "只能加入註解", "只能加入 main"], answer: 0, explanation: "子類別可繼承父類別，也可加入自己的欄位與方法。" },
+      { question: "Override 是什麼？", options: ["子類別重新定義父類別方法", "建立陣列", "刪除父類別", "改檔名"], answer: 0, explanation: "Override 讓子類別提供自己的方法行為。" },
+      { question: "@Override 的好處是？", options: ["讓編譯器檢查是否真的覆寫", "讓程式不用編譯", "自動建立物件", "一定提高速度"], answer: 0, explanation: "@Override 可以避免方法簽名寫錯。" },
+      { question: "多型的例子是？", options: ["Animal a = new Dog();", "int a = \"Dog\";", "class Dog extends Animal, Pet", "void Dog()"], answer: 0, explanation: "父類別參考可指向子類別物件。" },
+      { question: "多型中覆寫方法的執行結果主要看？", options: ["實際物件型別", "變數名稱長度", "註解", "檔案大小"], answer: 0, explanation: "執行時依實際物件型別決定覆寫方法版本。" },
+      { question: "super.speak() 代表？", options: ["呼叫父類別 speak()", "呼叫 main", "建立 String", "結束程式"], answer: 0, explanation: "`super` 可呼叫父類別成員。" },
+      { question: "super() 常用來？", options: ["呼叫父類別 Constructor", "呼叫 Regex", "刪除物件", "建立陣列索引"], answer: 0, explanation: "子類別 Constructor 可用 super() 呼叫父類別 Constructor。" },
+      { question: "Java 類別可直接 extends 幾個父類別？", options: ["一個", "兩個", "無限多個", "只能零個"], answer: 0, explanation: "Java 類別是單一繼承。" },
+      { question: "private 成員在子類別中？", options: ["不能直接存取", "一定可直接存取", "會自動變 public", "只能用 final 覆寫"], answer: 0, explanation: "private 只限類別內部直接存取。" },
+      { question: "final 方法可以被覆寫嗎？", options: ["不可以", "可以", "只要加 static 就可以", "只在 Dog 可以"], answer: 0, explanation: "final method 不能被 Override。" },
+      { question: "final class 可以被繼承嗎？", options: ["不可以", "可以", "只能被 Object 繼承", "只能在 main 裡繼承"], answer: 0, explanation: "final class 不能作為父類別被繼承。" },
+      { question: "所有 Java 類別最終都繼承自？", options: ["Object", "String", "Integer", "Scanner"], answer: 0, explanation: "Object 是類別階層的根。" },
+      { question: "println 物件時常會用到哪個方法？", options: ["toString()", "parseOnly()", "extends()", "mainString()"], answer: 0, explanation: "物件轉文字表示時常使用 toString()。" },
+      { question: "int 的 Wrapper Class 是？", options: ["Integer", "IntObject", "NumberInt", "Char"], answer: 0, explanation: "int 對應 Integer。" },
+      { question: "Varargs 語法是哪一個？", options: ["int... nums", "int nums...", "...int nums", "var int nums"], answer: 0, explanation: "Varargs 使用三個點寫在型態後方。" },
+      { question: "Object... 可以接收不同型別資料的原因是？", options: ["所有物件都可視為 Object，基本型別可 Autoboxing", "Object 只能接 int", "Object 不是類別", "因為 Regex"], answer: 0, explanation: "Object 是共同父類別，Wrapper 又能包住基本型別。" }
     ]
   };
 }
