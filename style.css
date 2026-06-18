@@ -181,6 +181,12 @@ textarea {
   letter-spacing: 0;
 }
 
+.nav-course-group + .nav-course-group {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
 .app-shell {
   width: min(100%, var(--max));
   margin: 0 auto;
@@ -228,6 +234,26 @@ textarea {
   flex-wrap: wrap;
   gap: 12px;
   margin-top: 30px;
+}
+
+.completion-banner {
+  display: grid;
+  gap: 4px;
+  max-width: 680px;
+  margin-top: 22px;
+  padding: 16px;
+  border: 1px solid rgba(134, 239, 172, 0.34);
+  border-radius: var(--radius);
+  background: rgba(22, 101, 52, 0.18);
+}
+
+.completion-banner strong {
+  color: var(--ok);
+  font-size: 1.08rem;
+}
+
+.completion-banner span {
+  color: var(--muted);
 }
 
 .button {
@@ -380,6 +406,35 @@ textarea {
   gap: 18px;
 }
 
+.course-map {
+  display: grid;
+  gap: 34px;
+}
+
+.course-group {
+  display: grid;
+  gap: 16px;
+}
+
+.course-group-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 18px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 12px;
+}
+
+.course-group-heading h2 {
+  margin: 0;
+  font-size: clamp(1.35rem, 2.5vw, 2rem);
+}
+
+.course-group-heading span {
+  color: var(--accent);
+  font-weight: 900;
+}
+
 .chapter-card {
   display: flex;
   flex-direction: column;
@@ -413,6 +468,10 @@ textarea {
 .chapter-card p {
   margin: 0;
   color: var(--muted);
+}
+
+.chapter-progress {
+  margin-top: 18px;
 }
 
 .chapter-meta {

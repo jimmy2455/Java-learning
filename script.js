@@ -2,6 +2,29 @@ const STORAGE_KEY = "javaVillageProgress";
 
 const createActivity = (activity) => activity;
 
+const COURSE_GROUPS = [
+  { title: "Java 基礎", chapterIds: [1, 2, 3, 4, 5, 6, 7] },
+  { title: "物件導向", chapterIds: [8, 9, 10, 11, 12] },
+  { title: "進階應用", chapterIds: [13, 14, 15, 16, 17] },
+  { title: "GUI 實作", chapterIds: [18] }
+];
+
+const COURSE_NAV_TITLES = {
+  4: "運算式",
+  6: "流程控制（二）：迴圈",
+  7: "陣列",
+  8: "物件導向程式設計",
+  10: "字串",
+  11: "繼承",
+  12: "抽象類別、介面、內部類別",
+  13: "套件",
+  14: "例外處理",
+  15: "多執行緒",
+  16: "資料輸入與輸出",
+  17: "Java 標準類別庫",
+  18: "圖形使用者介面"
+};
+
 const chapters = [
   {
     id: 1,
@@ -11196,6 +11219,17 @@ function getAllActivities() {
   })));
 }
 
+function getCourseGroups() {
+  return COURSE_GROUPS.map((group) => ({
+    ...group,
+    chapters: group.chapterIds.map(getChapter).filter(Boolean)
+  }));
+}
+
+function getChapterNavTitle(chapter) {
+  return COURSE_NAV_TITLES[chapter.id] || chapter.title;
+}
+
 function getChapter(id) {
   return chapters.find((chapter) => chapter.id === id) || chapters[0];
 }
@@ -11270,12 +11304,28 @@ function getChapterStats(chapter, state = getState()) {
   };
 }
 
+function getChapterProgressPercent(chapter, state = getState()) {
+  const stats = getChapterStats(chapter, state);
+  const totalUnits = stats.totalSections + stats.totalActivities + stats.totalQuiz;
+  const completedUnits = stats.completedSections + stats.completedActivities + stats.answeredCount;
+
+  return totalUnits === 0 ? 0 : Math.round((completedUnits / totalUnits) * 100);
+}
+
+function getChapterStatus(chapter, state = getState()) {
+  if (state.completedChapters.includes(chapter.id)) return "已完成";
+  return getChapterProgressPercent(chapter, state) > 0 ? "學習中" : "未開始";
+}
+
 function getProgressStats() {
   const state = getState();
   const totalActivities = getAllActivities().length;
   const completedActivities = state.completedActivities.length;
+  const totalQuiz = chapters.reduce((sum, chapter) => sum + chapter.quiz.length, 0);
+  const completedQuiz = chapters.reduce((sum, chapter) => sum + getChapterStats(chapter, state).answeredCount, 0);
   const chapterPercent = Math.round((state.completedChapters.length / chapters.length) * 100);
   const activityPercent = totalActivities === 0 ? 0 : Math.round((completedActivities / totalActivities) * 100);
+  const quizPercent = totalQuiz === 0 ? 0 : Math.round((completedQuiz / totalQuiz) * 100);
 
   return {
     state,
@@ -11285,14 +11335,33 @@ function getProgressStats() {
     chapterPercent,
     completedActivities,
     totalActivities,
-    activityPercent
+    activityPercent,
+    completedQuiz,
+    totalQuiz,
+    quizPercent,
+    isCourseComplete: state.completedChapters.length === chapters.length
   };
+}
+
+function getContinueTarget(state = getState()) {
+  const chapter = chapters.find((item) => !state.completedChapters.includes(item.id)) || chapters[chapters.length - 1];
+  const chapterStats = getChapterStats(chapter, state);
+  const section = getSortedSections(chapter).find((item) => !state.completedSections.includes(getSectionKey(chapter.id, item.sectionId)));
+
+  if (section) return `#chapter-${chapter.id}/${encodeURIComponent(section.sectionId)}`;
+  if (!chapterStats.allQuizDone) return `#chapter-${chapter.id}/quiz`;
+  return `#chapter-${chapter.id}`;
 }
 
 function renderMainNav() {
   if (!mainNav) return;
-  const courseLinks = chapters.map((chapter) => `
-    <a href="#chapter-${chapter.id}" data-nav-link>${chapter.code} ${chapter.title}</a>
+  const courseGroups = getCourseGroups().map((group) => `
+    <div class="nav-course-group">
+      <div class="nav-group-title">${group.title}</div>
+      ${group.chapters.map((chapter) => `
+        <a href="#chapter-${chapter.id}" data-nav-link>${chapter.code} ${getChapterNavTitle(chapter)}</a>
+      `).join("")}
+    </div>
   `).join("");
 
   mainNav.innerHTML = `
@@ -11304,8 +11373,7 @@ function renderMainNav() {
       </button>
       <div class="nav-dropdown-menu" id="courseMenu" data-course-menu hidden>
         <a class="nav-map-link" href="#map" data-nav-link>查看完整章節地圖</a>
-        <div class="nav-group-title">Java基礎</div>
-        ${courseLinks}
+        ${courseGroups}
       </div>
     </div>
     <a href="#toolbox" data-nav-link>Java工具箱</a>
@@ -11357,15 +11425,22 @@ function renderProgressPanel() {
 
 function renderHome() {
   const stats = getProgressStats();
+  const continueTarget = getContinueTarget(stats.state);
   app.innerHTML = `
     <section class="hero">
       <div>
-        <p class="eyebrow">Prototype 課程網站 · 前 ${stats.chapterTotal} 章</p>
+        <p class="eyebrow">完整 ${stats.chapterTotal} 章課程</p>
         <h1>Java 新手村</h1>
-        <p>從零開始學會 Java 程式設計。用章節地圖、範例程式、練習與測驗，把第一段學習路徑走穩。</p>
+        <p>從零開始學會 Java 程式設計。用章節地圖、範例程式、練習、作業與測驗，完整走過 Java 基礎、物件導向、進階應用與 GUI 實作。</p>
+        ${stats.isCourseComplete ? `
+          <div class="completion-banner">
+            <strong>🎉 恭喜完成 Java 新手村！</strong>
+            <span>已完成 ${stats.chapterDone} / ${stats.chapterTotal} 章 · 練習完成率 ${stats.activityPercent}% · 測驗完成率 ${stats.quizPercent}%</span>
+          </div>
+        ` : ""}
         <div class="hero-actions">
-          <a class="button" href="#map">開始學習</a>
-          <a class="button secondary" href="#chapter-${chapters[0].id}">直接進入 ${chapters[0].code}</a>
+          <a class="button" href="${continueTarget}">繼續學習</a>
+          <a class="button secondary" href="#map">前往課程地圖</a>
         </div>
       </div>
 
@@ -11373,19 +11448,19 @@ function renderHome() {
         <div class="stats-grid">
           <div class="stat-card">
             <strong>${stats.chapterTotal}</strong>
-            <span>目前章節</span>
+            <span>完整課程章節</span>
           </div>
           <div class="stat-card">
-            <strong>18</strong>
-            <span>未來規劃章節</span>
+            <strong>${stats.chapterDone}</strong>
+            <span>已完成章節</span>
           </div>
           <div class="stat-card">
             <strong>${stats.completedActivities}</strong>
             <span>已完成練習</span>
           </div>
           <div class="stat-card">
-            <strong>${stats.activityPercent}%</strong>
-            <span>練習完成率</span>
+            <strong>${stats.chapterPercent}%</strong>
+            <span>總學習進度</span>
           </div>
         </div>
         ${renderProgressPanel()}
@@ -11399,30 +11474,50 @@ function renderMap() {
   app.innerHTML = `
     <section class="page-title">
       <p class="eyebrow">Chapter Map</p>
-      <h1>章節地圖</h1>
-      <p>依照章節順序建立 Java 基礎。每一章都可以單獨閱讀，也可以照順序完成小節、練習與測驗。</p>
+      <h1>課程地圖</h1>
+      <p>完整 18 章課程依主題分組。每一章都可以單獨閱讀，也可以照順序完成小節、練習與測驗。</p>
       ${renderProgressPanel()}
     </section>
 
-    <section class="chapter-grid" aria-label="章節列表">
-      ${chapters.map((chapter) => {
-        const chapterStats = getChapterStats(chapter, state);
-        const isDone = state.completedChapters.includes(chapter.id);
-        return `
-          <a class="chapter-card" href="#chapter-${chapter.id}">
-            <span class="chapter-kicker">${chapter.code}</span>
-            <h2>${chapter.title}</h2>
-            <p>${chapter.summary}</p>
-            <div class="chapter-meta">
-              <span class="pill">${chapter.minutes} 分鐘</span>
-              <span class="pill ${isDone ? "done" : ""}">${isDone ? "已完成" : "尚未完成"}</span>
-              <span class="pill">小節 ${chapterStats.completedSections}/${chapterStats.totalSections}</span>
-              <span class="pill">練習 ${chapterStats.completedActivities}/${chapterStats.totalActivities}</span>
-              <span class="pill">測驗 ${chapterStats.answeredCount}/${chapterStats.totalQuiz}</span>
-            </div>
-          </a>
-        `;
-      }).join("")}
+    <section class="course-map" aria-label="章節列表">
+      ${getCourseGroups().map((group) => `
+        <section class="course-group">
+          <div class="course-group-heading">
+            <h2>${group.title}</h2>
+            <span>${group.chapters.length} 章</span>
+          </div>
+          <div class="chapter-grid">
+            ${group.chapters.map((chapter) => {
+              const chapterStats = getChapterStats(chapter, state);
+              const progressPercent = getChapterProgressPercent(chapter, state);
+              const status = getChapterStatus(chapter, state);
+              return `
+                <a class="chapter-card" href="#chapter-${chapter.id}">
+                  <span class="chapter-kicker">${chapter.code}</span>
+                  <h2>${chapter.title}</h2>
+                  <p>${chapter.summary}</p>
+                  <div class="chapter-progress">
+                    <div class="progress-row">
+                      <strong>${status}</strong>
+                      <span>${progressPercent}%</span>
+                    </div>
+                    <div class="progress-track">
+                      <div class="progress-bar" style="width: ${progressPercent}%"></div>
+                    </div>
+                  </div>
+                  <div class="chapter-meta">
+                    <span class="pill">${chapter.minutes} 分鐘</span>
+                    <span class="pill ${status === "已完成" ? "done" : ""}">${status}</span>
+                    <span class="pill">小節 ${chapterStats.completedSections}/${chapterStats.totalSections}</span>
+                    <span class="pill">練習 ${chapterStats.completedActivities}/${chapterStats.totalActivities}</span>
+                    <span class="pill">測驗 ${chapterStats.answeredCount}/${chapterStats.totalQuiz}</span>
+                  </div>
+                </a>
+              `;
+            }).join("")}
+          </div>
+        </section>
+      `).join("")}
     </section>
   `;
 }
