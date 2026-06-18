@@ -4176,6 +4176,7 @@ nums[j + 1] = temp;`,
   chapters.push(createChapter11());
   chapters.push(createChapter12());
   chapters.push(createChapter13());
+  chapters.push(createChapter14());
 }
 
 function updateSection(chapterId, sectionId, data) {
@@ -8316,6 +8317,524 @@ tw.com.example.school.course`,
       { question: "java.math 常見用途是？", options: ["精準數字運算", "讀取鍵盤", "宣告 package", "建立 classpath"], answer: 0, explanation: "java.math 包含 BigInteger、BigDecimal。" },
       { question: "反向網域命名法範例是？", options: ["com.company.project", "MyPackage", "Test123", "Package Main"], answer: 0, explanation: "反向網域命名法常用小寫並以點分層。" },
       { question: "為什麼不建議 package 叫 MyPackage？", options: ["不符合常見小寫命名慣例且語意模糊", "因為太短不能編譯", "因為必須有數字", "因為只能叫 java.lang"], answer: 0, explanation: "Package 通常使用小寫並具備清楚分層語意。" }
+    ]
+  };
+}
+
+function createChapter14() {
+  return {
+    id: 14,
+    code: "CH14",
+    title: "例外處理（Exception Handling）",
+    minutes: 135,
+    summary: "理解 Exception、Runtime Error、try/catch/finally、throw/throws 與自訂例外。",
+    intro: "程式不只要在正常情況下能跑，也要能面對錯誤輸入、資料不存在、除以零、餘額不足等狀況。本章會教你讓程式遇到問題時，不是直接崩潰，而是能用清楚方式處理錯誤。",
+    goals: [
+      "了解什麼是例外 Exception",
+      "了解 Runtime Error 與 Compile Error 的差異",
+      "學會 try / catch / finally",
+      "學會 throw 與 throws",
+      "學會建立自訂例外類別",
+      "能夠設計具有錯誤處理能力的程式"
+    ],
+    sections: [
+      {
+        sectionId: "14.1",
+        title: "什麼是例外？",
+        body: [
+          "例外（Exception）是程式執行時發生的異常狀況。像 ATM 提款餘額不足、登入時帳號不存在、使用者輸入文字但程式期待數字，都是可以用例外思維處理的情境。",
+          "錯誤大致可分成 Compile Error、Runtime Error、Logical Error。編譯錯誤會讓程式無法通過編譯；執行錯誤是在程式跑起來後才發生；邏輯錯誤則是程式能跑，但結果不符合需求。",
+          "當例外沒有被處理時，程式通常會立即中斷，後面的程式碼不會繼續執行。例外處理的目的，就是讓程式能在出錯時給出合理反應。",
+          "常見例外包含 ArithmeticException、ArrayIndexOutOfBoundsException、NullPointerException、NumberFormatException。"
+        ],
+        code: {
+          title: "錯誤類型圖解",
+          value: `Compile Error
+  ↓ 編譯前就發現
+System.out.prinln("Hello");
+
+Runtime Error
+  ↓ 執行時才發生
+10 / 0
+
+Logical Error
+  ↓ 程式可執行但結果錯
+折扣公式寫錯`
+        },
+        codes: [
+          { title: "範例 1：生活案例 ATM 餘額不足", value: `提款 5000\n  ↓\n帳戶餘額只有 1000\n  ↓\n發生「餘額不足」例外狀況\n  ↓\n提示使用者：餘額不足，請重新輸入金額` },
+          { title: "範例 2：Compile Error", value: `System.out.prinln("Hello");\n\n// 錯誤原因：\n// println 拼錯，編譯時就會發現。` },
+          { title: "範例 3：Runtime Error 除以零", value: `int x = 10 / 0;\nSystem.out.println(x);\n\n// 執行時發生：\n// ArithmeticException: / by zero` },
+          { title: "範例 4：Logical Error", value: `int price = 1000;\nint discount = 20;\nint finalPrice = price + discount;\n\n// 程式可執行，但公式錯了。\n// 折扣應該是減掉，不是加上。` },
+          { title: "範例 5：ArithmeticException", value: `int a = 10;\nint b = 0;\nSystem.out.println(a / b);\n\n// 例外：\n// ArithmeticException` },
+          { title: "範例 6：ArrayIndexOutOfBoundsException", value: `int[] nums = {1, 2, 3};\nSystem.out.println(nums[3]);\n\n// 例外：\n// ArrayIndexOutOfBoundsException\n// 索引只有 0, 1, 2。` },
+          { title: "範例 7：NullPointerException", value: `String name = null;\nSystem.out.println(name.length());\n\n// 例外：\n// NullPointerException\n// null 沒有物件可呼叫 length()。` },
+          { title: "範例 8：NumberFormatException", value: `String text = "abc";\nint number = Integer.parseInt(text);\n\n// 例外：\n// NumberFormatException\n// abc 不能轉成整數。` },
+          { title: "範例 9：例外發生後程式中斷", value: `System.out.println("開始");\nint x = 10 / 0;\nSystem.out.println("結束");\n\n// 執行結果：\n// 開始\n// 接著發生例外，結束不會印出。` },
+          { title: "範例 10：例外是物件", value: `ArithmeticException e =\n    new ArithmeticException("不能除以零");\n\nSystem.out.println(e.getMessage());\n\n// 執行結果：\n// 不能除以零` },
+          { title: "範例 11：先檢查避免例外", value: `int a = 10;\nint b = 0;\n\nif (b != 0) {\n    System.out.println(a / b);\n} else {\n    System.out.println("除數不能是 0");\n}\n\n// 執行結果：\n// 除數不能是 0` }
+        ]
+      },
+      {
+        sectionId: "14.2",
+        title: "try / catch / finally 敘述",
+        body: [
+          "`try` 區塊放可能發生例外的程式，`catch` 區塊負責捕捉並處理例外。這樣例外發生時，程式不會直接中斷，而是進入對應的 catch。",
+          "你可以透過 `e.getMessage()` 取得例外訊息，或用 `e.printStackTrace()` 印出詳細追蹤資訊。初學時先知道它能幫你找錯即可。",
+          "多重 catch 可以針對不同例外給不同處理方式。順序要從比較具體的例外寫到比較一般的 Exception。",
+          "`finally` 無論是否發生例外，通常都會執行，常用於關閉檔案、關閉資料庫連線、釋放資源。"
+        ],
+        code: {
+          title: "try / catch / finally 流程圖",
+          value: `try
+  ↓
+發生例外？
+  ├─ 是 → catch 處理
+  └─ 否 → 繼續
+  ↓
+finally
+  ↓
+後續程式`
+        },
+        codes: [
+          { title: "範例 1：基本 try / catch", value: `try {\n    int x = 10 / 0;\n} catch (Exception e) {\n    System.out.println("發生錯誤");\n}\n\n// 執行結果：\n// 發生錯誤` },
+          { title: "範例 2：取得例外訊息", value: `try {\n    int x = 10 / 0;\n} catch (Exception e) {\n    System.out.println(e.getMessage());\n}\n\n// 執行結果：\n// / by zero` },
+          { title: "範例 3：印出例外資訊", value: `try {\n    int x = 10 / 0;\n} catch (Exception e) {\n    e.printStackTrace();\n}\n\n// 解說：\n// 會印出例外類型、訊息與呼叫位置。` },
+          { title: "範例 4：捕捉 ArithmeticException", value: `try {\n    int x = 10 / 0;\n} catch (ArithmeticException e) {\n    System.out.println("數學運算錯誤");\n}\n\n// 執行結果：\n// 數學運算錯誤` },
+          { title: "範例 5：捕捉陣列越界", value: `try {\n    int[] nums = {1, 2, 3};\n    System.out.println(nums[5]);\n} catch (ArrayIndexOutOfBoundsException e) {\n    System.out.println("索引超出範圍");\n}\n\n// 執行結果：\n// 索引超出範圍` },
+          { title: "範例 6：多重 catch", value: `try {\n    int[] nums = {1, 2, 3};\n    System.out.println(nums[3]);\n} catch (ArithmeticException e) {\n    System.out.println("除法錯誤");\n} catch (ArrayIndexOutOfBoundsException e) {\n    System.out.println("陣列索引錯誤");\n}\n\n// 執行結果：\n// 陣列索引錯誤` },
+          { title: "範例 7：最後用 Exception 接一般錯誤", value: `try {\n    String text = null;\n    System.out.println(text.length());\n} catch (NullPointerException e) {\n    System.out.println("資料是 null");\n} catch (Exception e) {\n    System.out.println("其他錯誤");\n}\n\n// 執行結果：\n// 資料是 null` },
+          { title: "範例 8：finally 一定會執行", value: `try {\n    int x = 10 / 0;\n} catch (Exception e) {\n    System.out.println("發生錯誤");\n} finally {\n    System.out.println("一定會執行");\n}\n\n// 執行結果：\n// 發生錯誤\n// 一定會執行` },
+          { title: "範例 9：沒有例外也會 finally", value: `try {\n    int x = 10 / 2;\n    System.out.println(x);\n} catch (Exception e) {\n    System.out.println("發生錯誤");\n} finally {\n    System.out.println("收尾");\n}\n\n// 執行結果：\n// 5\n// 收尾` },
+          { title: "範例 10：除法計算器", value: `int a = 10;\nint b = 0;\n\ntry {\n    System.out.println(a / b);\n} catch (ArithmeticException e) {\n    System.out.println("除數不能是 0");\n}\n\n// 執行結果：\n// 除數不能是 0` },
+          { title: "範例 11：陣列安全存取", value: `int[] nums = {10, 20, 30};\nint index = 5;\n\ntry {\n    System.out.println(nums[index]);\n} catch (ArrayIndexOutOfBoundsException e) {\n    System.out.println("沒有這個位置");\n}\n\n// 執行結果：\n// 沒有這個位置` },
+          { title: "範例 12：finally 用於關閉資源", value: `try {\n    System.out.println("開啟檔案");\n    System.out.println("讀取資料");\n} catch (Exception e) {\n    System.out.println("讀取失敗");\n} finally {\n    System.out.println("關閉檔案");\n}\n\n// 執行結果：\n// 開啟檔案\n// 讀取資料\n// 關閉檔案` },
+          { title: "範例 13：NumberFormatException", value: `try {\n    int n = Integer.parseInt("abc");\n} catch (NumberFormatException e) {\n    System.out.println("請輸入數字");\n}\n\n// 執行結果：\n// 請輸入數字` }
+        ]
+      },
+      {
+        sectionId: "14.3",
+        title: "拋出例外",
+        body: [
+          "`throw` 是主動拋出一個例外物件，通常用在你檢查到不合法資料時。例如年齡小於 0，就可以主動丟出例外。",
+          "`throws` 寫在方法宣告上，表示這個方法可能會丟出某種例外，提醒呼叫者要處理。",
+          "簡單記法：`throw` 是真的丟出去；`throws` 是方法先聲明可能會丟。",
+          "例外會沿著呼叫鏈往上傳遞。methodB 發生例外，如果 methodB 不處理，可能傳給 methodA，再傳回 main。"
+        ],
+        code: {
+          title: "Call Stack 圖解",
+          value: `main()
+  ↓ 呼叫
+methodA()
+  ↓ 呼叫
+methodB()
+  ↓
+throw Exception
+  ↑
+往呼叫者回傳，直到被 catch`
+        },
+        codes: [
+          { title: "範例 1：throw 主動拋出例外", value: `int age = -1;\n\nif (age < 0) {\n    throw new RuntimeException("年齡不能小於 0");\n}\n\n// 執行結果：\n// RuntimeException: 年齡不能小於 0` },
+          { title: "範例 2：throw new Exception", value: `static void checkAge(int age) throws Exception {\n    if (age < 0) {\n        throw new Exception("年齡不能小於0");\n    }\n}` },
+          { title: "範例 3：throws 宣告", value: `static void test() throws Exception {\n    throw new Exception("測試錯誤");\n}\n\n// 解說：\n// throws 告訴呼叫者：這個方法可能發生 Exception。` },
+          { title: "範例 4：呼叫 throws 方法需要處理", value: `try {\n    test();\n} catch (Exception e) {\n    System.out.println(e.getMessage());\n}\n\n// 執行結果：\n// 測試錯誤` },
+          { title: "範例 5：驗證年齡", value: `static void validateAge(int age) {\n    if (age < 0) {\n        throw new IllegalArgumentException("年齡不合法");\n    }\n}\n\nvalidateAge(-5);\n\n// 例外：\n// IllegalArgumentException` },
+          { title: "範例 6：驗證分數", value: `static void validateScore(int score) {\n    if (score < 0 || score > 100) {\n        throw new IllegalArgumentException("分數必須是 0 到 100");\n    }\n}` },
+          { title: "範例 7：驗證帳戶餘額", value: `static void withdraw(int balance, int amount) {\n    if (amount > balance) {\n        throw new IllegalArgumentException("餘額不足");\n    }\n}` },
+          { title: "範例 8：throw 與 return 的差異", value: `static int divide(int a, int b) {\n    if (b == 0) {\n        throw new IllegalArgumentException("除數不能是 0");\n    }\n    return a / b;\n}\n\n// throw 會中斷正常流程；return 是正常回傳結果。` },
+          { title: "範例 9：呼叫鏈傳遞", value: `static void methodB() throws Exception {\n    throw new Exception("B 發生錯誤");\n}\n\nstatic void methodA() throws Exception {\n    methodB();\n}\n\npublic static void main(String[] args) {\n    try {\n        methodA();\n    } catch (Exception e) {\n        System.out.println(e.getMessage());\n    }\n}\n\n// 執行結果：\n// B 發生錯誤` },
+          { title: "範例 10：多個 throws", value: `static void readData() throws Exception {\n    throw new Exception("讀取失敗");\n}\n\n// 初學先知道：\n// throws 可以把處理責任交給呼叫者。` },
+          { title: "範例 11：何時適合主動 throw", value: `適合：\n- 參數不合法\n- 狀態不允許操作\n- 資料缺失導致無法繼續\n\n不適合：\n- 可以用簡單 if 正常處理的流程，不一定要丟例外。` }
+        ]
+      },
+      {
+        sectionId: "14.4",
+        title: "自訂例外類別",
+        body: [
+          "Java 提供很多標準例外，但有時候標準例外不夠清楚。例如餘額不足、年齡不合法、會員等級錯誤，這些都可以設計成自訂例外。",
+          "自訂例外通常繼承 `Exception` 或 `RuntimeException`。初學階段先用 `extends Exception` 理解它是一種例外類別。",
+          "自訂例外的好處是讓錯誤語意更清楚。看到 `BalanceException`，比看到一般 `Exception` 更容易知道是帳戶餘額問題。",
+          "建立自訂例外常會加上 Constructor，接收錯誤訊息並呼叫 `super(msg)`。"
+        ],
+        code: {
+          title: "自訂例外流程圖",
+          value: `定義 AgeException
+  ↓
+validateAge()
+  ↓ 年齡不合法
+throw new AgeException(...)
+  ↓
+catch(AgeException e)
+  ↓
+顯示錯誤訊息`
+        },
+        codes: [
+          { title: "範例 1：最簡單 AgeException", value: `class AgeException extends Exception {\n}\n\n// 解說：\n// AgeException 現在是一種 Exception。` },
+          { title: "範例 2：加入訊息 Constructor", value: `class AgeException extends Exception {\n    AgeException(String msg) {\n        super(msg);\n    }\n}` },
+          { title: "範例 3：拋出 AgeException", value: `static void checkAge(int age) throws AgeException {\n    if (age < 0) {\n        throw new AgeException("年齡不合法");\n    }\n}` },
+          { title: "範例 4：捕捉 AgeException", value: `try {\n    checkAge(-1);\n} catch (AgeException e) {\n    System.out.println(e.getMessage());\n}\n\n// 執行結果：\n// 年齡不合法` },
+          { title: "範例 5：ScoreException", value: `class ScoreException extends Exception {\n    ScoreException(String msg) {\n        super(msg);\n    }\n}\n\nstatic void checkScore(int score) throws ScoreException {\n    if (score < 0 || score > 100) {\n        throw new ScoreException("分數超出範圍");\n    }\n}` },
+          { title: "範例 6：BalanceException", value: `class BalanceException extends Exception {\n    BalanceException(String msg) {\n        super(msg);\n    }\n}` },
+          { title: "範例 7：提款時拋出 BalanceException", value: `static void withdraw(int balance, int amount)\n        throws BalanceException {\n    if (amount > balance) {\n        throw new BalanceException("餘額不足");\n    }\n}` },
+          { title: "範例 8：會員等級錯誤", value: `class MemberLevelException extends Exception {\n    MemberLevelException(String msg) {\n        super(msg);\n    }\n}\n\nstatic void checkLevel(String level) throws MemberLevelException {\n    if (!level.equals("VIP") && !level.equals("NORMAL")) {\n        throw new MemberLevelException("會員等級錯誤");\n    }\n}` },
+          { title: "範例 9：自訂例外命名", value: `建議命名：\nAgeException\nScoreException\nBalanceException\n\n不建議：\nError1\nBadThing\nMyProblem\n\n// 好名字能直接說明錯誤類型。` },
+          { title: "範例 10：RuntimeException 版本", value: `class BalanceRuntimeException extends RuntimeException {\n    BalanceRuntimeException(String msg) {\n        super(msg);\n    }\n}\n\n// 初學先認識：\n// RuntimeException 通常不強制 throws。` },
+          { title: "範例 11：自訂例外讓 catch 更精準", value: `try {\n    withdraw(1000, 2000);\n} catch (BalanceException e) {\n    System.out.println("提款失敗：" + e.getMessage());\n}\n\n// 執行結果：\n// 提款失敗：餘額不足` }
+        ]
+      },
+      {
+        sectionId: "14.5",
+        title: "綜合演練",
+        body: [
+          "本節把前面學過的方法、字串、封裝、Constructor 與 Exception 串起來。",
+          "例外處理的設計重點是：正常流程保持清楚，錯誤流程也要有明確訊息。不要讓程式默默失敗，也不要讓使用者只看到看不懂的錯誤。"
+        ],
+        code: {
+          title: "題目 1：會拋出例外的計算階乘程式",
+          value: `問題說明：
+建立 factorial(int n)，負數不允許，遇到負數主動拋出例外。
+
+解題思路：
+階乘只接受 0 或正整數。
+如果 n < 0，throw IllegalArgumentException。
+否則用迴圈計算。
+
+流程圖：
+輸入 n
+  ↓
+n < 0 ?
+  ├─ 是 → throw 例外
+  └─ 否 → 計算階乘
+
+Hint：
+先檢查參數，再做計算。
+
+Solution：
+static int factorial(int n) {
+    if (n < 0) {
+        throw new IllegalArgumentException("負數不能計算階乘");
+    }
+
+    int result = 1;
+    for (int i = 1; i <= n; i++) {
+        result *= i;
+    }
+    return result;
+}
+
+try {
+    System.out.println(factorial(-3));
+} catch (IllegalArgumentException e) {
+    System.out.println(e.getMessage());
+}
+
+執行結果：
+負數不能計算階乘
+
+Explanation：
+錯誤輸入不應該進入正常計算流程。先檢查並拋出例外，可以讓方法規則更清楚。`
+        },
+        codes: [
+          {
+            title: "題目 2：字串大小寫轉換應用",
+            value: `問題說明：
+輸入字串後轉成全大寫與全小寫。
+若輸入為 null，請處理例外。
+
+解題思路：
+String 的 toUpperCase()、toLowerCase() 需要物件存在。
+如果 text 是 null，呼叫方法會發生 NullPointerException。
+可以先主動檢查 null，並丟出 IllegalArgumentException。
+
+Hint：
+用 if (text == null) 檢查。
+
+Solution：
+static void convertText(String text) {
+    if (text == null) {
+        throw new IllegalArgumentException("文字不能是 null");
+    }
+
+    System.out.println(text.toUpperCase());
+    System.out.println(text.toLowerCase());
+}
+
+try {
+    convertText(null);
+} catch (IllegalArgumentException e) {
+    System.out.println(e.getMessage());
+}
+
+執行結果：
+文字不能是 null
+
+Explanation：
+與其讓 NullPointerException 在深處發生，不如在方法入口先檢查，給出更容易理解的訊息。`
+          },
+          {
+            title: "題目 3：簡單的帳戶模擬程式",
+            value: `問題說明：
+建立 BankAccount，包含 deposit() 和 withdraw()。
+若提款超過餘額，拋出 BalanceException。
+
+UML 概念圖：
+BankAccount
+- balance
++ BankAccount(balance)
++ deposit(amount)
++ withdraw(amount)
++ getBalance()
+
+BalanceException extends Exception
+
+流程圖：
+withdraw(amount)
+  ↓
+amount > balance ?
+  ├─ 是 → throw BalanceException
+  └─ 否 → balance -= amount
+
+Hint：
+balance 使用 private，透過方法控制存取。
+
+Solution：
+class BalanceException extends Exception {
+    BalanceException(String msg) {
+        super(msg);
+    }
+}
+
+class BankAccount {
+    private int balance;
+
+    BankAccount(int balance) {
+        this.balance = balance;
+    }
+
+    void deposit(int amount) {
+        if (amount > 0) {
+            balance += amount;
+        }
+    }
+
+    void withdraw(int amount) throws BalanceException {
+        if (amount > balance) {
+            throw new BalanceException("餘額不足");
+        }
+        balance -= amount;
+    }
+
+    int getBalance() {
+        return balance;
+    }
+}
+
+BankAccount account = new BankAccount(1000);
+
+try {
+    account.withdraw(1500);
+} catch (BalanceException e) {
+    System.out.println(e.getMessage());
+}
+
+執行結果：
+餘額不足
+
+Explanation：
+這題結合 Constructor、Encapsulation、Exception。BankAccount 保護 balance，提款規則集中在 withdraw()，錯誤情況用自訂例外清楚表達。`
+          }
+        ]
+      }
+    ],
+    activities: [
+      createActivity({
+        id: "ch14-exercise-runtime-errors",
+        sectionId: "14.1",
+        type: "exercise",
+        title: "14.1 練習：觀察三種 Runtime Error",
+        question: "分別寫出除以零、陣列越界、NullPointerException 的範例，觀察錯誤訊息。",
+        hint: "可以用 `10 / 0`、`nums[3]`、`name.length()` 搭配 null。",
+        solution: `int x = 10 / 0;
+
+int[] nums = {1, 2, 3};
+System.out.println(nums[3]);
+
+String name = null;
+System.out.println(name.length());`,
+        explanation: "這題目的是認識常見 Runtime Error。實務上會用 try/catch 或事前檢查處理。"
+      }),
+      createActivity({
+        id: "ch14-thought-error-types",
+        sectionId: "14.1",
+        type: "thought",
+        title: "14.1 思考題：Compile / Runtime / Logical Error 差在哪？",
+        question: "請各用一句話說明三種錯誤差異。",
+        hint: "思考錯誤是在編譯前、執行中，還是結果不符合需求。",
+        solution: "Compile Error 是編譯時發現的語法或名稱錯誤；Runtime Error 是執行中發生的錯誤；Logical Error 是程式能執行但邏輯結果錯。",
+        explanation: "分清楚錯誤類型，才能選擇正確除錯方式。"
+      }),
+      createActivity({
+        id: "ch14-exercise-try-catch",
+        sectionId: "14.2",
+        type: "exercise",
+        title: "14.2 練習：除法計算器",
+        question: "建立除法程式，當除數為 0 時，用 try/catch 顯示錯誤訊息。",
+        hint: "捕捉 `ArithmeticException`。",
+        solution: `try {
+    int result = 10 / 0;
+    System.out.println(result);
+} catch (ArithmeticException e) {
+    System.out.println("除數不能是 0");
+}`,
+        explanation: "try/catch 可以讓程式在錯誤發生時改走錯誤處理流程，而不是直接中斷。"
+      }),
+      createActivity({
+        id: "ch14-exercise-multi-catch",
+        sectionId: "14.2",
+        type: "exercise",
+        title: "14.2 練習：多重 catch",
+        question: "設計程式同時可能發生除法錯誤與陣列錯誤，並用不同 catch 處理。",
+        hint: "先寫 ArithmeticException，再寫 ArrayIndexOutOfBoundsException。",
+        solution: `try {
+    int[] nums = {1, 2, 3};
+    System.out.println(nums[5]);
+} catch (ArithmeticException e) {
+    System.out.println("除法錯誤");
+} catch (ArrayIndexOutOfBoundsException e) {
+    System.out.println("陣列索引錯誤");
+}`,
+        explanation: "多重 catch 讓不同錯誤有不同提示，使用者比較容易理解。"
+      }),
+      createActivity({
+        id: "ch14-exercise-throw-age",
+        sectionId: "14.3",
+        type: "exercise",
+        title: "14.3 練習：驗證年齡",
+        question: "建立 `validateAge(int age)`，年齡小於 0 時主動拋出例外。",
+        hint: "使用 `throw new IllegalArgumentException(...)`。",
+        solution: `static void validateAge(int age) {
+    if (age < 0) {
+        throw new IllegalArgumentException("年齡不能小於 0");
+    }
+}`,
+        explanation: "throw 適合在方法發現不合法資料時主動中斷正常流程。"
+      }),
+      createActivity({
+        id: "ch14-homework-throw-score-balance",
+        sectionId: "14.3",
+        type: "homework",
+        title: "14.3 作業：驗證分數與餘額",
+        question: "建立 `validateScore` 與 `withdraw`，分數超出範圍或餘額不足時拋出例外。",
+        hint: "分數規則是 0 到 100，提款規則是 amount <= balance。",
+        solution: `static void validateScore(int score) {
+    if (score < 0 || score > 100) {
+        throw new IllegalArgumentException("分數超出範圍");
+    }
+}
+
+static void withdraw(int balance, int amount) {
+    if (amount > balance) {
+        throw new IllegalArgumentException("餘額不足");
+    }
+}`,
+        explanation: "例外可以把違反規則的情況明確表達出來。"
+      }),
+      createActivity({
+        id: "ch14-exercise-custom-age",
+        sectionId: "14.4",
+        type: "exercise",
+        title: "14.4 練習：AgeException",
+        question: "建立 `AgeException extends Exception`，並在年齡小於 0 時拋出。",
+        hint: "自訂例外 Constructor 內呼叫 `super(msg)`。",
+        solution: `class AgeException extends Exception {
+    AgeException(String msg) {
+        super(msg);
+    }
+}`,
+        explanation: "自訂例外讓錯誤語意更清楚，呼叫端也能精準 catch。"
+      }),
+      createActivity({
+        id: "ch14-exercise-custom-score-balance",
+        sectionId: "14.4",
+        type: "exercise",
+        title: "14.4 練習：ScoreException 與 BalanceException",
+        question: "建立 `ScoreException` 與 `BalanceException`，分別表示分數超出範圍與餘額不足。",
+        hint: "兩個類別都可以 extends Exception。",
+        solution: `class ScoreException extends Exception {
+    ScoreException(String msg) {
+        super(msg);
+    }
+}
+
+class BalanceException extends Exception {
+    BalanceException(String msg) {
+        super(msg);
+    }
+}`,
+        explanation: "自訂例外命名最好能直接說明錯誤類型。"
+      }),
+      createActivity({
+        id: "ch14-project-factorial",
+        sectionId: "14.5",
+        type: "exercise",
+        title: "14.5 綜合練習：階乘例外",
+        question: "完成 factorial，負數時拋出例外，並用 try/catch 顯示訊息。",
+        hint: "先檢查 `n < 0`。",
+        solution: `static int factorial(int n) {
+    if (n < 0) {
+        throw new IllegalArgumentException("負數不能計算階乘");
+    }
+    int result = 1;
+    for (int i = 1; i <= n; i++) result *= i;
+    return result;
+}`,
+        explanation: "方法入口處先驗證參數，是寫出穩定程式的重要習慣。"
+      }),
+      createActivity({
+        id: "ch14-homework-bank-account",
+        sectionId: "14.5",
+        type: "homework",
+        title: "14.5 作業：BankAccount 例外處理",
+        question: "完成 BankAccount，使用 private balance、deposit、withdraw，餘額不足時拋出 BalanceException。",
+        hint: "結合 Constructor、Encapsulation、自訂例外。",
+        solution: `class BankAccount {
+    private int balance;
+
+    BankAccount(int balance) {
+        this.balance = balance;
+    }
+
+    void withdraw(int amount) throws BalanceException {
+        if (amount > balance) {
+            throw new BalanceException("餘額不足");
+        }
+        balance -= amount;
+    }
+}`,
+        explanation: "這題將前面 OOP 與 Exception 整合，是本章最接近實務的練習。"
+      })
+    ],
+    quiz: [
+      { question: "Exception 通常代表什麼？", options: ["程式執行時的異常狀況", "CSS 樣式", "HTML 標籤", "資料庫表格"], answer: 0, explanation: "Exception 是執行期間可能發生的錯誤狀況。" },
+      { question: "Compile Error 是什麼？", options: ["編譯時發現的錯誤", "程式結果錯但可執行", "使用者登入成功", "finally 區塊"], answer: 0, explanation: "拼字錯、語法錯常屬於 Compile Error。" },
+      { question: "`10 / 0` 常造成哪種錯誤？", options: ["Runtime Error", "Compile Error", "Logical Error", "HTML Error"], answer: 0, explanation: "除以零是在執行時發生 ArithmeticException。" },
+      { question: "陣列索引超出範圍常見例外是？", options: ["ArrayIndexOutOfBoundsException", "NullPointerException", "AgeException", "PackageException"], answer: 0, explanation: "存取不存在的陣列位置會造成此例外。" },
+      { question: "將 `abc` 轉成 int 可能發生？", options: ["NumberFormatException", "ArithmeticException", "InterfaceException", "NoPackageError"], answer: 0, explanation: "abc 無法解析成整數。" },
+      { question: "try 區塊放什麼？", options: ["可能發生例外的程式", "只能放註解", "只能放 package", "只能放 class 名稱"], answer: 0, explanation: "try 用來包住可能出錯的程式碼。" },
+      { question: "catch 區塊用途是？", options: ["捕捉並處理例外", "建立物件", "宣告套件", "結束編譯器"], answer: 0, explanation: "catch 負責錯誤處理。" },
+      { question: "finally 通常何時執行？", options: ["無論是否發生例外通常都會執行", "只有編譯錯誤時", "只有沒有例外時", "永遠不執行"], answer: 0, explanation: "finally 常用於收尾與釋放資源。" },
+      { question: "取得例外訊息可用？", options: ["e.getMessage()", "e.messageOnly()", "e.catch()", "e.finally()"], answer: 0, explanation: "getMessage() 回傳例外訊息。" },
+      { question: "多重 catch 順序通常應該？", options: ["具體例外在前，一般 Exception 在後", "Exception 一定最前", "順序完全不重要", "finally 放最前"], answer: 0, explanation: "較一般的 catch 放前面會擋住後面具體 catch。" },
+      { question: "throw 的用途是？", options: ["主動拋出例外", "宣告 package", "建立 class", "匯入類別"], answer: 0, explanation: "throw 會丟出一個例外物件。" },
+      { question: "throws 的用途是？", options: ["宣告方法可能拋出例外", "真的建立例外物件", "捕捉例外", "關閉檔案"], answer: 0, explanation: "throws 寫在方法宣告上，提醒呼叫者處理。" },
+      { question: "throw 與 throws 差異是？", options: ["throw 真的丟例外，throws 是方法宣告", "兩者完全相同", "throws 只能放變數", "throw 只能放 package"], answer: 0, explanation: "一個是動作，一個是方法簽名中的聲明。" },
+      { question: "Call Stack 可用來理解什麼？", options: ["方法呼叫鏈與例外傳遞", "CSS 排版", "套件命名", "字串不可變"], answer: 0, explanation: "例外會沿呼叫鏈往上傳遞直到被處理。" },
+      { question: "自訂例外通常繼承？", options: ["Exception 或 RuntimeException", "String", "Scanner", "System"], answer: 0, explanation: "自訂例外是例外類別的一種。" },
+      { question: "自訂例外 Constructor 中常呼叫？", options: ["super(msg)", "this.package()", "catch(msg)", "final(msg)"], answer: 0, explanation: "super(msg) 把訊息傳給父類別 Exception。" },
+      { question: "BalanceException 最適合表示？", options: ["餘額不足", "字串轉大寫", "套件匯入", "抽象類別不能 new"], answer: 0, explanation: "好的例外名稱能清楚表達錯誤語意。" },
+      { question: "階乘程式遇到負數時，適合？", options: ["主動拋出例外", "默默回傳 999", "忽略輸入", "改 package 名稱"], answer: 0, explanation: "負數違反方法規則，適合用例外表達。" },
+      { question: "BankAccount 提款超過餘額時，較好的設計是？", options: ["拋出 BalanceException 並讓呼叫端處理", "直接讓 balance 變負數", "刪除帳戶", "重新命名 class"], answer: 0, explanation: "錯誤狀態應清楚表達並交由呼叫端處理。" },
+      { question: "本章不需要深入哪個主題？", options: ["JVM Exception Table", "try / catch", "throw", "Custom Exception"], answer: 0, explanation: "初學階段先會使用例外處理即可。" }
     ]
   };
 }
