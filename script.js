@@ -12622,11 +12622,21 @@ function parseChapterRoute() {
 }
 
 function navigateToSection(chapterId, sectionId) {
-  location.hash = `#chapter-${chapterId}/${encodeURIComponent(sectionId)}`;
+  const targetHash = `#chapter-${chapterId}/${encodeURIComponent(sectionId)}`;
+  if (location.hash === targetHash) {
+    renderCurrentRoute({ scrollToTop: true });
+    return;
+  }
+  location.hash = targetHash;
 }
 
 function navigateToAssessment(chapterId) {
-  location.hash = `#chapter-${chapterId}/quiz`;
+  const targetHash = `#chapter-${chapterId}/quiz`;
+  if (location.hash === targetHash) {
+    renderCurrentRoute({ scrollToTop: true });
+    return;
+  }
+  location.hash = targetHash;
 }
 
 function navigateRelativeSection(chapterId, direction) {
@@ -12675,6 +12685,26 @@ function closeMobileNav() {
 
   siteHeader.classList.remove("nav-open");
   navToggle.setAttribute("aria-expanded", "false");
+}
+
+function scrollMainContentToTop() {
+  const mainContent = document.querySelector(".lesson-article");
+  const mainContentStyle = mainContent ? window.getComputedStyle(mainContent) : null;
+  const hasMainContentScrollbar = mainContentStyle && /(auto|scroll)/.test(mainContentStyle.overflowY);
+  const canScrollMainContent = hasMainContentScrollbar && mainContent.scrollHeight > mainContent.clientHeight;
+
+  if (canScrollMainContent) {
+    mainContent.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+    return;
+  }
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
 }
 
 function bindMainNavEvents() {
@@ -12810,7 +12840,7 @@ function bindEvents() {
   });
 }
 
-function renderCurrentRoute() {
+function renderCurrentRoute(options = {}) {
   const hash = location.hash || "#home";
   const chapterRoute = parseChapterRoute();
 
@@ -12828,10 +12858,13 @@ function renderCurrentRoute() {
 
   updateActiveNav();
   app.focus({ preventScroll: true });
+  if (options.scrollToTop) {
+    requestAnimationFrame(scrollMainContentToTop);
+  }
 }
 
 renderMainNav();
-window.addEventListener("hashchange", renderCurrentRoute);
+window.addEventListener("hashchange", () => renderCurrentRoute({ scrollToTop: true }));
 bindMainNavEvents();
 bindEvents();
 renderCurrentRoute();
