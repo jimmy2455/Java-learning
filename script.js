@@ -619,26 +619,12 @@ Java支援`
         title: "安裝 JDK",
         body: [
           `本課程推薦使用 ${CH02_ENVIRONMENT_SETUP.jdkVersion}。LTS 是 Long-Term Support，代表這個版本會被較長期維護，適合學習與正式專案使用。`,
-          `官方下載網站：<a href="${CH02_ENVIRONMENT_SETUP.jdkDownloadUrl}" target="_blank" rel="noopener">${CH02_ENVIRONMENT_SETUP.jdkDownloadUrl}</a>。未來若 JDK 版本更新，只需要調整本章的「環境建置」資料區塊。`,
+          `官方下載網站：<a href="${CH02_ENVIRONMENT_SETUP.jdkDownloadUrl}" target="_blank" rel="noopener">${CH02_ENVIRONMENT_SETUP.jdkDownloadUrl}</a>。`,
           `Windows 安裝流程：${CH02_ENVIRONMENT_SETUP.windowsSteps.join(" → ")}。如果你不熟悉 PATH，可以先把它理解成：電腦用來尋找指令工具的位置清單。`,
           `macOS 安裝流程：${CH02_ENVIRONMENT_SETUP.macSteps.join(" → ")}。Terminal 是 macOS 的終端機，用來輸入像 java -version 這類指令。`,
           "安裝完成後，開啟終端機輸入 `java -version` 與 `javac -version`。`java` 用來執行 Java 程式，`javac` 是 Java 編譯器，用來把程式碼編譯成可執行的 class 檔案。"
         ],
         visuals: [
-          {
-            type: "screenshot",
-            title: "下載頁面截圖佔位",
-            value: `[下載頁面截圖]
-
-請在這裡放 OpenJDK 21 官方下載頁面截圖。`
-          },
-          {
-            type: "screenshot",
-            title: "安裝畫面截圖佔位",
-            value: `[安裝畫面截圖]
-
-請在這裡放 Windows 或 macOS 安裝畫面截圖。`
-          },
           {
             type: "callout",
             variant: "warning",
