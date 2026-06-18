@@ -4175,6 +4175,7 @@ nums[j + 1] = temp;`,
   chapters.push(createChapter10());
   chapters.push(createChapter11());
   chapters.push(createChapter12());
+  chapters.push(createChapter13());
 }
 
 function updateSection(chapterId, sectionId, data) {
@@ -7915,6 +7916,406 @@ class Button {
       { question: "Button + ClickListener 中，ClickListener 的角色是？", options: ["溝通契約", "資料庫", "抽象欄位", "數學運算子"], answer: 0, explanation: "Button 透過 Listener 通知外部行為。" },
       { question: "Shape、Circle、Rectangle 的範例主要展示？", options: ["抽象類別與多型", "Regex", "Scanner", "檔案輸入"], answer: 0, explanation: "Shape 定義共通 draw()，子類別提供實作。" },
       { question: "本章較不建議一開始深入哪個方向？", options: ["過度抽象的框架設計", "Animal 案例", "Button Listener", "Shape 案例"], answer: 0, explanation: "初學階段先用生活化案例理解概念即可。" }
+    ]
+  };
+}
+
+function createChapter13() {
+  return {
+    id: 13,
+    code: "CH13",
+    title: "套件（Packages）",
+    minutes: 105,
+    summary: "學會 Package、import、Subpackage、存取控制與 Java 標準類別庫的基本使用。",
+    intro: "當類別越來越多，專案就需要更好的分類方式。Package 就像資料夾與命名空間，幫你整理類別、避免命名衝突，並和存取控制一起影響類別如何被使用。",
+    goals: [
+      "了解 Package 的用途",
+      "學會建立 Package",
+      "學會使用 import",
+      "學會跨 Package 使用類別",
+      "了解子套件 Subpackage",
+      "了解 Package 與存取控制的關係",
+      "了解 Java 標準類別庫",
+      "學會 Package 命名規則"
+    ],
+    sections: [
+      {
+        sectionId: "13.1",
+        title: "程式的切割",
+        body: [
+          "專案一開始可能只有幾個類別，全部放在同一個資料夾還看得懂。但當 Student、Teacher、Dog、Cat、Vehicle、Car、Motorcycle、Calculator、Utility 都放在一起時，很快就會變亂。",
+          "Package 可以把相關類別分組，就像電腦中的資料夾。學校相關類別放 `school`，動物相關類別放 `animal`，工具類別放 `utility`。",
+          "Java 檔案最上方可以用 `package school;` 宣告自己屬於哪個套件。通常 package 名稱會對應資料夾路徑，例如 `package school;` 對應 `school/Student.java`。",
+          "Package 的目的包含整理類別、避免命名衝突、控制存取範圍，並讓專案架構更清楚。"
+        ],
+        code: {
+          title: "問題起點：全部檔案放一起",
+          value: `Project
+
+Student.java
+Teacher.java
+Dog.java
+Cat.java
+Vehicle.java
+Car.java
+Motorcycle.java
+Calculator.java
+Utility.java
+
+問題：
+檔案越來越多，越來越難管理。`
+        },
+        codes: [
+          { title: "範例 1：Package 像資料夾", value: `Project\n├─ school\n│  ├─ Student.java\n│  └─ Teacher.java\n├─ animal\n│  ├─ Dog.java\n│  └─ Cat.java\n└─ utility\n   └─ Calculator.java` },
+          { title: "範例 2：宣告 school 套件", value: `package school;\n\npublic class Student {\n    public String name;\n}\n\n// 解說：\n// 這個類別屬於 school package。` },
+          { title: "範例 3：宣告 animal 套件", value: `package animal;\n\npublic class Dog {\n    public void bark() {\n        System.out.println(\"汪汪\");\n    }\n}` },
+          { title: "範例 4：同一套件放多個相關類別", value: `animal\n├─ Dog.java\n└─ Cat.java\n\npackage animal;\n\npublic class Cat {\n    public void meow() {\n        System.out.println(\"喵喵\");\n    }\n}` },
+          { title: "範例 5：utility 套件", value: `package utility;\n\npublic class Calculator {\n    public static int add(int a, int b) {\n        return a + b;\n    }\n}` },
+          { title: "範例 6：Package 與資料夾路徑", value: `package school;\n\npublic class Teacher {\n}\n\n對應資料夾：\nschool/Teacher.java\n\n重點：\npackage 宣告通常要和資料夾結構一致。` },
+          { title: "範例 7：子資料夾形式的 package", value: `package com.example.school;\n\npublic class Student {\n}\n\n對應資料夾：\ncom/example/school/Student.java` },
+          { title: "範例 8：類別名稱相同但套件不同", value: `school.Student\ncompany.Student\n\n// 解說：\n// package 讓兩個 Student 可以同時存在，\n// 因為完整名稱不同。` },
+          { title: "範例 9：沒有 package 的預設套件", value: `public class Main {\n    public static void main(String[] args) {\n        System.out.println(\"Default package\");\n    }\n}\n\n// 解說：\n// 沒有 package 宣告時，類別在預設套件。\n// 初學可用，但大型專案不建議。` }
+        ]
+      },
+      {
+        sectionId: "13.2",
+        title: "分享寫好的程式",
+        body: [
+          "把類別放進不同 Package 後，就會遇到一個問題：不同 Package 要如何使用彼此的類別？答案是 `import`。",
+          "`import` 會告訴 Java：這個檔案會使用哪個 Package 裡的類別。例如 `import java.util.Scanner;` 代表你要使用標準類別庫中的 Scanner。",
+          "如果不使用 import，也可以寫完整名稱（Fully Qualified Name），例如 `java.util.Scanner sc = new java.util.Scanner(System.in);`。",
+          "`import animal.*;` 可以匯入 animal 套件中的多個類別，但過度使用星號可能讓來源不夠清楚。若有重名類別，例如 `school.Student` 和 `company.Student`，就需要用完整名稱避免衝突。"
+        ],
+        code: {
+          title: "import 圖解",
+          value: `Main.java
+  ↓ import animal.Dog
+animal/Dog.java
+  ↓
+Main 可以直接使用 Dog`
+        },
+        codes: [
+          { title: "範例 1：import Scanner", value: `import java.util.Scanner;\n\npublic class Main {\n    public static void main(String[] args) {\n        Scanner sc = new Scanner(System.in);\n    }\n}` },
+          { title: "範例 2：import 自訂類別 Dog", value: `import animal.Dog;\n\npublic class Main {\n    public static void main(String[] args) {\n        Dog dog = new Dog();\n        dog.bark();\n    }\n}\n\n// 執行結果：\n// 汪汪` },
+          { title: "範例 3：import school.Student", value: `import school.Student;\n\npublic class Main {\n    public static void main(String[] args) {\n        Student s = new Student();\n        s.name = \"Jimmy\";\n        System.out.println(s.name);\n    }\n}\n\n// 執行結果：\n// Jimmy` },
+          { title: "範例 4：完整名稱 Fully Qualified Name", value: `java.util.Scanner sc =\n    new java.util.Scanner(System.in);\n\n// 解說：\n// 不 import 也能用，但程式比較長。` },
+          { title: "範例 5：自訂類別完整名稱", value: `animal.Dog dog = new animal.Dog();\ndog.bark();\n\n// 執行結果：\n// 汪汪` },
+          { title: "範例 6：import animal.*", value: `import animal.*;\n\npublic class Main {\n    public static void main(String[] args) {\n        Dog dog = new Dog();\n        Cat cat = new Cat();\n    }\n}\n\n// 解說：\n// * 代表使用 animal 套件中的類別。` },
+          { title: "範例 7：星號 import 的優缺點", value: `優點：\nimport animal.*;\n// 少寫多個 import。\n\n缺點：\n// 不容易一眼看出 Dog、Cat 來自哪裡。\n// 大型專案通常偏好明確 import。` },
+          { title: "範例 8：重名類別衝突", value: `import school.Student;\nimport company.Student;\n\n// 問題：\n// 兩個 Student 名稱相同，Java 不知道你要用哪一個。` },
+          { title: "範例 9：用完整名稱處理重名", value: `school.Student schoolStudent = new school.Student();\ncompany.Student companyStudent = new company.Student();\n\n// 解說：\n// 完整名稱能明確指定是哪個 Student。` },
+          { title: "範例 10：java.lang 不用 import", value: `String text = \"Hello\";\nSystem.out.println(Math.max(3, 8));\n\n// 解說：\n// java.lang 裡的類別常自動可用，例如 String、Math。` },
+          { title: "範例 11：import static", value: `import static java.lang.Math.PI;\nimport static java.lang.Math.max;\n\nSystem.out.println(PI);\nSystem.out.println(max(3, 8));\n\n// 執行結果：\n// 3.141592653589793\n// 8\n\n// 解說：\n// 初學先認識即可，不必大量使用。` }
+        ]
+      },
+      {
+        sectionId: "13.3",
+        title: "子套件以及存取控制關係",
+        body: [
+          "Subpackage 是更細的套件分類，例如 `com.school.student`、`com.school.teacher`。它們看起來像資料夾父子關係，但在 Java 存取控制上是不同 Package。",
+          "請特別記住：`school` 和 `school.student` 不是父子類別關係，也不是同一個 Package。它們是兩個不同的 Package。",
+          "Package 會影響存取控制。`public` 幾乎到處可用；`private` 只在同一類別；沒有修飾字的 default 只限同 Package；`protected` 對同 Package 可用，也可讓不同 Package 的子類別透過繼承使用。",
+          "學到這裡先建立直覺：Package 不只是資料夾，也會影響誰看得到你的類別與成員。"
+        ],
+        code: {
+          title: "存取控制表",
+          value: `修飾字       同類別   同Package   不同Package子類別   其他Package
+public       可以     可以        可以              可以
+protected    可以     可以        可以              不可以
+default      可以     可以        不可以            不可以
+private      可以     不可以      不可以            不可以`
+        },
+        codes: [
+          { title: "範例 1：Subpackage 結構", value: `com\n├─ school\n├─ school.student\n└─ school.teacher\n\n// 注意：\n// school 和 school.student 是不同 package。` },
+          { title: "範例 2：animal 與 animal.dog", value: `animal\n└─ Animal.java\n\nanimal/dog\n└─ Dog.java\n\npackage animal;\npublic class Animal {}\n\npackage animal.dog;\npublic class Dog {}\n\n// 解說：\n// animal 與 animal.dog 是不同 package。` },
+          { title: "範例 3：public 成員", value: `package animal;\n\npublic class Animal {\n    public String name = \"Lucky\";\n}\n\n// 不同 package 也可透過物件存取 public name。` },
+          { title: "範例 4：private 成員", value: `package animal;\n\npublic class Animal {\n    private int age = 3;\n}\n\n// 只有 Animal 類別內部可以直接使用 age。` },
+          { title: "範例 5：default 成員", value: `package animal;\n\npublic class Animal {\n    String type = \"animal\";\n}\n\n// 沒有 public/protected/private 時是 default。\n// 只有同 package animal 可以直接存取。` },
+          { title: "範例 6：同 Package 可存取 default", value: `package animal;\n\npublic class Dog {\n    void test() {\n        Animal a = new Animal();\n        System.out.println(a.type);\n    }\n}\n\n// Dog 和 Animal 都在 animal，能存取 default type。` },
+          { title: "範例 7：subpackage 不能存取 default", value: `package animal.dog;\n\nimport animal.Animal;\n\npublic class Dog {\n    void test() {\n        Animal a = new Animal();\n        // System.out.println(a.type); // 錯誤\n    }\n}\n\n// animal.dog 不是 animal，所以不能存取 default 成員。` },
+          { title: "範例 8：protected 與子類別", value: `package animal;\n\npublic class Animal {\n    protected String name = \"Lucky\";\n}\n\npackage animal.dog;\n\nimport animal.Animal;\n\npublic class Dog extends Animal {\n    void show() {\n        System.out.println(name);\n    }\n}\n\n// 不同 package 的子類別可以透過繼承使用 protected 成員。` },
+          { title: "範例 9：protected 不是任意物件都能用", value: `package animal.dog;\n\nimport animal.Animal;\n\npublic class Dog extends Animal {\n    void test() {\n        Animal a = new Animal();\n        // System.out.println(a.name); // 通常不建議也可能受限制\n        System.out.println(this.name);\n    }\n}` },
+          { title: "範例 10：package-private 類別", value: `package utility;\n\nclass InternalTool {\n}\n\npublic class PublicTool {\n}\n\n// 解說：\n// InternalTool 沒有 public，只能在 utility package 內使用。` },
+          { title: "範例 11：存取控制圖解", value: `同 Package\n  ↓ default 可見\n不同 Package\n  ↓ default 不可見\n不同 Package 子類別\n  ↓ protected 可透過繼承使用\nprivate\n  ↓ 只在同一個類別內可見` }
+        ]
+      },
+      {
+        sectionId: "13.4",
+        title: "綜合演練",
+        body: [
+          "本節把 Package 組織、自訂套件、Java 標準類別庫與命名規則整理成實務練習。",
+          "請把 Package 想成專案地圖。好的套件命名和分類，能讓未來的你更快找到程式，也能降低類別名稱衝突。"
+        ],
+        code: {
+          title: "題目 1：加入新的類別到 flag 套件中",
+          value: `問題說明：
+建立 flag 套件，新增 TaiwanFlag、JapanFlag、USAFlag。
+
+解題思路：
+旗幟相關類別都放在 flag package。
+每個類別提供 show() 方法顯示名稱。
+
+資料夾結構：
+Project
+└─ flag
+   ├─ TaiwanFlag.java
+   ├─ JapanFlag.java
+   └─ USAFlag.java
+
+Hint：
+每個檔案最上方都要寫 package flag;
+
+Solution：
+package flag;
+
+public class TaiwanFlag {
+    public void show() {
+        System.out.println("Taiwan Flag");
+    }
+}
+
+package flag;
+
+public class JapanFlag {
+    public void show() {
+        System.out.println("Japan Flag");
+    }
+}
+
+package flag;
+
+public class USAFlag {
+    public void show() {
+        System.out.println("USA Flag");
+    }
+}
+
+Explanation：
+同一主題的類別放在同一套件，專案結構會更清楚。Main 若在其他 package，可用 import flag.TaiwanFlag; 使用。`
+        },
+        codes: [
+          {
+            title: "題目 2：Java 標準類別庫查詢表",
+            value: `問題說明：
+認識常見 Java 標準 Package，知道遇到問題時該去哪裡找類別。
+
+解題思路：
+先記常見用途，不需要背完整 API。
+
+查詢表：
+Package      用途                         常見類別
+java.lang    Java 核心類別，自動匯入       String, Math, System
+java.util    工具集合與輸入                Scanner, ArrayList, Random
+java.io      輸入輸出與檔案                File, InputStream, Reader
+java.math    精準數字運算                  BigInteger, BigDecimal
+
+Hint：
+看到 Scanner 就想到 java.util。
+看到 String、Math 通常不需要 import，因為在 java.lang。
+
+Solution：
+import java.util.Scanner;
+import java.util.Random;
+import java.math.BigDecimal;
+
+Scanner sc = new Scanner(System.in);
+Random random = new Random();
+BigDecimal price = new BigDecimal("99.9");
+
+Explanation：
+標準類別庫是 Java 已經幫你準備好的工具箱。學會 package 名稱，可以更快理解 import 的來源。`
+          },
+          {
+            title: "題目 3：套件的命名",
+            value: `問題說明：
+為專案設計清楚、不容易撞名的 package 名稱。
+
+解題思路：
+常見做法是反向網域命名法。
+例如公司網域是 example.com，package 可用 com.example.project。
+
+推薦命名：
+com.company.project
+tw.com.example.school
+org.learning.java
+
+不建議：
+MyPackage
+Test123
+
+原因：
+- 大寫開頭不符合常見 Java package 命名慣例
+- Test123 太模糊，不知道用途
+- 容易和其他專案撞名
+
+Hint：
+package 名稱通常使用小寫，並用點分層。
+
+Solution：
+package tw.com.example.school.student;
+
+public class Student {
+}
+
+Explanation：
+好的 package 名稱應該能看出組織、專案與功能分類。反向網域命名法能降低不同團隊之間的命名衝突。`
+          }
+        ]
+      }
+    ],
+    activities: [
+      createActivity({
+        id: "ch13-exercise-create-packages",
+        sectionId: "13.1",
+        type: "exercise",
+        title: "13.1 練習：建立三個套件",
+        question: "建立 `school`、`animal`、`utility` 三個套件，分別放入 Student、Dog、Calculator。",
+        hint: "每個檔案最上方寫對應的 `package` 宣告。",
+        solution: `package school;
+public class Student {}
+
+package animal;
+public class Dog {}
+
+package utility;
+public class Calculator {}`,
+        explanation: "Package 讓類別依主題分組，檔案越多時越重要。"
+      }),
+      createActivity({
+        id: "ch13-thought-package-folder",
+        sectionId: "13.1",
+        type: "thought",
+        title: "13.1 思考題：Package 和資料夾有什麼關係？",
+        question: "請說明 `package school;` 通常會對應到哪個資料夾。",
+        hint: "想想 `school/Student.java`。",
+        solution: "`package school;` 通常對應到 `school` 資料夾，`Student.java` 會放在該資料夾中。",
+        explanation: "Package 是 Java 的命名分類，資料夾是檔案系統分類；實務上兩者通常保持一致。"
+      }),
+      createActivity({
+        id: "ch13-exercise-import-scanner",
+        sectionId: "13.2",
+        type: "exercise",
+        title: "13.2 練習：import Scanner",
+        question: "使用 `import java.util.Scanner;` 建立 Scanner 物件。",
+        hint: "import 寫在 class 之前、package 之後。",
+        solution: `import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+    }
+}`,
+        explanation: "Scanner 在 java.util package 中，因此需要 import。"
+      }),
+      createActivity({
+        id: "ch13-exercise-import-custom",
+        sectionId: "13.2",
+        type: "exercise",
+        title: "13.2 練習：import 自訂類別",
+        question: "在 Main 中 import `animal.Dog` 並呼叫 `bark()`。",
+        hint: "先確定 Dog 是 public，且 package 是 animal。",
+        solution: `import animal.Dog;
+
+public class Main {
+    public static void main(String[] args) {
+        Dog dog = new Dog();
+        dog.bark();
+    }
+}`,
+        explanation: "不同 package 使用類別時，通常用 import 讓程式更簡潔。"
+      }),
+      createActivity({
+        id: "ch13-homework-fully-qualified",
+        sectionId: "13.2",
+        type: "homework",
+        title: "13.2 作業：使用完整類別名稱",
+        question: "不使用 import，直接用完整名稱建立 `java.util.Scanner` 和 `animal.Dog`。",
+        hint: "完整名稱包含 package 和 class 名稱。",
+        solution: `java.util.Scanner sc =
+    new java.util.Scanner(System.in);
+
+animal.Dog dog = new animal.Dog();`,
+        explanation: "完整名稱能避免重名衝突，但程式會變長。"
+      }),
+      createActivity({
+        id: "ch13-exercise-subpackage",
+        sectionId: "13.3",
+        type: "exercise",
+        title: "13.3 練習：建立子套件",
+        question: "建立 `animal` 和 `animal.dog`，觀察它們是否為同一個 Package。",
+        hint: "`animal.dog` 看起來像子資料夾，但在 Java 中是不同 package。",
+        solution: `package animal;
+public class Animal {}
+
+package animal.dog;
+public class Dog {}`,
+        explanation: "`animal` 與 `animal.dog` 在存取控制上是不同 Package。"
+      }),
+      createActivity({
+        id: "ch13-exercise-access-modifiers",
+        sectionId: "13.3",
+        type: "exercise",
+        title: "13.3 練習：測試 public / protected / default",
+        question: "建立 Animal，分別宣告 public、protected、default 欄位，測試同 package 與不同 package 子類別可見性。",
+        hint: "先用表格判斷，再寫程式驗證。",
+        solution: `package animal;
+
+public class Animal {
+    public String publicName;
+    protected String protectedName;
+    String defaultName;
+}`,
+        explanation: "public 最開放，default 只限同 package，protected 對子類別有特殊規則。"
+      }),
+      createActivity({
+        id: "ch13-project-flag-package",
+        sectionId: "13.4",
+        type: "exercise",
+        title: "13.4 綜合練習：flag 套件",
+        question: "建立 `flag` 套件，新增 TaiwanFlag、JapanFlag、USAFlag。",
+        hint: "三個檔案都寫 `package flag;`。",
+        solution: `package flag;
+
+public class TaiwanFlag {
+    public void show() {
+        System.out.println("Taiwan Flag");
+    }
+}`,
+        explanation: "同類主題放在同一個 package，未來新增旗幟類別會更好找。"
+      }),
+      createActivity({
+        id: "ch13-homework-package-naming",
+        sectionId: "13.4",
+        type: "homework",
+        title: "13.4 作業：設計套件命名",
+        question: "替一個學校管理系統設計 3 個 package 名稱，使用反向網域命名法。",
+        hint: "可以從 `tw.com.example.school` 開始往下分。",
+        solution: `tw.com.example.school.student
+tw.com.example.school.teacher
+tw.com.example.school.course`,
+        explanation: "小寫、分層、能看出用途，是良好 package 命名的重要原則。"
+      })
+    ],
+    quiz: [
+      { question: "Package 主要用途是什麼？", options: ["整理類別並避免命名衝突", "取代所有方法", "只能輸出文字", "讓程式不用編譯"], answer: 0, explanation: "Package 可分類類別、避免衝突，也影響存取控制。" },
+      { question: "`package school;` 通常應放在檔案哪裡？", options: ["最上方", "main 方法裡", "class 結尾", "註解中"], answer: 0, explanation: "package 宣告通常是 Java 檔案第一行有效程式碼。" },
+      { question: "`package school;` 通常對應哪個資料夾？", options: ["school", "src-only", "main", "java.util"], answer: 0, explanation: "Package 名稱通常對應資料夾路徑。" },
+      { question: "若類別在 `com.example.school`，資料夾常見路徑是？", options: ["com/example/school", "com-example-school", "school.com.example", "exampleOnly"], answer: 0, explanation: "點號通常對應資料夾層級。" },
+      { question: "使用 Scanner 通常需要哪個 import？", options: ["import java.util.Scanner;", "import java.lang.Scanner;", "import scanner.*;", "package Scanner;"], answer: 0, explanation: "Scanner 位於 java.util。" },
+      { question: "Fully Qualified Name 是什麼？", options: ["包含 package 的完整類別名稱", "只包含方法名稱", "只包含變數名稱", "註解格式"], answer: 0, explanation: "例如 java.util.Scanner。" },
+      { question: "`import animal.*;` 代表什麼？", options: ["匯入 animal 套件中的類別", "匯入所有子套件", "建立 animal 物件", "刪除 animal"], answer: 0, explanation: "星號匯入指定 package 的類別，不代表自動包含子套件。" },
+      { question: "遇到 school.Student 和 company.Student 重名時，常見做法是？", options: ["使用完整類別名稱", "刪掉 package", "兩個都 import 並直接用 Student", "改用 private"], answer: 0, explanation: "完整名稱可明確指定來源。" },
+      { question: "java.lang 中常見類別是否通常需要 import？", options: ["不需要", "一定需要", "只能用完整名稱", "不能使用"], answer: 0, explanation: "java.lang 會自動可用。" },
+      { question: "subpackage 在 Java 存取控制上代表？", options: ["不同 Package", "同一 Package", "父子類別", "同一 class"], answer: 0, explanation: "school 和 school.student 是不同 Package。" },
+      { question: "`animal` 和 `animal.dog` 是否是同一個 Package？", options: ["不是", "是", "只有 Dog 是", "只有 public 時是"], answer: 0, explanation: "它們是兩個不同 Package。" },
+      { question: "default 存取權限可被誰直接存取？", options: ["同 Package", "所有 Package", "只有子套件", "只有 private class"], answer: 0, explanation: "default 又稱 package-private，只在同 package 可見。" },
+      { question: "private 成員可被誰直接存取？", options: ["同一個類別內", "同 package 全部類別", "所有子類別", "所有 package"], answer: 0, explanation: "private 最嚴格，只限同類別。" },
+      { question: "public 成員可見範圍通常是？", options: ["所有地方都可見", "只限同類別", "只限子套件", "只限 default package"], answer: 0, explanation: "public 是最開放的存取權限。" },
+      { question: "protected 在不同 Package 子類別中？", options: ["可透過繼承使用", "完全不可用", "自動變 private", "只能用 import static"], answer: 0, explanation: "protected 對不同 package 的子類別有開放規則。" },
+      { question: "哪個是 Java 標準類別庫 package？", options: ["java.util", "my-test", "Test123", "MainPackage"], answer: 0, explanation: "java.util 是標準類別庫中的常用 package。" },
+      { question: "java.math 常見用途是？", options: ["精準數字運算", "讀取鍵盤", "宣告 package", "建立 classpath"], answer: 0, explanation: "java.math 包含 BigInteger、BigDecimal。" },
+      { question: "反向網域命名法範例是？", options: ["com.company.project", "MyPackage", "Test123", "Package Main"], answer: 0, explanation: "反向網域命名法常用小寫並以點分層。" },
+      { question: "為什麼不建議 package 叫 MyPackage？", options: ["不符合常見小寫命名慣例且語意模糊", "因為太短不能編譯", "因為必須有數字", "因為只能叫 java.lang"], answer: 0, explanation: "Package 通常使用小寫並具備清楚分層語意。" }
     ]
   };
 }
