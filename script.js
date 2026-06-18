@@ -25,6 +25,411 @@ const COURSE_NAV_TITLES = {
   18: "圖形使用者介面"
 };
 
+const COURSE_FILTER_LABELS = {
+  "Java 基礎": "Java基礎",
+  "GUI 實作": "GUI實作"
+};
+
+const SYNTAX_REFERENCE = [
+  {
+    chapterId: 1,
+    description: "Java 是一套穩定、跨平台、常用於企業系統與 Android 的程式語言。",
+    cards: [
+      { title: "單行註解", purpose: "在程式中留下不會被執行的說明。", keywords: ["comment", "註解"], code: `// 這是一行註解` },
+      { title: "多行註解", purpose: "撰寫多行說明或暫時註解一段內容。", keywords: ["comment block"], code: `/*
+  這是多行註解
+  Java 編譯時會忽略它
+*/` },
+      { title: "基本輸出觀察", purpose: "用輸出確認 Java 程式正在執行。", keywords: ["println", "first program"], code: `System.out.println("我正在學 Java");` }
+    ]
+  },
+  {
+    chapterId: 2,
+    description: "Java 程式從 class 與 main 方法開始，使用 println 輸出文字。",
+    cards: [
+      { title: "class 基本結構", purpose: "定義 Java 程式的基本外殼。", keywords: ["class", "Main"], code: `public class Main {
+    public static void main(String[] args) {
+    }
+}` },
+      { title: "main 方法", purpose: "Java 程式執行的入口。", keywords: ["main", "String[] args"], code: `public static void main(String[] args) {
+    // 程式從這裡開始
+}` },
+      { title: "System.out.println()", purpose: "輸出文字並換行。", keywords: ["print", "println", "output"], code: `System.out.println("Hello Java");` }
+    ]
+  },
+  {
+    chapterId: 3,
+    description: "變數用來儲存資料，每個變數都有型態、名稱與值。",
+    cards: [
+      { title: "int 整數", purpose: "儲存整數資料。", keywords: ["integer"], code: `int age = 18;` },
+      { title: "double 小數", purpose: "儲存有小數點的數值。", keywords: ["float", "decimal"], code: `double height = 170.5;` },
+      { title: "char 字元", purpose: "儲存單一字元。", keywords: ["character"], code: `char grade = 'A';` },
+      { title: "boolean 布林值", purpose: "儲存 true 或 false。", keywords: ["true", "false"], code: `boolean passed = true;` },
+      { title: "String 字串", purpose: "儲存一段文字。", keywords: ["text"], code: `String name = "Jimmy";` },
+      { title: "宣告變數", purpose: "建立變數並給初始值。", keywords: ["declare"], code: `int score = 90;` },
+      { title: "修改變數值", purpose: "把新的資料指定給既有變數。", keywords: ["assign"], code: `score = 100;` }
+    ]
+  },
+  {
+    chapterId: 4,
+    description: "運算式會由運算元與算符組成，最後得到一個結果。",
+    cards: [
+      { title: "= 指定算符", purpose: "把右邊的值存到左邊變數。", keywords: ["assignment"], code: `int x = 10;` },
+      { title: "+= 加後指定", purpose: "把變數加上某值後存回去。", keywords: ["plus assign"], code: `x += 5; // x = x + 5` },
+      { title: "-= 減後指定", purpose: "把變數減去某值後存回去。", keywords: ["minus assign"], code: `x -= 2;` },
+      { title: "*= 乘後指定", purpose: "把變數乘上某值後存回去。", keywords: ["multiply assign"], code: `x *= 3;` },
+      { title: "/= 除後指定", purpose: "把變數除以某值後存回去。", keywords: ["divide assign"], code: `x /= 2;` },
+      { title: "% 餘數", purpose: "取得除法後的餘數。", keywords: ["mod", "remainder"], code: `int r = 10 % 3; // 1` },
+      { title: "&& 且", purpose: "兩個條件都成立才是 true。", keywords: ["and", "logical"], code: `age >= 18 && age <= 65` },
+      { title: "|| 或", purpose: "任一條件成立就是 true。", keywords: ["or", "logical"], code: `score >= 60 || bonus > 0` },
+      { title: "! 反相", purpose: "把 true 變 false，把 false 變 true。", keywords: ["not"], code: `if(!isLogin){
+    System.out.println("請先登入");
+}` },
+      { title: "三元運算子", purpose: "用一行寫簡短條件判斷。", keywords: ["ternary", "condition"], code: `String result = score >= 60 ? "及格" : "不及格";` },
+      { title: "型別轉換", purpose: "把資料轉成指定型態。", keywords: ["cast", "conversion"], code: `double avg = (double) total / count;` }
+    ]
+  },
+  {
+    chapterId: 5,
+    description: "條件分支讓程式依照條件選擇不同執行路線。",
+    cards: [
+      { title: "if 條件判斷", purpose: "條件成立時執行程式碼。", keywords: ["condition"], code: `if(score >= 60){
+    System.out.println("及格");
+}` },
+      { title: "if-else", purpose: "條件成立與不成立時各自處理。", keywords: ["else"], code: `if(score >= 60){
+    System.out.println("及格");
+}else{
+    System.out.println("不及格");
+}` },
+      { title: "if-else if", purpose: "處理多段條件。", keywords: ["else if"], code: `if(score >= 90){
+    System.out.println("A");
+}else if(score >= 80){
+    System.out.println("B");
+}else{
+    System.out.println("C");
+}` },
+      { title: "switch", purpose: "依照固定值選擇分支。", keywords: ["case", "default"], code: `switch(day){
+    case 1:
+        System.out.println("星期一");
+        break;
+    default:
+        System.out.println("未知");
+}` },
+      { title: "break", purpose: "離開 switch 或迴圈。", keywords: ["switch break"], code: `case 1:
+    System.out.println("星期一");
+    break;` }
+    ]
+  },
+  {
+    chapterId: 6,
+    description: "迴圈用來重複執行相同或相似的程式碼。",
+    cards: [
+      { title: "for 迴圈", purpose: "適合已知次數的重複。", keywords: ["loop"], code: `for(int i = 1; i <= 5; i++){
+    System.out.println(i);
+}` },
+      { title: "while 迴圈", purpose: "條件成立時持續執行。", keywords: ["loop"], code: `while(count > 0){
+    System.out.println(count);
+    count--;
+}` },
+      { title: "do-while 迴圈", purpose: "至少執行一次再判斷條件。", keywords: ["loop"], code: `do{
+    System.out.println(menu);
+}while(choice != 0);` },
+      { title: "巢狀迴圈", purpose: "迴圈中再放迴圈。", keywords: ["nested loop"], code: `for(int i = 1; i <= 3; i++){
+    for(int j = 1; j <= 3; j++){
+        System.out.println(i + "," + j);
+    }
+}` },
+      { title: "break", purpose: "提前離開迴圈。", keywords: ["stop loop"], code: `if(i == 5){
+    break;
+}` },
+      { title: "continue", purpose: "略過本次迴圈剩下程式碼。", keywords: ["skip loop"], code: `if(i % 2 == 0){
+    continue;
+}` }
+    ]
+  },
+  {
+    chapterId: 7,
+    description: "陣列用來儲存多個相同型態的資料。",
+    cards: [
+      { title: "一維陣列", purpose: "建立固定長度的資料集合。", keywords: ["array"], code: `int[] scores = new int[5];` },
+      { title: "new int[]", purpose: "建立匿名或明確陣列物件。", keywords: ["new array"], code: `int[] nums = new int[]{1, 2, 3};` },
+      { title: "陣列初始化", purpose: "建立陣列時直接放入資料。", keywords: ["array literal"], code: `int[] scores = {80, 90, 70};` },
+      { title: "length", purpose: "取得陣列元素數量。", keywords: ["array length"], code: `System.out.println(scores.length);` },
+      { title: "二維陣列", purpose: "儲存表格狀資料。", keywords: ["2d array"], code: `int[][] table = {
+    {1, 2, 3},
+    {4, 5, 6}
+};` },
+      { title: "for 走訪陣列", purpose: "用索引讀取每個元素。", keywords: ["traverse"], code: `for(int i = 0; i < scores.length; i++){
+    System.out.println(scores[i]);
+}` },
+      { title: "enhanced for", purpose: "快速讀取陣列每個值。", keywords: ["for each"], code: `for(int score : scores){
+    System.out.println(score);
+}` }
+    ]
+  },
+  {
+    chapterId: 8,
+    description: "物件導向用 class、object、method 組織資料與行為。",
+    cards: [
+      { title: "class", purpose: "定義物件的藍圖。", keywords: ["oop"], code: `class Student {
+    String name;
+    int age;
+}` },
+      { title: "object", purpose: "用 class 建立實體物件。", keywords: ["new instance"], code: `Student s1 = new Student();` },
+      { title: "method", purpose: "定義物件或類別會做的事。", keywords: ["function"], code: `void greet(){
+    System.out.println("Hello");
+}` },
+      { title: "parameter", purpose: "把資料傳入方法。", keywords: ["argument"], code: `void sayHello(String name){
+    System.out.println("Hello " + name);
+}` },
+      { title: "return", purpose: "從方法回傳結果。", keywords: ["return value"], code: `int add(int a, int b){
+    return a + b;
+}` },
+      { title: "recursion", purpose: "方法呼叫自己。", keywords: ["recursive"], code: `int factorial(int n){
+    if(n == 1) return 1;
+    return n * factorial(n - 1);
+}` },
+      { title: "anonymous array", purpose: "建立後立即使用的陣列。", keywords: ["匿名陣列"], code: `printArray(new int[]{1, 2, 3});` },
+      { title: "overloading", purpose: "同名方法使用不同參數列表。", keywords: ["method overloading"], code: `int add(int a, int b){ return a + b; }
+int add(int a, int b, int c){ return a + b + c; }` }
+    ]
+  },
+  {
+    chapterId: 9,
+    description: "建構方法、封裝與 static 讓類別更完整、更安全。",
+    cards: [
+      { title: "constructor", purpose: "建立物件時初始化資料。", keywords: ["建構方法"], code: `Student(String name, int age){
+    this.name = name;
+    this.age = age;
+}` },
+      { title: "this", purpose: "代表目前物件。", keywords: ["current object"], code: `this.name = name;` },
+      { title: "private", purpose: "限制欄位只能在類別內直接使用。", keywords: ["encapsulation"], code: `private int balance;` },
+      { title: "getter", purpose: "安全讀取 private 欄位。", keywords: ["get"], code: `public int getBalance(){
+    return balance;
+}` },
+      { title: "setter", purpose: "安全修改 private 欄位。", keywords: ["set"], code: `public void setBalance(int balance){
+    if(balance >= 0){
+        this.balance = balance;
+    }
+}` },
+      { title: "static field", purpose: "所有物件共享的欄位。", keywords: ["class variable"], code: `static int count = 0;` },
+      { title: "static method", purpose: "不用建立物件即可呼叫的方法。", keywords: ["class method"], code: `static int max(int a, int b){
+    return a > b ? a : b;
+}` }
+    ]
+  },
+  {
+    chapterId: 10,
+    description: "String 用來處理文字，常搭配方法進行查詢、切割與替換。",
+    cards: [
+      { title: "String", purpose: "建立字串。", keywords: ["文字"], code: `String name = "Jimmy";` },
+      { title: "length()", purpose: "取得字串長度。", keywords: ["string length"], code: `int len = name.length();` },
+      { title: "charAt()", purpose: "取得指定位置的字元。", keywords: ["character"], code: `char first = name.charAt(0);` },
+      { title: "substring()", purpose: "擷取部分字串。", keywords: ["slice"], code: `String part = text.substring(1, 4);` },
+      { title: "equals()", purpose: "比較字串內容是否相同。", keywords: ["compare"], code: `if(input.equals("yes")){
+    System.out.println("OK");
+}` },
+      { title: "indexOf()", purpose: "找出文字出現位置。", keywords: ["find"], code: `int index = text.indexOf("Java");` },
+      { title: "replace()", purpose: "替換字串內容。", keywords: ["replace string"], code: `String result = text.replace("cat", "dog");` },
+      { title: "split()", purpose: "依規則切割字串。", keywords: ["csv"], code: `String[] parts = csv.split(",");` },
+      { title: "StringBuilder", purpose: "頻繁組合字串時使用。", keywords: ["append"], code: `StringBuilder sb = new StringBuilder();
+sb.append("Hello");
+sb.append(" Java");` },
+      { title: "matches()", purpose: "用 Regex 檢查格式。", keywords: ["regex"], code: `boolean ok = phone.matches("\\\\d{10}");` }
+    ]
+  },
+  {
+    chapterId: 11,
+    description: "繼承讓子類別重用父類別成員，也能搭配覆寫與多型。",
+    cards: [
+      { title: "extends", purpose: "讓子類別繼承父類別。", keywords: ["inheritance"], code: `class Dog extends Animal {
+}` },
+      { title: "override", purpose: "子類別重新定義父類別方法。", keywords: ["覆寫"], code: `@Override
+void speak(){
+    System.out.println("汪汪");
+}` },
+      { title: "super", purpose: "呼叫父類別成員或建構方法。", keywords: ["parent"], code: `super.speak();` },
+      { title: "polymorphism", purpose: "父類別參考指向子類別物件。", keywords: ["多型"], code: `Animal animal = new Dog();
+animal.speak();` },
+      { title: "Object", purpose: "所有類別最上層父類別。", keywords: ["toString"], code: `@Override
+public String toString(){
+    return name;
+}` },
+      { title: "wrapper class", purpose: "基本型別的物件版本。", keywords: ["Integer", "Double"], code: `Integer x = 10;
+int y = x;` },
+      { title: "varargs", purpose: "接收不定數量參數。", keywords: ["int..."], code: `int sum(int... nums){
+    int total = 0;
+    for(int n : nums) total += n;
+    return total;
+}` },
+      { title: "Object...", purpose: "接收任意型別的不定參數。", keywords: ["any type"], code: `void show(Object... values){
+    for(Object v : values){
+        System.out.println(v);
+    }
+}` }
+    ]
+  },
+  {
+    chapterId: 12,
+    description: "抽象類別、介面與內部類別能建立更彈性的 OOP 結構。",
+    cards: [
+      { title: "abstract class", purpose: "定義不能直接建立物件的父類別。", keywords: ["抽象類別"], code: `abstract class Animal {
+    abstract void speak();
+}` },
+      { title: "abstract method", purpose: "要求子類別必須實作的方法。", keywords: ["抽象方法"], code: `abstract void draw();` },
+      { title: "interface", purpose: "定義能力或規格。", keywords: ["介面"], code: `interface Flyable {
+    void fly();
+}` },
+      { title: "implements", purpose: "類別實作介面。", keywords: ["interface implementation"], code: `class Bird implements Flyable {
+    public void fly() {
+        System.out.println("飛行");
+    }
+}` },
+      { title: "interface extends", purpose: "介面繼承介面。", keywords: ["介面繼承"], code: `interface Bird extends Flyable {
+}` },
+      { title: "inner class", purpose: "類別內部定義另一個類別。", keywords: ["內部類別"], code: `class Car {
+    class Engine {
+    }
+}` },
+      { title: "anonymous inner class", purpose: "一次性建立介面或類別實作。", keywords: ["匿名內部類別"], code: `Runnable task = new Runnable() {
+    public void run() {
+        System.out.println("Run");
+    }
+};` }
+    ]
+  },
+  {
+    chapterId: 13,
+    description: "Package 用來組織類別，import 用來使用其他套件的類別。",
+    cards: [
+      { title: "package", purpose: "宣告類別所在套件。", keywords: ["套件"], code: `package school;` },
+      { title: "import", purpose: "匯入其他套件的類別。", keywords: ["匯入"], code: `import java.util.Scanner;` },
+      { title: "import *", purpose: "匯入同一套件下多個類別。", keywords: ["wildcard"], code: `import java.util.*;` },
+      { title: "fully qualified name", purpose: "不 import 時使用完整類別名稱。", keywords: ["完整名稱"], code: `java.util.Scanner sc = new java.util.Scanner(System.in);` },
+      { title: "public", purpose: "任何地方都可存取。", keywords: ["access"], code: `public class Student {
+}` },
+      { title: "protected", purpose: "同 package 或子類別可存取。", keywords: ["access"], code: `protected int age;` },
+      { title: "default", purpose: "不寫修飾字，同 package 可存取。", keywords: ["package private"], code: `class Helper {
+}` },
+      { title: "private", purpose: "只有同一類別內可存取。", keywords: ["access"], code: `private String name;` }
+    ]
+  },
+  {
+    chapterId: 14,
+    description: "例外處理讓程式遇到錯誤時可以有控制地處理。",
+    cards: [
+      { title: "try", purpose: "放可能發生例外的程式碼。", keywords: ["exception"], code: `try {
+    int x = 10 / 0;
+}` },
+      { title: "catch", purpose: "捕捉並處理例外。", keywords: ["exception"], code: `catch(ArithmeticException e) {
+    System.out.println("不能除以 0");
+}` },
+      { title: "finally", purpose: "不論是否發生例外都會執行。", keywords: ["cleanup"], code: `finally {
+    System.out.println("結束");
+}` },
+      { title: "throw", purpose: "主動拋出例外。", keywords: ["拋出"], code: `throw new Exception("資料不合法");` },
+      { title: "throws", purpose: "宣告方法可能拋出例外。", keywords: ["宣告例外"], code: `void read() throws IOException {
+}` },
+      { title: "custom exception", purpose: "建立自訂例外類別。", keywords: ["自訂例外"], code: `class AgeException extends Exception {
+    AgeException(String msg) {
+        super(msg);
+    }
+}` },
+      { title: "e.getMessage()", purpose: "取得例外訊息。", keywords: ["error message"], code: `System.out.println(e.getMessage());` }
+    ]
+  },
+  {
+    chapterId: 15,
+    description: "多執行緒讓多個任務可以看起來同時進行。",
+    cards: [
+      { title: "Thread", purpose: "建立執行緒類別。", keywords: ["thread"], code: `class MyThread extends Thread {
+    public void run() {
+        System.out.println("執行中");
+    }
+}` },
+      { title: "Runnable", purpose: "定義可被執行緒執行的任務。", keywords: ["task"], code: `class MyTask implements Runnable {
+    public void run() {
+        System.out.println("Task");
+    }
+}` },
+      { title: "start()", purpose: "啟動新執行緒。", keywords: ["thread start"], code: `new MyThread().start();` },
+      { title: "run()", purpose: "執行緒實際執行的內容。", keywords: ["thread run"], code: `public void run() {
+    System.out.println("Running");
+}` },
+      { title: "sleep()", purpose: "暫停目前執行緒一段時間。", keywords: ["pause"], code: `Thread.sleep(1000);` },
+      { title: "synchronized", purpose: "保護共享資料。", keywords: ["lock"], code: `synchronized void withdraw(int money) {
+    balance -= money;
+}` },
+      { title: "wait()", purpose: "讓執行緒等待條件成立。", keywords: ["thread wait"], code: `wait();` },
+      { title: "notify()", purpose: "喚醒等待中的執行緒。", keywords: ["thread notify"], code: `notify();` },
+      { title: "join()", purpose: "等待另一個執行緒完成。", keywords: ["thread join"], code: `thread.join();` }
+    ]
+  },
+  {
+    chapterId: 16,
+    description: "IO 用來讀寫檔案、文字資料與物件資料。",
+    cards: [
+      { title: "File", purpose: "代表檔案或資料夾路徑。", keywords: ["file"], code: `File file = new File("data.txt");` },
+      { title: "FileWriter", purpose: "寫入文字檔。", keywords: ["write file"], code: `FileWriter writer = new FileWriter("data.txt");
+writer.write("Hello");
+writer.close();` },
+      { title: "FileReader", purpose: "讀取文字檔。", keywords: ["read file"], code: `FileReader reader = new FileReader("data.txt");` },
+      { title: "BufferedWriter", purpose: "更有效率地寫文字。", keywords: ["buffer write"], code: `BufferedWriter bw = new BufferedWriter(new FileWriter("data.txt"));
+bw.write("Hello");
+bw.close();` },
+      { title: "BufferedReader", purpose: "逐行讀取文字。", keywords: ["buffer read"], code: `BufferedReader br = new BufferedReader(new FileReader("data.txt"));
+String line = br.readLine();` },
+      { title: "try-with-resources", purpose: "自動關閉資源。", keywords: ["auto close"], code: `try(BufferedReader br = new BufferedReader(new FileReader("data.txt"))) {
+    System.out.println(br.readLine());
+}` },
+      { title: "Serializable", purpose: "允許物件被序列化保存。", keywords: ["serialize"], code: `class Student implements Serializable {
+}` },
+      { title: "ObjectOutputStream", purpose: "寫出物件。", keywords: ["write object"], code: `ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("obj.dat"));
+out.writeObject(student);` },
+      { title: "ObjectInputStream", purpose: "讀回物件。", keywords: ["read object"], code: `ObjectInputStream in = new ObjectInputStream(new FileInputStream("obj.dat"));
+Student s = (Student) in.readObject();` }
+    ]
+  },
+  {
+    chapterId: 17,
+    description: "標準類別庫提供常用工具，能快速完成轉型、數學與集合操作。",
+    cards: [
+      { title: "Integer.parseInt()", purpose: "把數字字串轉成 int。", keywords: ["parse"], code: `int n = Integer.parseInt("123");` },
+      { title: "Math.pow()", purpose: "計算次方。", keywords: ["power"], code: `double x = Math.pow(2, 3);` },
+      { title: "Math.sqrt()", purpose: "計算平方根。", keywords: ["square root"], code: `double x = Math.sqrt(25);` },
+      { title: "Math.random()", purpose: "產生 0 到 1 之間的亂數。", keywords: ["random"], code: `double r = Math.random();` },
+      { title: "ArrayList", purpose: "可變長度清單。", keywords: ["list", "collection"], code: `ArrayList<String> names = new ArrayList<>();
+names.add("Jimmy");` },
+      { title: "HashSet", purpose: "儲存不重複資料。", keywords: ["set", "unique"], code: `HashSet<Integer> numbers = new HashSet<>();
+numbers.add(7);` },
+      { title: "HashMap", purpose: "用 key 查詢 value。", keywords: ["map", "dictionary"], code: `HashMap<String, Integer> scores = new HashMap<>();
+scores.put("Jimmy", 90);` },
+      { title: "Collections.sort()", purpose: "排序 List。", keywords: ["sort"], code: `Collections.sort(names);` }
+    ]
+  },
+  {
+    chapterId: 18,
+    description: "Swing 可建立桌面 GUI，包含視窗、元件、事件與繪圖。",
+    cards: [
+      { title: "JFrame", purpose: "建立視窗。", keywords: ["gui", "window"], code: `JFrame frame = new JFrame("My Window");` },
+      { title: "JPanel", purpose: "放置其他元件的容器。", keywords: ["panel"], code: `JPanel panel = new JPanel();` },
+      { title: "JButton", purpose: "建立按鈕。", keywords: ["button"], code: `JButton button = new JButton("送出");` },
+      { title: "JLabel", purpose: "顯示文字標籤。", keywords: ["label"], code: `JLabel label = new JLabel("姓名：");` },
+      { title: "JTextField", purpose: "單行文字輸入框。", keywords: ["input"], code: `JTextField field = new JTextField(10);` },
+      { title: "JTextArea", purpose: "多行文字輸入區。", keywords: ["textarea"], code: `JTextArea area = new JTextArea(10, 30);` },
+      { title: "ActionListener", purpose: "處理按鈕點擊事件。", keywords: ["event"], code: `button.addActionListener(e -> {
+    label.setText("Clicked");
+});` },
+      { title: "LayoutManager", purpose: "控制元件排列方式。", keywords: ["layout"], code: `frame.setLayout(new BorderLayout());` },
+      { title: "Graphics", purpose: "提供 2D 繪圖方法。", keywords: ["drawing"], code: `g.drawRect(20, 20, 100, 50);` },
+      { title: "paintComponent()", purpose: "自訂 JPanel 繪圖。", keywords: ["paint"], code: `protected void paintComponent(Graphics g) {
+    super.paintComponent(g);
+    g.drawString("Hello", 20, 20);
+}` }
+    ]
+  }
+];
+
 const chapters = [
   {
     id: 1,
@@ -11376,8 +11781,7 @@ function renderMainNav() {
         ${courseGroups}
       </div>
     </div>
-    <a href="#toolbox" data-nav-link>Java工具箱</a>
-    <a href="#cheatsheet" data-nav-link>Java Cheat Sheet</a>
+    <a href="#syntax" data-nav-link>Java 語法速查</a>
     <a href="#progress" data-nav-link>學習進度</a>
   `;
 }
@@ -11522,66 +11926,96 @@ function renderMap() {
   `;
 }
 
-function renderToolbox() {
-  app.innerHTML = `
-    <section class="page-title">
-      <p class="eyebrow">Java Toolbox</p>
-      <h1>Java工具箱</h1>
-      <p>這裡整理學 Java 時常用到的工具與觀念入口。之後可以逐步補上安裝教學、常用命令與環境檢查清單。</p>
-    </section>
+function getSyntaxChapterEntries() {
+  return SYNTAX_REFERENCE.map((entry) => ({
+    ...entry,
+    chapter: getChapter(entry.chapterId),
+    group: getCourseGroups().find((group) => group.chapterIds.includes(entry.chapterId))?.title || "全部"
+  }));
+}
 
-    <section class="content-section">
-      <h2>常用工具</h2>
-      <ul>
-        <li><strong>JDK：</strong>撰寫、編譯與執行 Java 程式的開發工具包。</li>
-        <li><strong>VS Code：</strong>輕量編輯器，適合新手快速開始與練習小程式。</li>
-        <li><strong>IntelliJ IDEA：</strong>Java 專案常用 IDE，提示、除錯與專案管理功能完整。</li>
-        <li><strong>終端機：</strong>練習 <code>javac</code>、<code>java</code> 等基本命令，理解程式如何被編譯與執行。</li>
-      </ul>
-      <div class="section-actions">
-        <a class="button" href="#chapter-2/2.1">複習 JDK</a>
-        <a class="button secondary" href="#chapter-2/2.5">複習編譯與執行</a>
+function getSyntaxSearchText(entry, card) {
+  return [
+    entry.chapter.code,
+    entry.chapter.title,
+    getChapterNavTitle(entry.chapter),
+    entry.group,
+    card.title,
+    card.purpose,
+    card.code,
+    ...(card.keywords || [])
+  ].join(" ").toLowerCase();
+}
+
+function getSyntaxCardKey(chapterId, cardIndex) {
+  return `${chapterId}:${cardIndex}`;
+}
+
+function getSyntaxCardByKey(key) {
+  const [chapterId, cardIndex] = key.split(":").map(Number);
+  const entry = SYNTAX_REFERENCE.find((item) => item.chapterId === chapterId);
+  return entry?.cards[cardIndex] || null;
+}
+
+function renderSyntaxCard(entry, card, cardIndex) {
+  const searchText = escapeAttribute(getSyntaxSearchText(entry, card));
+  const key = getSyntaxCardKey(entry.chapterId, cardIndex);
+  return `
+    <article class="syntax-card" data-syntax-card data-group="${escapeAttribute(entry.group)}" data-search="${searchText}">
+      <div class="syntax-card-head">
+        <div>
+          <h3>${card.title}</h3>
+          <p>${card.purpose}</p>
+        </div>
+        <button class="mini-button syntax-copy" type="button" data-copy-syntax="${key}">複製程式碼</button>
       </div>
-    </section>
+      <pre><code>${escapeHtml(card.code)}</code></pre>
+    </article>
   `;
 }
 
-function renderCheatSheet() {
+function renderSyntaxReference() {
+  const entries = getSyntaxChapterEntries();
   app.innerHTML = `
     <section class="page-title">
       <p class="eyebrow">Quick Reference</p>
-      <h1>Java Cheat Sheet</h1>
-      <p>把前面章節最常用的語法集中放在這裡，方便練習時快速回頭查。</p>
+      <h1>Java 語法速查</h1>
+      <p>依照章節整理 Java 常用語法。忘記語法、寫練習題、考前複習或面試前整理時，可以在這裡快速查詢與複製。</p>
     </section>
 
-    <section class="content-section">
-      <h2>Hello World</h2>
-      ${renderCodeBlock({
-        title: "HelloWorld.java",
-        value: `public class HelloWorld {
-    public static void main(String[] args) {
-        System.out.println("Hello, Java!");
-    }
-}`
-      })}
+    <section class="syntax-toolbar" aria-label="語法搜尋與篩選">
+      <label>
+        <span>搜尋語法</span>
+        <input type="search" data-syntax-search placeholder="搜尋章節、語法、關鍵字或程式碼，例如 if、ArrayList、JFrame">
+      </label>
+      <div class="syntax-filters" aria-label="章節分類篩選">
+        <button class="syntax-filter active" type="button" data-syntax-filter="全部">全部</button>
+        ${COURSE_GROUPS.map((group) => `
+          <button class="syntax-filter" type="button" data-syntax-filter="${group.title}">${COURSE_FILTER_LABELS[group.title] || group.title}</button>
+        `).join("")}
+      </div>
     </section>
 
-    <section class="content-section">
-      <h2>變數與條件判斷</h2>
-      ${renderCodeBlock({
-        title: "常用語法速查",
-        value: `String name = "小明";
-int age = 18;
-double height = 170.5;
-boolean canVote = age >= 18;
-
-if (canVote) {
-    System.out.println(name + " 可以投票");
-} else {
-    System.out.println(name + " 還不能投票");
-}`
-      })}
+    <section class="syntax-reference" aria-label="Java 語法卡片">
+      ${entries.map((entry) => `
+        <section class="syntax-chapter" data-syntax-section data-group="${escapeAttribute(entry.group)}">
+          <div class="syntax-chapter-heading">
+            <div>
+              <span class="chapter-kicker">${entry.chapter.code}</span>
+              <h2>${entry.chapter.title}</h2>
+              <p>${entry.description}</p>
+            </div>
+            <a class="button secondary compact" href="#chapter-${entry.chapter.id}">前往章節</a>
+          </div>
+          <div class="syntax-card-grid">
+            ${entry.cards.map((card, index) => renderSyntaxCard(entry, card, index)).join("")}
+          </div>
+        </section>
+      `).join("")}
+      <p class="syntax-empty" data-syntax-empty hidden>找不到相關語法</p>
     </section>
+
+    <div class="copy-toast" data-copy-toast hidden>已複製程式碼</div>
   `;
 }
 
@@ -12036,6 +12470,67 @@ function escapeHtml(value) {
     .replace(/>/g, "&gt;");
 }
 
+function escapeAttribute(value) {
+  return escapeHtml(String(value)).replace(/"/g, "&quot;");
+}
+
+function filterSyntaxCards() {
+  const searchInput = document.querySelector("[data-syntax-search]");
+  const activeFilter = document.querySelector("[data-syntax-filter].active")?.dataset.syntaxFilter || "全部";
+  const query = (searchInput?.value || "").trim().toLowerCase();
+  let visibleCount = 0;
+
+  document.querySelectorAll("[data-syntax-card]").forEach((card) => {
+    const matchesGroup = activeFilter === "全部" || card.dataset.group === activeFilter;
+    const matchesQuery = !query || (card.dataset.search || "").includes(query);
+    const shouldShow = matchesGroup && matchesQuery;
+    card.classList.toggle("is-hidden", !shouldShow);
+    if (shouldShow) visibleCount++;
+  });
+
+  document.querySelectorAll("[data-syntax-section]").forEach((section) => {
+    const hasVisibleCard = Boolean(section.querySelector("[data-syntax-card]:not(.is-hidden)"));
+    section.classList.toggle("is-hidden", !hasVisibleCard);
+  });
+
+  const empty = document.querySelector("[data-syntax-empty]");
+  if (empty) empty.hidden = visibleCount > 0;
+}
+
+function setSyntaxFilter(button) {
+  document.querySelectorAll("[data-syntax-filter]").forEach((item) => {
+    item.classList.toggle("active", item === button);
+  });
+  filterSyntaxCards();
+}
+
+async function copySyntaxCode(key) {
+  const card = getSyntaxCardByKey(key);
+  if (!card) return;
+
+  try {
+    await navigator.clipboard.writeText(card.code);
+  } catch (error) {
+    const textarea = document.createElement("textarea");
+    textarea.value = card.code;
+    textarea.setAttribute("readonly", "");
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textarea);
+  }
+
+  const toast = document.querySelector("[data-copy-toast]");
+  if (!toast) return;
+  toast.hidden = false;
+  clearTimeout(copySyntaxCode.toastTimer);
+  copySyntaxCode.toastTimer = setTimeout(() => {
+    toast.hidden = true;
+  }, 1400);
+}
+
 function toggleActivityComplete(activityId, checked) {
   const state = getState();
   const completed = new Set(state.completedActivities);
@@ -12231,6 +12726,18 @@ function bindEvents() {
       return;
     }
 
+    const syntaxFilterButton = event.target.closest("[data-syntax-filter]");
+    if (syntaxFilterButton) {
+      setSyntaxFilter(syntaxFilterButton);
+      return;
+    }
+
+    const copySyntaxButton = event.target.closest("[data-copy-syntax]");
+    if (copySyntaxButton) {
+      copySyntaxCode(copySyntaxButton.dataset.copySyntax);
+      return;
+    }
+
     const quizButton = event.target.closest(".quiz-option");
     if (quizButton) {
       handleQuizClick(quizButton);
@@ -12295,6 +12802,12 @@ function bindEvents() {
       toggleActivityComplete(checkbox.dataset.activityComplete, checkbox.checked);
     }
   });
+
+  app.addEventListener("input", (event) => {
+    if (event.target.closest("[data-syntax-search]")) {
+      filterSyntaxCards();
+    }
+  });
 }
 
 function renderCurrentRoute() {
@@ -12305,10 +12818,8 @@ function renderCurrentRoute() {
     renderChapter(chapterRoute.chapterId, chapterRoute.view);
   } else if (hash === "#map") {
     renderMap();
-  } else if (hash === "#toolbox") {
-    renderToolbox();
-  } else if (hash === "#cheatsheet") {
-    renderCheatSheet();
+  } else if (hash === "#syntax" || hash === "#toolbox" || hash === "#cheatsheet") {
+    renderSyntaxReference();
   } else if (hash === "#progress") {
     renderProgressPage();
   } else {
