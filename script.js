@@ -30,6 +30,25 @@ const COURSE_FILTER_LABELS = {
   "GUI 實作": "GUI實作"
 };
 
+const CH02_ENVIRONMENT_SETUP = {
+  jdkVersion: "OpenJDK 21（LTS）",
+  jdkDownloadUrl: "https://jdk.java.net/21/",
+  vscodeDownloadUrl: "https://code.visualstudio.com/",
+  extensionName: "Java Extension Pack",
+  windowsSteps: [
+    "開啟 JDK 下載頁面，下載 Windows 版本的 OpenJDK 21。",
+    "解壓縮或依安裝程式指示安裝到固定資料夾，例如 C:\\Program Files\\Java。",
+    "確認系統環境變數 PATH 包含 JDK 的 bin 資料夾。",
+    "重新開啟終端機後輸入 java -version 與 javac -version。"
+  ],
+  macSteps: [
+    "開啟 JDK 下載頁面，下載 macOS 版本的 OpenJDK 21。",
+    "依照下載來源提供的安裝方式安裝 JDK。",
+    "開啟 Terminal，輸入 java -version 與 javac -version。",
+    "若指令找不到，確認 JAVA_HOME 與 PATH 是否正確設定。"
+  ]
+};
+
 const SYNTAX_REFERENCE = [
   {
     chapterId: 1,
@@ -557,77 +576,252 @@ const chapters = [
     id: 2,
     code: "CH02",
     title: "初探 Java",
-    minutes: 35,
-    summary: "理解 JDK、編輯器、Hello World，以及 Java 程式的基本組成。",
-    intro: "本章會讓你看見第一個完整 Java 程式。先不要急著背每個字，重點是知道每一段大概負責什麼。",
+    minutes: 55,
+    summary: "建立 Java 開發環境，安裝 JDK 與 VS Code，完成第一個 Hello Java 程式。",
+    intro: "本章會帶你從零建立 Java 開發環境。你不需要先懂終端機、編譯器或 IDE，本章會用新手能理解的方式說明每個工具負責什麼。",
     sections: [
       {
         sectionId: "2.1",
-        title: "JDK 是什麼",
+        title: "建立 Java 開發環境",
         body: [
-          "JDK 是 Java Development Kit，也就是 Java 開發工具包。它包含寫 Java 程式需要的工具，例如編譯器 javac，以及執行 Java 程式所需的環境。",
-          "你可以把 JDK 想成 Java 開發的工具箱。只安裝一般使用者執行程式需要的環境還不夠，因為開發者還需要把程式碼編譯成電腦能執行的形式。"
+          "學習 Java 需要先準備三樣工具：JDK、VS Code、Java Extension Pack。它們分別負責「編譯與執行 Java」、「編輯程式碼」、「讓 VS Code 看懂 Java」。",
+          "JDK 是 Java Development Kit，也就是 Java 開發工具包。它包含 Java 編譯器 `javac` 與執行 Java 程式需要的工具。編譯器可以把你寫的 `.java` 程式碼轉成 Java 能執行的形式。",
+          "VS Code 是程式編輯器。編輯器就像專門寫程式的記事本，可以幫你管理檔案、顯示顏色、打開終端機。終端機是輸入指令的地方，之後你會用它確認 Java 是否安裝成功。",
+          "Java Extension Pack 是 VS Code 的 Java 擴充套件組。安裝後，VS Code 會有 Java 語法提示、執行按鈕、錯誤提示與專案支援。"
+        ],
+        visuals: [
+          {
+            type: "flow",
+            title: "Java 開發環境圖解",
+            value: `Java開發環境
+
+JDK
+ ↓
+Java編譯器
+
+VS Code
+ ↓
+編輯程式
+
+Extension Pack
+ ↓
+Java支援`
+          },
+          {
+            type: "callout",
+            variant: "tip",
+            text: "IDE 是 Integrated Development Environment，意思是整合式開發環境。你可以先把它理解成：把寫程式、執行程式、看錯誤提示放在一起的工具。"
+          }
         ]
       },
       {
         sectionId: "2.2",
-        title: "安裝編輯器",
+        title: "安裝 JDK",
         body: [
-          "VS Code 是輕量、擴充彈性高的編輯器，適合想用同一套工具寫多種語言的人。安裝 Java 相關擴充套件後，也可以寫 Java。",
-          "IntelliJ IDEA 是很受 Java 開發者歡迎的 IDE。它對 Java 專案、錯誤提示、重構與自動完成支援完整，適合長期深入學習。"
+          `本課程推薦使用 ${CH02_ENVIRONMENT_SETUP.jdkVersion}。LTS 是 Long-Term Support，代表這個版本會被較長期維護，適合學習與正式專案使用。`,
+          `官方下載網站：<a href="${CH02_ENVIRONMENT_SETUP.jdkDownloadUrl}" target="_blank" rel="noopener">${CH02_ENVIRONMENT_SETUP.jdkDownloadUrl}</a>。未來若 JDK 版本更新，只需要調整本章的「環境建置」資料區塊。`,
+          `Windows 安裝流程：${CH02_ENVIRONMENT_SETUP.windowsSteps.join(" → ")}。如果你不熟悉 PATH，可以先把它理解成：電腦用來尋找指令工具的位置清單。`,
+          `macOS 安裝流程：${CH02_ENVIRONMENT_SETUP.macSteps.join(" → ")}。Terminal 是 macOS 的終端機，用來輸入像 java -version 這類指令。`,
+          "安裝完成後，開啟終端機輸入 `java -version` 與 `javac -version`。`java` 用來執行 Java 程式，`javac` 是 Java 編譯器，用來把程式碼編譯成可執行的 class 檔案。"
+        ],
+        visuals: [
+          {
+            type: "screenshot",
+            title: "下載頁面截圖佔位",
+            value: `[下載頁面截圖]
+
+請在這裡放 OpenJDK 21 官方下載頁面截圖。`
+          },
+          {
+            type: "screenshot",
+            title: "安裝畫面截圖佔位",
+            value: `[安裝畫面截圖]
+
+請在這裡放 Windows 或 macOS 安裝畫面截圖。`
+          },
+          {
+            type: "callout",
+            variant: "warning",
+            text: "如果終端機顯示找不到 java 或 javac，通常代表 JDK 沒裝好，或 PATH 尚未設定。"
+          }
+        ],
+        codes: [
+          {
+            title: "檢查 Java 執行工具",
+            value: `java -version`
+          },
+          {
+            title: "檢查 Java 編譯器",
+            value: `javac -version`
+          },
+          {
+            title: "預期結果範例",
+            value: `java version "21"`
+          }
         ]
       },
       {
         sectionId: "2.3",
-        title: "第一個 Java 程式",
+        title: "安裝 VS Code",
         body: [
-          "許多語言的第一個範例都是 Hello World。它的目的不是做出複雜功能，而是確認你的環境、檔案、編譯與執行流程都能正常運作。",
-          "請注意檔名和 class 名稱的關係：如果 class 叫做 HelloWorld，檔案通常也要命名為 HelloWorld.java。大小寫也要一致。"
+          `VS Code 官方網站：<a href="${CH02_ENVIRONMENT_SETUP.vscodeDownloadUrl}" target="_blank" rel="noopener">${CH02_ENVIRONMENT_SETUP.vscodeDownloadUrl}</a>。下載後依照作業系統安裝即可。`,
+          `安裝 VS Code 後，請打開左側 Extensions 圖示，搜尋「${CH02_ENVIRONMENT_SETUP.extensionName}」，找到 Microsoft 提供的套件後按 Install。這個套件會一次安裝 Java 開發常用功能。`,
+          "VS Code 介面可以先認識三個區域：Explorer 是左側檔案列表，用來管理專案檔案；Editor 是中間寫程式的地方；Terminal 是下方輸入指令、執行程式與查看結果的地方。",
+          "你不一定要用 VS Code，也可以使用 IntelliJ IDEA、Eclipse 等工具。不過本課程為了讓畫面和操作一致，會統一使用 VS Code 示範。"
         ],
-        code: {
-          title: "HelloWorld.java",
-          value: `public class HelloWorld {
-    public static void main(String[] args) {
-        System.out.println("Hello, Java!");
-    }
-}`
-        }
+        visuals: [
+          {
+            type: "files",
+            title: "VS Code 介面圖解",
+            value: `VS Code
+
+Explorer
+ ↓
+管理檔案與資料夾
+
+Editor
+ ↓
+撰寫程式碼
+
+Terminal
+ ↓
+輸入指令與查看輸出`
+          },
+          {
+            type: "screenshot",
+            title: "Java Extension Pack 安裝畫面佔位",
+            value: `[安裝畫面截圖]
+
+Extensions 搜尋 Java Extension Pack，按下 Install。`
+          },
+          {
+            type: "callout",
+            variant: "tip",
+            text: "Q：一定要用 VS Code 嗎？A：不用，但本課程統一使用 VS Code 示範，這樣你跟著操作時比較不容易迷路。"
+          }
+        ]
       },
       {
         sectionId: "2.4",
-        title: "Java 程式的組成要素",
+        title: "建立第一個 Java 專案",
         body: [
-          "`public class HelloWorld` 定義了一個名為 HelloWorld 的類別。Java 程式通常會放在 class 裡面。",
-          "`public static void main(String[] args)` 是程式開始執行的入口。當你執行這個程式時，Java 會從 main 方法開始跑。",
-          "`System.out.println(\"Hello, Java!\");` 會把文字輸出到畫面上。println 的意思可以想成 print line，輸出後換行。",
-          "大括號 `{}` 用來包住 class 或方法的內容；分號 `;` 則常用在一個指令結束的地方。少了分號是新手很常見的錯誤。"
+          "專案可以先理解成：放同一個程式相關檔案的資料夾。第一個專案請建立一個名為 `HelloJava` 的資料夾，裡面放一個 `Main.java` 檔案。",
+          "檔案名稱很重要。這次程式的類別名稱是 `Main`，所以檔案請命名為 `Main.java`。Java 對大小寫敏感，`Main.java` 和 `main.java` 不是同一個名稱。",
+          "如果你不熟悉資料夾結構，可以把它想成書桌上的文件夾：`HelloJava` 是文件夾，`Main.java` 是放在裡面的第一張程式檔案。"
+        ],
+        visuals: [
+          {
+            type: "files",
+            title: "HelloJava 專案結構",
+            value: `HelloJava
+
+ └─ Main.java`
+          },
+          {
+            type: "callout",
+            variant: "tip",
+            text: "初學時請把專案放在簡單路徑，例如桌面或文件資料夾，避免路徑中有太多特殊符號。"
+          }
+        ],
+        codes: [
+          {
+            title: "建立 Main.java",
+            value: `// 檔案名稱：Main.java
+public class Main {
+
+}`
+          }
         ]
       },
       {
         sectionId: "2.5",
-        title: "編譯與執行",
+        title: "撰寫第一個 Java 程式",
         body: [
-          "Java 程式通常會先寫在 `.java` 檔案中。接著用編譯器把它轉成 `.class` 檔案，最後交給 JVM 執行。",
-          "你可以先記住流程：寫程式碼、編譯、執行、看結果、修正錯誤。這個循環會陪你很久，也會讓你越來越熟。",
-          "如果看到找不到 class、找不到 main 方法、或分號錯誤，先不要慌。檢查檔名、class 名稱、main 方法拼字，以及每行指令是否有分號。",
-          "初學階段請先把程式放在簡單路徑，避免資料夾名稱太複雜。每次只改一小段，再重新編譯執行，會比較容易找出問題。"
+          "接著在 `Main.java` 中輸入第一個 Java 程式。這個程式會在畫面上輸出 `Hello Java`。",
+          "你現在不需要完全理解每一個字。先把它看成固定格式：外層是 class，中間有 main 方法，main 方法裡面放要執行的指令。",
+          "在 VS Code 中，如果 Java Extension Pack 安裝成功，通常可以看到 Run 或執行按鈕。你也可以用終端機執行：先 `javac Main.java` 編譯，再 `java Main` 執行。"
         ],
         code: {
-          title: "終端機概念指令",
-          value: `javac HelloWorld.java
-java HelloWorld`
-        }
+          title: "Main.java",
+          value: `public class Main {
+
+    public static void main(String[] args) {
+
+        System.out.println("Hello Java");
+
+    }
+
+}`
+        },
+        visuals: [
+          {
+            type: "compare",
+            title: "執行結果預覽",
+            before: `執行前：
+Main.java`,
+            after: `Hello Java`
+          }
+        ],
+        codes: [
+          {
+            title: "終端機編譯與執行",
+            value: `javac Main.java
+java Main`
+          }
+        ]
+      },
+      {
+        sectionId: "2.6",
+        title: "Java 程式的組成要素",
+        body: [
+          "`public class Main` 定義了一個名為 Main 的類別。類別可以先理解成 Java 程式的外殼，程式碼通常會放在 class 裡面。",
+          "`public static void main(String[] args)` 是程式開始執行的入口。入口就像大樓的大門，Java 執行程式時會從這裡開始。",
+          "`System.out.println(\"Hello Java\");` 會把文字輸出到畫面上。`println` 可以想成 print line，也就是輸出一行並換行。",
+          "大括號 `{}` 用來包住 class 或方法的內容；分號 `;` 常用在一個指令結束的地方。忘記分號是新手很常見的錯誤。"
+        ],
+        visuals: [
+          {
+            type: "flow",
+            title: "程式碼標註圖",
+            value: `public class Main
+        ↓
+定義 Main 類別
+
+public static void main(String[] args)
+        ↓
+程式執行入口
+
+System.out.println("Hello Java");
+        ↓
+輸出文字到畫面`
+          },
+          {
+            type: "callout",
+            variant: "warning",
+            text: "如果 class 名稱是 Main，檔案名稱也要是 Main.java。大小寫不一致可能導致執行失敗。"
+          }
+        ],
+        codes: [
+          {
+            title: "逐行拆解",
+            value: `public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello Java");
+    }
+}`
+          }
+        ]
       }
     ],
     activities: [
       createActivity({
         id: "ch02-exercise-name",
-        sectionId: "2.3",
+        sectionId: "2.5",
         type: "exercise",
         title: "實作練習：改成自己的名字",
-        question: "把 `System.out.println(\"Hello, Java!\");` 裡面的文字改成自己的名字，並觀察輸出結果。",
+        question: "把 `System.out.println(\"Hello Java\");` 裡面的文字改成自己的名字，並觀察輸出結果。",
         hint: "只需要改雙引號裡面的文字，不要刪掉雙引號、括號或分號。",
-        solution: `public class HelloWorld {
+        solution: `public class Main {
     public static void main(String[] args) {
         System.out.println("我是小明");
     }
@@ -636,7 +830,7 @@ java HelloWorld`
       }),
       createActivity({
         id: "ch02-thought-main",
-        sectionId: "2.4",
+        sectionId: "2.6",
         type: "thought",
         title: "思考題：為什麼 main 方法很重要？",
         question: "請用自己的話說明：如果 Java 程式沒有 main 方法，可能會發生什麼事？",
@@ -659,6 +853,17 @@ java HelloWorld`
     }
 }`,
         explanation: "每呼叫一次 System.out.println() 就會輸出一行並換行。這個作業讓你練習 class、main 方法、字串輸出與分號。"
+      }),
+      createActivity({
+        id: "ch02-exercise-env-check",
+        sectionId: "2.2",
+        type: "exercise",
+        title: "實作練習：確認 JDK 安裝狀態",
+        question: "在終端機輸入 `java -version` 與 `javac -version`，確認兩個指令都能顯示版本資訊。",
+        hint: "如果終端機顯示找不到指令，請先關閉終端機再重新開啟；仍失敗時檢查 PATH 是否包含 JDK 的 bin 資料夾。",
+        solution: `java -version
+javac -version`,
+        explanation: "`java` 負責執行 Java 程式，`javac` 負責編譯 Java 程式。兩個指令都能顯示版本，代表開發環境比較完整。"
       })
     ],
     quiz: [
@@ -667,6 +872,12 @@ java HelloWorld`
         options: ["提供 Java 開發所需工具", "調整螢幕亮度", "只用來寫 HTML", "管理瀏覽器分頁"],
         answer: 0,
         explanation: "JDK 是 Java Development Kit，包含編譯與開發 Java 程式需要的工具。"
+      },
+      {
+        question: "本課程推薦安裝哪個 JDK 版本？",
+        options: ["OpenJDK 21（LTS）", "JDK 1.0", "只安裝瀏覽器", "不需要 JDK"],
+        answer: 0,
+        explanation: "OpenJDK 21 是 LTS 版本，適合學習與長期使用。"
       },
       {
         question: "Java 程式的執行入口通常是哪個方法？",
@@ -687,10 +898,16 @@ java HelloWorld`
         explanation: "許多 Java 敘述句結尾都需要分號，忘記分號會造成編譯錯誤。"
       },
       {
-        question: "`javac HelloWorld.java` 的概念是什麼？",
+        question: "`javac Main.java` 的概念是什麼？",
         options: ["編譯 Java 程式", "開啟圖片", "啟動瀏覽器", "新增資料夾"],
         answer: 0,
         explanation: "javac 是 Java 編譯器，用來把 .java 程式碼編譯成 .class。"
+      },
+      {
+        question: "Java Extension Pack 的用途是什麼？",
+        options: ["讓 VS Code 支援 Java 開發", "取代 JDK", "製作網頁樣式", "刪除終端機"],
+        answer: 0,
+        explanation: "Java Extension Pack 會替 VS Code 加入 Java 語法提示、執行與專案支援。"
       }
     ]
   },
@@ -12126,7 +12343,8 @@ function renderVisualBlock(visual) {
     component: "元件階層圖",
     event: "事件流程圖",
     layout: "Layout 視覺化圖",
-    drawing: "繪圖結果預覽"
+    drawing: "繪圖結果預覽",
+    screenshot: "圖片佔位區塊"
   }[visual.type] || "視覺化教學";
 
   return `
