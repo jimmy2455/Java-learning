@@ -4179,6 +4179,7 @@ nums[j + 1] = temp;`,
   chapters.push(createChapter14());
   chapters.push(createChapter15());
   chapters.push(createChapter16());
+  chapters.push(createChapter17());
   applyVisualTeachingUpgrade();
 }
 
@@ -9754,6 +9755,620 @@ int min = Integer.MAX_VALUE;`,
       { question: "transient 欄位會？", options: ["不被序列化保存", "一定被加密", "變成 static", "自動寫入文字檔"], answer: 0, explanation: "transient 表示略過序列化。" },
       { question: "讀取 CSV 後常用哪個方法切欄位？", options: ["split()", "join()", "wait()", "start()"], answer: 0, explanation: "split(',') 可切開欄位。" },
       { question: "將 score 字串轉 int 可用？", options: ["Integer.parseInt()", "String.start()", "Thread.parse()", "File.toInt()"], answer: 0, explanation: "Integer.parseInt 可把數字字串轉整數。" }
+    ]
+  };
+}
+
+function createChapter17() {
+  return {
+    id: 17,
+    code: "CH17",
+    title: "Java標準類別庫（Java Standard Library）",
+    minutes: 180,
+    summary: "認識 Java 內建工具箱，學會 Wrapper Class、Math、Collections 與 API 文件查閱。",
+    intro: "標準類別庫就像 Java 已經幫你準備好的工具箱。本章會讓你知道什麼時候該使用現成類別，而不是每次都從零開始寫功能。",
+    goals: [
+      "了解什麼是 Java 標準類別庫",
+      "學會使用 Wrapper Class",
+      "學會使用 Math 類別",
+      "學會使用 Collections Framework",
+      "學會查閱 Java API 文件",
+      "能夠利用標準類別庫快速完成常見功能"
+    ],
+    sections: [
+      {
+        sectionId: "17.1",
+        title: "什麼是 Java 標準類別庫",
+        body: [
+          "當你需要計算平方根時，不一定要自己寫演算法；當你需要排序資料時，也不一定要重新發明排序法。Java 標準類別庫已經提供大量常見工具，讓你可以專心解決問題本身。",
+          "Java Standard Library 是 Java 內建的一組類別與套件。它包含字串、數學、輸入輸出、集合、時間、隨機數、掃描輸入等工具。學會查找與使用標準類別庫，是從新手走向實作能力的重要一步。",
+          "常見套件包含 `java.lang`、`java.util`、`java.io`、`java.math`、`java.time`。其中 `java.lang` 會自動匯入，所以你可以直接使用 `String`、`Math`、`Integer` 等類別。",
+          "查文件時，可以從 <a href=\"https://docs.oracle.com/en/java/javase/21/docs/api/?utm_source=chatgpt.com\" target=\"_blank\" rel=\"noopener\">Java API Documentation</a> 開始。先搜尋類別名稱，再看建構方法、常用方法、回傳型態與範例。"
+        ],
+        visuals: [
+          {
+            type: "files",
+            title: "標準類別庫套件地圖",
+            value: `Java Standard Library
+├─ java.lang
+│  ├─ String
+│  ├─ Math
+│  └─ Integer
+├─ java.util
+│  ├─ Scanner
+│  ├─ ArrayList
+│  └─ Random
+├─ java.io
+│  ├─ FileReader
+│  └─ FileWriter
+├─ java.math
+│  ├─ BigInteger
+│  └─ BigDecimal
+└─ java.time
+   ├─ LocalDate
+   └─ LocalDateTime`
+          },
+          {
+            type: "flow",
+            title: "查 API 的基本流程",
+            value: `遇到需求
+  ↓
+找可能的類別
+  ↓
+閱讀方法名稱與參數
+  ↓
+看回傳值
+  ↓
+寫小範例測試`
+          }
+        ],
+        codes: [
+          { title: "範例 1：使用 Math 計算平方根", value: `public class Main {
+    public static void main(String[] args) {
+        double result = Math.sqrt(25);
+        System.out.println(result);
+    }
+}
+
+// 執行結果：
+// 5.0` },
+          { title: "範例 2：使用 Arrays 排序", value: `import java.util.Arrays;
+
+public class Main {
+    public static void main(String[] args) {
+        int[] nums = {5, 2, 9};
+        Arrays.sort(nums);
+        System.out.println(Arrays.toString(nums));
+    }
+}
+
+// 執行結果：
+// [2, 5, 9]` },
+          { title: "範例 3：使用 ArrayList 儲存資料", value: `import java.util.ArrayList;
+
+public class Main {
+    public static void main(String[] args) {
+        ArrayList<String> names = new ArrayList<>();
+        names.add("Jimmy");
+        names.add("Amy");
+        System.out.println(names);
+    }
+}
+
+// 執行結果：
+// [Jimmy, Amy]` },
+          { title: "範例 4：使用 Scanner 讀取輸入", value: `import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        String name = sc.nextLine();
+        System.out.println("Hello " + name);
+    }
+}` },
+          { title: "範例 5：使用 Random 產生亂數", value: `import java.util.Random;
+
+public class Main {
+    public static void main(String[] args) {
+        Random random = new Random();
+        int dice = random.nextInt(6) + 1;
+        System.out.println(dice);
+    }
+}` },
+          { title: "範例 6：使用 LocalDate 取得日期", value: `import java.time.LocalDate;
+
+public class Main {
+    public static void main(String[] args) {
+        LocalDate today = LocalDate.now();
+        System.out.println(today);
+    }
+}` },
+          { title: "範例 7：使用 BigDecimal 處理精準小數", value: `import java.math.BigDecimal;
+
+public class Main {
+    public static void main(String[] args) {
+        BigDecimal price = new BigDecimal("19.99");
+        BigDecimal count = new BigDecimal("3");
+        System.out.println(price.multiply(count));
+    }
+}
+
+// 執行結果：
+// 59.97` },
+          { title: "範例 8：使用 Collections 反轉清單", value: `import java.util.ArrayList;
+import java.util.Collections;
+
+public class Main {
+    public static void main(String[] args) {
+        ArrayList<String> list = new ArrayList<>();
+        list.add("A");
+        list.add("B");
+        list.add("C");
+        Collections.reverse(list);
+        System.out.println(list);
+    }
+}
+
+// 執行結果：
+// [C, B, A]` }
+        ]
+      },
+      {
+        sectionId: "17.2",
+        title: "基本資料類別（Wrapper Class）",
+        body: [
+          "Java 有基本型別，例如 `int`、`double`、`char`、`boolean`。它們很輕量，適合存放單純資料；但有些工具需要物件，例如 `ArrayList`，這時就需要 Wrapper Class。",
+          "Wrapper Class 是基本型別的物件版本。`int` 對應 `Integer`，`double` 對應 `Double`，`char` 對應 `Character`，`boolean` 對應 `Boolean`。",
+          "Autoboxing 是 Java 自動把基本型別包成 Wrapper；Unboxing 是自動把 Wrapper 拆回基本型別。這讓我們在寫 Collections 時比較方便。",
+          "Collections 只能放物件，不能直接放基本型別。因此 `ArrayList<int>` 是錯的，應該寫成 `ArrayList<Integer>`。"
+        ],
+        visuals: [
+          {
+            type: "steps",
+            title: "基本型別與 Wrapper 對照",
+            headers: ["基本型別", "Wrapper Class", "常見用途"],
+            rows: [
+              ["int", "Integer", "整數、parseInt、ArrayList<Integer>"],
+              ["double", "Double", "小數、parseDouble、數值比較"],
+              ["char", "Character", "字元判斷、大小寫處理"],
+              ["boolean", "Boolean", "真假值、設定旗標"]
+            ]
+          },
+          {
+            type: "memory",
+            title: "Autoboxing / Unboxing 概念",
+            value: `int 10
+  ↓ Autoboxing
+Integer 10
+  ↓ Unboxing
+int 10`
+          }
+        ],
+        codes: [
+          { title: "範例 1：Autoboxing", value: `Integer x = 10;
+System.out.println(x);
+
+// 執行結果：
+// 10` },
+          { title: "範例 2：Unboxing", value: `Integer x = 10;
+int y = x;
+System.out.println(y + 5);
+
+// 執行結果：
+// 15` },
+          { title: "範例 3：parseInt 字串轉整數", value: `String text = "123";
+int number = Integer.parseInt(text);
+System.out.println(number + 7);
+
+// 執行結果：
+// 130` },
+          { title: "範例 4：parseDouble 字串轉小數", value: `String text = "3.14";
+double pi = Double.parseDouble(text);
+System.out.println(pi * 2);
+
+// 執行結果：
+// 6.28` },
+          { title: "範例 5：valueOf 建立 Wrapper", value: `Integer number = Integer.valueOf("99");
+System.out.println(number);
+
+// 執行結果：
+// 99` },
+          { title: "範例 6：MAX_VALUE", value: `System.out.println(Integer.MAX_VALUE);
+
+// 執行結果：
+// 2147483647` },
+          { title: "範例 7：MIN_VALUE", value: `System.out.println(Integer.MIN_VALUE);
+
+// 執行結果：
+// -2147483648` },
+          { title: "範例 8：compareTo", value: `Integer a = 10;
+Integer b = 20;
+System.out.println(a.compareTo(b));
+
+// 執行結果：
+// -1` },
+          { title: "範例 9：數字轉字串", value: `int score = 95;
+String text = String.valueOf(score);
+System.out.println("分數：" + text);
+
+// 執行結果：
+// 分數：95` },
+          { title: "範例 10：Character 判斷字母", value: `char ch = 'A';
+System.out.println(Character.isLetter(ch));
+
+// 執行結果：
+// true` },
+          { title: "範例 11：Boolean 解析字串", value: `String text = "true";
+boolean result = Boolean.parseBoolean(text);
+System.out.println(result);
+
+// 執行結果：
+// true` },
+          { title: "範例 12：Collections 使用 Wrapper", value: `import java.util.ArrayList;
+
+ArrayList<Integer> scores = new ArrayList<>();
+scores.add(80);
+scores.add(95);
+System.out.println(scores);
+
+// 執行結果：
+// [80, 95]` }
+        ]
+      },
+      {
+        sectionId: "17.3",
+        title: "Math 類別",
+        body: [
+          "`Math` 是 Java 提供的數學工具類別。它的方法大多是 `static`，所以你不需要建立 `Math` 物件，可以直接寫 `Math.sqrt(25)`。",
+          "常用方法包含 `abs()`、`max()`、`min()`、`pow()`、`sqrt()`、`cbrt()`、`round()`、`floor()`、`ceil()`、`random()`。常用常數包含 `Math.PI` 與 `Math.E`。",
+          "`Math.pow(a, b)` 可以計算 a 的 b 次方，但如果只是平方，例如 `x * x`，直接乘法通常更直覺。`pow()` 適合次方數是變數或需要泛用計算時使用。"
+        ],
+        visuals: [
+          {
+            type: "flow",
+            title: "平方根視覺化",
+            value: `25 是哪個數的平方？
+  ↓
+5 × 5 = 25
+  ↓
+Math.sqrt(25) = 5.0`
+          },
+          {
+            type: "compare",
+            title: "pow 與直接乘法",
+            before: `double area = Math.pow(radius, 2) * Math.PI;`,
+            after: `double area = radius * radius * Math.PI;`
+          }
+        ],
+        codes: [
+          { title: "範例 1：abs 絕對值", value: `System.out.println(Math.abs(-10));
+// 10` },
+          { title: "範例 2：max 最大值", value: `System.out.println(Math.max(80, 95));
+// 95` },
+          { title: "範例 3：min 最小值", value: `System.out.println(Math.min(80, 95));
+// 80` },
+          { title: "範例 4：pow 次方", value: `System.out.println(Math.pow(2, 3));
+// 8.0` },
+          { title: "範例 5：sqrt 平方根", value: `System.out.println(Math.sqrt(25));
+// 5.0` },
+          { title: "範例 6：cbrt 立方根", value: `System.out.println(Math.cbrt(27));
+// 3.0` },
+          { title: "範例 7：round 四捨五入", value: `System.out.println(Math.round(3.6));
+// 4` },
+          { title: "範例 8：floor 無條件捨去", value: `System.out.println(Math.floor(3.9));
+// 3.0` },
+          { title: "範例 9：ceil 無條件進位", value: `System.out.println(Math.ceil(3.1));
+// 4.0` },
+          { title: "範例 10：random 產生 0 到 1", value: `System.out.println(Math.random());
+// 可能輸出：0.734...` },
+          { title: "範例 11：產生 1 到 10 亂數", value: `int n = (int)(Math.random() * 10) + 1;
+System.out.println(n);` },
+          { title: "範例 12：PI 圓周率", value: `double r = 5;
+double area = r * r * Math.PI;
+System.out.println(area);` },
+          { title: "範例 13：E 自然常數", value: `System.out.println(Math.E);
+// 2.718281828459045` },
+          { title: "範例 14：BMI 計算", value: `double weight = 70;
+double height = 1.75;
+double bmi = weight / Math.pow(height, 2);
+System.out.println(bmi);` },
+          { title: "範例 15：兩點距離", value: `int x1 = 0, y1 = 0;
+int x2 = 3, y2 = 4;
+double distance = Math.sqrt(
+    Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)
+);
+System.out.println(distance);
+
+// 執行結果：
+// 5.0` }
+        ]
+      },
+      {
+        sectionId: "17.4",
+        title: "Java Collections",
+        body: [
+          "如果要儲存 100 位學生，用陣列可以做到，但陣列大小固定，新增與刪除比較不方便。Collections Framework 提供更有彈性的資料容器。",
+          "`ArrayList` 適合儲存有順序、可重複的資料；`HashSet` 適合儲存不可重複資料；`HashMap` 適合用 Key 對應 Value，例如英文單字對中文翻譯。",
+          "集合類別通常使用泛型語法，例如 `ArrayList<String>` 代表這個清單主要放字串。初學時先把泛型想成資料類型標籤，可以讓程式更安全、更清楚。"
+        ],
+        visuals: [
+          {
+            type: "uml",
+            title: "Collections Framework 概念圖",
+            value: `Collection
+├─ List
+│  ├─ ArrayList
+│  └─ LinkedList
+├─ Set
+│  ├─ HashSet
+│  └─ TreeSet
+└─ Queue
+
+Map
+└─ HashMap
+   Key → Value`
+          },
+          {
+            type: "array",
+            title: "HashMap 查表概念",
+            value: `Key       Value
+apple  →  蘋果
+dog    →  狗
+cat    →  貓`
+          }
+        ],
+        codes: [
+          { title: "範例 1：建立 ArrayList", value: `import java.util.ArrayList;
+
+ArrayList<String> names = new ArrayList<>();` },
+          { title: "範例 2：add 新增元素", value: `names.add("Jimmy");
+names.add("Amy");
+System.out.println(names);
+
+// [Jimmy, Amy]` },
+          { title: "範例 3：get 讀取元素", value: `System.out.println(names.get(0));
+// Jimmy` },
+          { title: "範例 4：set 修改元素", value: `names.set(1, "John");
+System.out.println(names);
+
+// [Jimmy, John]` },
+          { title: "範例 5：remove 刪除元素", value: `names.remove("Jimmy");
+System.out.println(names);
+
+// [John]` },
+          { title: "範例 6：size 取得數量", value: `System.out.println(names.size());` },
+          { title: "範例 7：contains 判斷是否存在", value: `System.out.println(names.contains("Amy"));` },
+          { title: "範例 8：for-each 走訪 ArrayList", value: `for(String name : names){
+    System.out.println(name);
+}` },
+          { title: "範例 9：HashSet 去除重複", value: `import java.util.HashSet;
+
+HashSet<Integer> numbers = new HashSet<>();
+numbers.add(7);
+numbers.add(7);
+numbers.add(9);
+System.out.println(numbers);
+
+// 可能輸出：[7, 9]` },
+          { title: "範例 10：HashSet contains", value: `System.out.println(numbers.contains(9));
+// true` },
+          { title: "範例 11：HashMap 建立字典", value: `import java.util.HashMap;
+
+HashMap<String, String> dict = new HashMap<>();
+dict.put("apple", "蘋果");
+dict.put("dog", "狗");` },
+          { title: "範例 12：HashMap get 查詢", value: `System.out.println(dict.get("apple"));
+// 蘋果` },
+          { title: "範例 13：HashMap 更新值", value: `dict.put("dog", "小狗");
+System.out.println(dict.get("dog"));
+// 小狗` },
+          { title: "範例 14：HashMap containsKey", value: `System.out.println(dict.containsKey("cat"));
+// false` },
+          { title: "範例 15：走訪 HashMap", value: `for(String key : dict.keySet()){
+    System.out.println(key + " = " + dict.get(key));
+}` }
+        ]
+      },
+      {
+        sectionId: "17.5",
+        title: "綜合演練",
+        body: [
+          "本節把標準類別庫用在較完整的小任務中。你會看到 `Math` 可以處理數學問題，`HashSet` 可以避免重複資料，`HashMap` 可以建立查詢表。",
+          "寫綜合題時不要急著背答案。先確認輸入、輸出、資料要放在哪一種容器，再選擇合適的標準類別庫。"
+        ],
+        visuals: [
+          {
+            type: "flow",
+            title: "題目 1：任意次方根流程",
+            value: `輸入數字 number
+  ↓
+輸入根次 root
+  ↓
+計算 Math.pow(number, 1.0 / root)
+  ↓
+輸出結果`
+          },
+          {
+            type: "uml",
+            title: "題目 2：樂透號碼 UML 概念",
+            value: `LottoGenerator
+├─ HashSet<Integer> numbers
+└─ generate()
+   └─ 產生 6 個不重複號碼`
+          },
+          {
+            type: "flow",
+            title: "題目 3：英漢字典流程",
+            value: `建立 HashMap
+  ↓
+放入 apple/dog/cat
+  ↓
+讀取英文單字
+  ↓
+containsKey？
+  ├─ 是：輸出中文
+  └─ 否：輸出查無資料`
+          }
+        ],
+        codes: [
+          { title: "題目 1 Solution：求任意次方根", value: `import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        double number = sc.nextDouble();
+        double root = sc.nextDouble();
+
+        double answer = Math.pow(number, 1.0 / root);
+        System.out.println(answer);
+    }
+}
+
+// 輸入：
+// 27
+// 3
+// 輸出：
+// 3.0` },
+          { title: "題目 2 Solution：產生樂透號碼", value: `import java.util.HashSet;
+import java.util.Random;
+
+public class Main {
+    public static void main(String[] args) {
+        Random random = new Random();
+        HashSet<Integer> lotto = new HashSet<>();
+
+        while(lotto.size() < 6){
+            int number = random.nextInt(49) + 1;
+            lotto.add(number);
+        }
+
+        System.out.println(lotto);
+    }
+}` },
+          { title: "題目 3 Solution：陽春型英漢字典", value: `import java.util.HashMap;
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        HashMap<String, String> dict = new HashMap<>();
+        dict.put("apple", "蘋果");
+        dict.put("dog", "狗");
+        dict.put("cat", "貓");
+
+        Scanner sc = new Scanner(System.in);
+        String word = sc.nextLine();
+
+        if(dict.containsKey(word)){
+            System.out.println(dict.get(word));
+        }else{
+            System.out.println("查無資料");
+        }
+    }
+}` }
+        ]
+      }
+    ],
+    activities: [
+      createActivity({
+        id: "ch17-exercise-api-docs",
+        sectionId: "17.1",
+        type: "exercise",
+        title: "實作練習：查閱 API 文件",
+        question: "請分別找出 Math、ArrayList、Scanner 在 Java API Documentation 中的位置，並寫下各一個你看得懂的方法名稱。",
+        hint: "先搜尋類別名稱，再看 Method Summary。你不需要一次讀完整份文件。",
+        solution: "Math：sqrt()。ArrayList：add()。Scanner：nextLine()。",
+        explanation: "查 API 的重點是確認類別在哪個 package、方法需要什麼參數、會回傳什麼結果。能查到方法名稱，就已經開始具備自學標準類別庫的能力。"
+      }),
+      createActivity({
+        id: "ch17-exercise-wrapper",
+        sectionId: "17.2",
+        type: "exercise",
+        title: "實作練習：Wrapper Class 轉換",
+        question: "把字串 \"85\" 轉成整數後加上 15，再把結果轉成字串輸出。",
+        hint: "使用 `Integer.parseInt()`，最後可用 `String.valueOf()`。",
+        solution: `String text = "85";
+int score = Integer.parseInt(text);
+score += 15;
+String result = String.valueOf(score);
+System.out.println(result);`,
+        explanation: "字串轉數字後才能做加法；如果直接寫 `\"85\" + 15`，結果會是字串串接而不是數值運算。"
+      }),
+      createActivity({
+        id: "ch17-exercise-math",
+        sectionId: "17.3",
+        type: "exercise",
+        title: "實作練習：用 Math 計算圓面積",
+        question: "建立半徑 r，使用 Math.PI 計算圓面積，並輸出結果。",
+        hint: "圓面積公式是 `半徑 * 半徑 * PI`。",
+        solution: `double r = 5;
+double area = r * r * Math.PI;
+System.out.println(area);`,
+        explanation: "`Math.PI` 是 Java 內建常數，比自己手打 3.14 更精準也更清楚。"
+      }),
+      createActivity({
+        id: "ch17-exercise-collections",
+        sectionId: "17.4",
+        type: "exercise",
+        title: "實作練習：使用集合管理資料",
+        question: "用 ArrayList 儲存三位學生姓名；用 HashSet 儲存三個號碼並確認不重複；用 HashMap 儲存姓名與分數。",
+        hint: "ArrayList 用 add，HashSet 也用 add，HashMap 用 put。",
+        solution: `ArrayList<String> names = new ArrayList<>();
+names.add("Jimmy");
+names.add("Amy");
+names.add("John");
+
+HashSet<Integer> nums = new HashSet<>();
+nums.add(1);
+nums.add(1);
+nums.add(2);
+
+HashMap<String, Integer> scores = new HashMap<>();
+scores.put("Jimmy", 90);`,
+        explanation: "三種集合解決不同問題：ArrayList 保留順序，HashSet 排除重複，HashMap 建立 key-value 查詢關係。"
+      }),
+      createActivity({
+        id: "ch17-homework-standard-library",
+        sectionId: "17.5",
+        type: "homework",
+        title: "作業：完成標準類別庫小工具",
+        question: "從任意次方根、樂透號碼、英漢字典三題中選一題完整實作，並加上 3 行註解說明你用了哪些標準類別庫。",
+        hint: "先列出需求，再決定使用 Math、HashSet 或 HashMap。",
+        solution: "可選擇 HashMap 英漢字典：建立 HashMap，put 三組單字，讀取輸入後用 containsKey 判斷是否存在，再用 get 取得中文翻譯。",
+        explanation: "這份作業的核心不是程式長度，而是練習把需求對應到標準類別庫。能選對工具，程式就會更短、更穩、更容易讀。"
+      }),
+      createActivity({
+        id: "ch17-thought-choose-library",
+        sectionId: "17.5",
+        type: "thought",
+        title: "思考題：何時該用標準類別庫？",
+        question: "如果 Java 已經提供排序、集合、數學計算工具，你覺得什麼情況仍然值得自己練習實作？",
+        hint: "可以從學習目的、效能需求、特殊規則三個角度想。",
+        solution: "學習演算法時值得自己實作，因為能理解原理；正式專案若只是常見功能，通常優先使用標準類別庫；若有特殊規則或效能瓶頸，才考慮自訂實作。",
+        explanation: "標準類別庫不是讓你不用理解原理，而是讓正式開發更可靠。學習時可以自己做輪子，實務上要懂得使用已經成熟的輪子。"
+      })
+    ],
+    quiz: [
+      { question: "Java 標準類別庫最接近哪個概念？", options: ["Java 內建工具箱", "只能寫 HTML 的工具", "資料庫伺服器", "作業系統核心"], answer: 0, explanation: "標準類別庫提供許多現成類別與方法。" },
+      { question: "哪個 package 常放集合與 Scanner？", options: ["java.util", "java.paint", "java.soundonly", "java.page"], answer: 0, explanation: "java.util 包含 ArrayList、HashMap、Scanner、Random 等工具。" },
+      { question: "哪個 package 會自動匯入？", options: ["java.lang", "java.extra", "java.manual", "java.web"], answer: 0, explanation: "String、Math、Integer 等 java.lang 類別可直接使用。" },
+      { question: "查 Java 類別與方法通常會看什麼？", options: ["Java API Documentation", "圖片編輯器", "CSS 色票", "瀏覽器書籤"], answer: 0, explanation: "API 文件能查類別、方法、參數與回傳型態。" },
+      { question: "int 對應的 Wrapper Class 是？", options: ["Integer", "IntObject", "NumberInt", "WrapperInt"], answer: 0, explanation: "int 的包裝類別是 Integer。" },
+      { question: "double 對應的 Wrapper Class 是？", options: ["Double", "Decimal", "FloatOnly", "Real"], answer: 0, explanation: "double 對應 Double。" },
+      { question: "Autoboxing 是什麼？", options: ["基本型別自動包成 Wrapper", "刪除物件", "編譯 HTML", "開啟檔案"], answer: 0, explanation: "例如 Integer x = 10。" },
+      { question: "Unboxing 是什麼？", options: ["Wrapper 自動拆回基本型別", "把字串切開", "建立 HashMap", "重新排序"], answer: 0, explanation: "例如 int y = x，其中 x 是 Integer。" },
+      { question: "字串 \"123\" 轉整數可使用？", options: ["Integer.parseInt(\"123\")", "Math.sqrt(\"123\")", "String.sort(\"123\")", "ArrayList.parse(\"123\")"], answer: 0, explanation: "parseInt 可把合法整數字串轉成 int。" },
+      { question: "Collections 為什麼使用 Integer 而不是 int？", options: ["集合儲存物件", "int 不能加法", "Integer 不能比較", "因為 int 是字串"], answer: 0, explanation: "泛型集合需要物件型別，因此使用 Wrapper。" },
+      { question: "Math.sqrt(25) 結果是？", options: ["5.0", "25", "10", "錯誤"], answer: 0, explanation: "sqrt 計算平方根，回傳 double。" },
+      { question: "Math.pow(2, 3) 結果是？", options: ["8.0", "6", "9", "5"], answer: 0, explanation: "2 的 3 次方是 8。" },
+      { question: "Math.abs(-10) 結果是？", options: ["10", "-10", "0", "錯誤"], answer: 0, explanation: "abs 回傳絕對值。" },
+      { question: "哪個常數代表圓周率？", options: ["Math.PI", "Math.CIRCLE", "Math.ROUND", "Math.RANDOM"], answer: 0, explanation: "Math.PI 是圓周率。" },
+      { question: "ArrayList 的特性是？", options: ["可依序儲存資料且大小可變", "永遠不可修改", "只存 key-value", "只能存 6 個元素"], answer: 0, explanation: "ArrayList 比陣列更彈性，常用於清單資料。" },
+      { question: "ArrayList 新增元素使用？", options: ["add()", "put()", "sqrt()", "notify()"], answer: 0, explanation: "List 類型常用 add 新增元素。" },
+      { question: "HashSet 的主要特性是？", options: ["不允許重複元素", "一定排序", "只能放字串", "必須有 key"], answer: 0, explanation: "Set 用來表示不重複集合。" },
+      { question: "HashMap 儲存的是？", options: ["Key 和 Value 對應", "只有一個數字", "只有順序索引", "只有 boolean"], answer: 0, explanation: "Map 用 key 找 value，很適合查表。" },
+      { question: "產生 6 個不重複樂透號碼適合使用？", options: ["HashSet", "StringBuilder only", "Math.PI", "FileReader"], answer: 0, explanation: "HashSet 可避免重複號碼。" },
+      { question: "陽春型英漢字典適合使用？", options: ["HashMap", "Thread", "Exception", "char"], answer: 0, explanation: "英文單字對中文翻譯是 key-value 查詢。" }
     ]
   };
 }
