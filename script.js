@@ -4177,6 +4177,7 @@ nums[j + 1] = temp;`,
   chapters.push(createChapter12());
   chapters.push(createChapter13());
   chapters.push(createChapter14());
+  chapters.push(createChapter15());
 }
 
 function updateSection(chapterId, sectionId, data) {
@@ -8835,6 +8836,458 @@ class BalanceException extends Exception {
       { question: "階乘程式遇到負數時，適合？", options: ["主動拋出例外", "默默回傳 999", "忽略輸入", "改 package 名稱"], answer: 0, explanation: "負數違反方法規則，適合用例外表達。" },
       { question: "BankAccount 提款超過餘額時，較好的設計是？", options: ["拋出 BalanceException 並讓呼叫端處理", "直接讓 balance 變負數", "刪除帳戶", "重新命名 class"], answer: 0, explanation: "錯誤狀態應清楚表達並交由呼叫端處理。" },
       { question: "本章不需要深入哪個主題？", options: ["JVM Exception Table", "try / catch", "throw", "Custom Exception"], answer: 0, explanation: "初學階段先會使用例外處理即可。" }
+    ]
+  };
+}
+
+function createChapter15() {
+  return {
+    id: 15,
+    code: "CH15",
+    title: "多執行緒（Multithreading）",
+    minutes: 165,
+    summary: "理解 Thread、Runnable、start/run、Synchronization、wait/notify 與簡易 Timer 設計。",
+    intro: "多執行緒讓程式能同時處理多件事，例如下載檔案時仍能操作畫面，遊戲中角色、音樂與敵人 AI 同時運作。本章會用生活化流程圖帶你建立基本多執行緒直覺。",
+    goals: [
+      "了解什麼是執行緒 Thread",
+      "了解單執行緒與多執行緒差異",
+      "學會建立執行緒",
+      "學會 Thread 類別",
+      "學會 Runnable 介面",
+      "了解同步 Synchronization",
+      "了解 wait() / notify()",
+      "能夠設計簡單的多執行緒程式"
+    ],
+    sections: [
+      {
+        sectionId: "15.1",
+        title: "什麼是執行緒",
+        body: [
+          "執行緒（Thread）可以想成程式中的一條工作線。單執行緒程式一次照順序做一件事，多執行緒程式則可以讓多個工作看起來同時進行。",
+          "例如下載檔案時仍能播放音樂；瀏覽器下載圖片時，使用者仍能捲動頁面；遊戲中角色移動、背景音樂、敵人 AI 可以一起運作。",
+          "程序（Process）是正在執行的程式；執行緒（Thread）是程序裡的工作單位。一個程序可以有一個或多個執行緒。",
+          "建立執行緒常見方式有繼承 Thread、實作 Runnable、匿名 Runnable。初學者最常犯的錯是直接呼叫 run()，但正確啟動新執行緒應該呼叫 start()。"
+        ],
+        code: {
+          title: "單執行緒 vs 多執行緒圖解",
+          value: `單執行緒：
+main
+ ↓
+工作1
+ ↓
+工作2
+ ↓
+工作3
+
+多執行緒：
+main
+ ├─ 工作1
+ ├─ 工作2
+ └─ 工作3`
+        },
+        codes: [
+          { title: "範例 1：Process 與 Thread 概念", value: `Process：正在執行的程式\n  ├─ main thread\n  ├─ download thread\n  └─ music thread\n\n解說：\n一個程式可以有多條工作線。` },
+          { title: "範例 2：繼承 Thread", value: `class MyThread extends Thread {\n    public void run() {\n        System.out.println(\"執行中\");\n    }\n}` },
+          { title: "範例 3：啟動執行緒 start()", value: `MyThread t = new MyThread();\nt.start();\n\n// 執行結果：\n// 執行中\n\n// 解說：\n// start() 會開啟新的執行緒，並自動呼叫 run()。` },
+          { title: "範例 4：run() 不是啟動新執行緒", value: `MyThread t = new MyThread();\nt.run();\n\n// 解說：\n// 這只是普通方法呼叫，仍在目前執行緒中執行。\n// 初學請記：要啟動新執行緒，用 start()。` },
+          { title: "範例 5：start() 與 run() 差異圖", value: `t.start()\n  ↓\n建立新 Thread\n  ↓\n新 Thread 執行 run()\n\n t.run()\n  ↓\n普通方法呼叫\n  ↓\n目前 Thread 執行 run()` },
+          { title: "範例 6：使用 Runnable", value: `class MyTask implements Runnable {\n    public void run() {\n        System.out.println(\"任務執行\");\n    }\n}\n\nThread t = new Thread(new MyTask());\nt.start();\n\n// 執行結果：\n// 任務執行` },
+          { title: "範例 7：匿名 Runnable", value: `Thread t = new Thread(new Runnable() {\n    public void run() {\n        System.out.println(\"匿名任務\");\n    }\n});\n\nt.start();\n\n// 執行結果：\n// 匿名任務` },
+          { title: "範例 8：Lambda Runnable", value: `Thread t = new Thread(() -> {\n    System.out.println(\"Lambda 任務\");\n});\n\nt.start();\n\n// 執行結果：\n// Lambda 任務\n\n// 解說：\n// Runnable 只有一個抽象方法，適合用 Lambda。` },
+          { title: "範例 9：sleep()", value: `try {\n    Thread.sleep(1000);\n    System.out.println(\"1 秒後執行\");\n} catch (InterruptedException e) {\n    System.out.println(\"睡眠被中斷\");\n}\n\n// 執行結果：\n// 1 秒後執行` },
+          { title: "範例 10：倒數計時", value: `Thread timer = new Thread(() -> {\n    for (int i = 3; i >= 1; i--) {\n        System.out.println(i);\n        try {\n            Thread.sleep(1000);\n        } catch (InterruptedException e) {\n            System.out.println(\"中斷\");\n        }\n    }\n    System.out.println(\"時間到\");\n});\n\ntimer.start();\n\n// 執行結果：\n// 3\n// 2\n// 1\n// 時間到` },
+          { title: "範例 11：同時執行兩個任務", value: `Thread t1 = new Thread(() -> {\n    for (int i = 1; i <= 3; i++) {\n        System.out.println(\"A\" + i);\n    }\n});\n\nThread t2 = new Thread(() -> {\n    for (int i = 1; i <= 3; i++) {\n        System.out.println(\"B\" + i);\n    }\n});\n\nt1.start();\nt2.start();\n\n// 執行結果順序可能不同：\n// A1 B1 A2 B2 ...` },
+          { title: "範例 12：執行緒生命週期簡圖", value: `New\n ↓ start()\nRunnable\n ↓ 被 CPU 執行\nRunning\n ↓ sleep()/wait()\nWaiting / Timed Waiting\n ↓ 結束 run()\nTerminated` },
+          { title: "範例 13：目前執行緒名稱", value: `System.out.println(Thread.currentThread().getName());\n\nThread t = new Thread(() -> {\n    System.out.println(Thread.currentThread().getName());\n});\n\nt.start();\n\n// 執行結果可能是：\n// main\n// Thread-0` }
+        ]
+      },
+      {
+        sectionId: "15.2",
+        title: "執行緒的同步（Synchronization）",
+        body: [
+          "多個執行緒同時操作同一份資料時，可能產生 Race Condition。像兩個人同時從同一帳戶提款，如果檢查餘額和扣款不是一個安全流程，就可能出現資料錯誤。",
+          "`synchronized` 可以讓同一時間只有一個執行緒進入某段重要程式。它像是一把物件鎖（Object Lock），先拿到鎖的人先執行，其他人等待。",
+          "同步可以用在方法上，也可以用同步區塊 `synchronized(this)`。範圍越小越精準，但初學先理解保護共享資料即可。",
+          "同步不是為了讓程式變快，而是為了讓共享資料正確。"
+        ],
+        code: {
+          title: "Race Condition 時間軸",
+          value: `餘額 balance = 1000
+
+Thread A 讀到 1000
+Thread B 讀到 1000
+Thread A 提款 500，寫回 500
+Thread B 提款 500，寫回 500
+
+問題：
+兩次提款共 1000，但結果仍是 500。`
+        },
+        codes: [
+          { title: "範例 1：未同步提款問題", value: `class BankAccount {\n    int balance = 1000;\n\n    void withdraw(int amount) {\n        if (balance >= amount) {\n            balance -= amount;\n        }\n    }\n}\n\n// 多執行緒同時呼叫時，可能發生資料競爭。` },
+          { title: "範例 2：同步方法", value: `class BankAccount {\n    private int balance = 1000;\n\n    public synchronized void withdraw(int amount) {\n        if (balance >= amount) {\n            balance -= amount;\n        }\n    }\n}` },
+          { title: "範例 3：同步區塊", value: `class BankAccount {\n    private int balance = 1000;\n\n    public void withdraw(int amount) {\n        synchronized (this) {\n            if (balance >= amount) {\n                balance -= amount;\n            }\n        }\n    }\n}` },
+          { title: "範例 4：Object Lock 圖解", value: `Thread A\n  ↓ 取得 account 的鎖\nwithdraw()\n  ↓ 完成後釋放鎖\nThread B\n  ↓ 才能進入 withdraw()` },
+          { title: "範例 5：同步 Counter", value: `class Counter {\n    private int count = 0;\n\n    public synchronized void add() {\n        count++;\n    }\n\n    public int getCount() {\n        return count;\n    }\n}` },
+          { title: "範例 6：多執行緒累加", value: `Counter counter = new Counter();\n\nThread t1 = new Thread(() -> {\n    for (int i = 0; i < 1000; i++) counter.add();\n});\nThread t2 = new Thread(() -> {\n    for (int i = 0; i < 1000; i++) counter.add();\n});\n\nt1.start();\nt2.start();\n\n// 同步後，最後結果較能保持正確。` },
+          { title: "範例 7：未同步 vs 同步比較", value: `未同步：\ncount++ 可能被多個執行緒交錯執行，結果小於預期。\n\n同步：\n一次只允許一個執行緒修改 count，結果較穩定。` },
+          { title: "範例 8：同步不是保護區塊外的程式", value: `synchronized (this) {\n    balance -= amount;\n}\n\nSystem.out.println(\"這行不在鎖內\");\n\n// 解說：\n// synchronized 只保護大括號內的程式碼。` },
+          { title: "範例 9：不同物件不同鎖", value: `BankAccount a = new BankAccount();\nBankAccount b = new BankAccount();\n\n// synchronized(this) 鎖的是各自物件。\n// a 和 b 的鎖不同。` },
+          { title: "範例 10：同步提款完整流程", value: `class BankAccount {\n    private int balance;\n\n    BankAccount(int balance) {\n        this.balance = balance;\n    }\n\n    synchronized void withdraw(int amount) {\n        if (balance >= amount) {\n            balance -= amount;\n            System.out.println(\"提款成功，餘額：\" + balance);\n        } else {\n            System.out.println(\"餘額不足\");\n        }\n    }\n}` },
+          { title: "範例 11：同步使用時機", value: `適合同步：\n- 多執行緒共享同一份資料\n- 修改餘額、庫存、計數器\n\n不一定需要同步：\n- 每個執行緒只使用自己的區域變數\n- 只讀取不可變資料` }
+        ]
+      },
+      {
+        sectionId: "15.3",
+        title: "執行緒間的協調",
+        body: [
+          "多執行緒不只是同時執行。有些情況需要互相等待，例如生產者 Producer 放入資料後，消費者 Consumer 才能取出資料。",
+          "`wait()` 讓目前執行緒釋放鎖並等待；`notify()` 喚醒一個等待中的執行緒；`notifyAll()` 喚醒所有等待中的執行緒。它們通常要在 synchronized 區塊或方法中使用。",
+          "`join()` 讓一個執行緒等待另一個執行緒完成。`yield()` 則是提示排程器：我願意先讓其他執行緒執行，但不保證一定切換。",
+          "初學時先掌握：wait/notify 用於協調共享資源，join 用於等待子執行緒結束。"
+        ],
+        code: {
+          title: "Producer / Consumer 圖解",
+          value: `Producer
+  ↓ 放入資料
+共享資源 Box
+  ↓ 通知
+Consumer
+  ↓ 取出資料`
+        },
+        codes: [
+          { title: "範例 1：wait() 概念", value: `synchronized (lock) {\n    lock.wait();\n}\n\n// 解說：\n// 目前執行緒進入等待，並釋放 lock。` },
+          { title: "範例 2：notify() 概念", value: `synchronized (lock) {\n    lock.notify();\n}\n\n// 解說：\n// 喚醒一個等待 lock 的執行緒。` },
+          { title: "範例 3：notifyAll() 概念", value: `synchronized (lock) {\n    lock.notifyAll();\n}\n\n// 解說：\n// 喚醒所有等待 lock 的執行緒。` },
+          { title: "範例 4：簡易 Box", value: `class Box {\n    private int data;\n    private boolean hasData = false;\n\n    synchronized void put(int value) {\n        data = value;\n        hasData = true;\n        notify();\n    }\n}` },
+          { title: "範例 5：Consumer 等待資料", value: `class Box {\n    private int data;\n    private boolean hasData = false;\n\n    synchronized int get() throws InterruptedException {\n        while (!hasData) {\n            wait();\n        }\n        hasData = false;\n        return data;\n    }\n}` },
+          { title: "範例 6：Producer / Consumer 完整概念", value: `Box box = new Box();\n\nThread producer = new Thread(() -> {\n    box.put(100);\n});\n\nThread consumer = new Thread(() -> {\n    try {\n        System.out.println(box.get());\n    } catch (InterruptedException e) {\n        System.out.println(\"中斷\");\n    }\n});\n\nconsumer.start();\nproducer.start();\n\n// 執行結果：\n// 100` },
+          { title: "範例 7：join() 等待子執行緒", value: `Thread t = new Thread(() -> {\n    System.out.println(\"子執行緒工作\");\n});\n\nt.start();\ntry {\n    t.join();\n} catch (InterruptedException e) {\n    System.out.println(\"等待被中斷\");\n}\nSystem.out.println(\"主執行緒繼續\");\n\n// 執行結果：\n// 子執行緒工作\n// 主執行緒繼續` },
+          { title: "範例 8：沒有 join 的差異", value: `Thread t = new Thread(() -> {\n    System.out.println(\"子執行緒\");\n});\n\nt.start();\nSystem.out.println(\"主執行緒\");\n\n// 執行結果順序不一定：\n// 主執行緒\n// 子執行緒` },
+          { title: "範例 9：yield()", value: `Thread.yield();\n\n// 解說：\n// 提示目前執行緒願意禮讓，\n// 但實際是否切換由排程器決定。` },
+          { title: "範例 10：wait/notify 流程圖", value: `Consumer 進入 get()\n  ↓\n沒有資料 → wait()\n  ↓\nProducer put() 放資料\n  ↓\nnotify()\n  ↓\nConsumer 被喚醒，取得資料` },
+          { title: "範例 11：wait 使用 while 檢查", value: `while (!hasData) {\n    wait();\n}\n\n// 解說：\n// 被喚醒後仍要重新檢查條件，\n// 這是寫 wait/notify 的好習慣。` }
+        ]
+      },
+      {
+        sectionId: "15.4",
+        title: "綜合演練",
+        body: [
+          "本節設計一個簡易 Timer。Timer 負責倒數，時間到後通知 TimerListener。這會結合 Interface、Thread/Runnable、匿名內部類別。",
+          "請把 Listener 想成通知管道：Timer 不知道時間到後要做什麼，只負責呼叫 listener.timeUp()。"
+        ],
+        code: {
+          title: "題目 1：用來通知計時結束的介面",
+          value: `問題說明：
+建立 TimerListener 介面，提供 timeUp() 方法。
+
+UML 概念圖：
+<<interface>> TimerListener
++ timeUp()
+
+Hint：
+介面只定義規格，不決定時間到後做什麼。
+
+Solution：
+interface TimerListener {
+    void timeUp();
+}
+
+Explanation：
+TimerListener 是通知契約。任何類別只要實作 timeUp()，就能接收計時結束通知。`
+        },
+        codes: [
+          {
+            title: "題目 2：實作 Timer 類別",
+            value: `問題說明：
+建立 Timer，指定秒數，開始倒數，時間到通知 Listener。
+
+UML 概念圖：
+Timer
+- seconds
+- listener
++ start()
+
+TimerListener
++ timeUp()
+
+流程圖：
+start()
+  ↓
+建立 Thread
+  ↓
+倒數 seconds 秒
+  ↓
+listener.timeUp()
+
+Hint：
+倒數工作可以放在 Runnable 裡。
+
+Solution：
+class Timer {
+    private int seconds;
+    private TimerListener listener;
+
+    Timer(int seconds, TimerListener listener) {
+        this.seconds = seconds;
+        this.listener = listener;
+    }
+
+    void start() {
+        Thread t = new Thread(() -> {
+            for (int i = seconds; i >= 1; i--) {
+                System.out.println(i);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    System.out.println("計時中斷");
+                    return;
+                }
+            }
+            listener.timeUp();
+        });
+
+        t.start();
+    }
+}
+
+Explanation：
+Timer 把倒數工作放到新執行緒，主程式不需要卡住等待倒數完成。`
+          },
+          {
+            title: "題目 3：測試 Timer 類別",
+            value: `問題說明：
+建立 Main，建立 Timer，開始倒數，時間到觸發 timeUp()。
+
+一般實作類別：
+class Alarm implements TimerListener {
+    public void timeUp() {
+        System.out.println("時間到！");
+    }
+}
+
+Timer timer1 = new Timer(3, new Alarm());
+timer1.start();
+
+匿名內部類別：
+Timer timer2 = new Timer(3, new TimerListener() {
+    public void timeUp() {
+        System.out.println("匿名通知：時間到！");
+    }
+});
+
+timer2.start();
+
+執行結果：
+3
+2
+1
+時間到！
+
+Explanation：
+一般類別適合重複使用；匿名內部類別適合一次性的通知行為。Timer 只依賴 TimerListener，因此彈性很高。`
+          }
+        ]
+      }
+    ],
+    activities: [
+      createActivity({
+        id: "ch15-exercise-create-thread",
+        sectionId: "15.1",
+        type: "exercise",
+        title: "15.1 練習：建立執行緒",
+        question: "建立一個繼承 Thread 的類別，覆寫 run()，並用 start() 啟動。",
+        hint: "不要直接呼叫 run()，請呼叫 start()。",
+        solution: `class MyThread extends Thread {
+    public void run() {
+        System.out.println("執行中");
+    }
+}
+
+new MyThread().start();`,
+        explanation: "start() 會建立新的執行緒並執行 run()；run() 只是普通方法呼叫。"
+      }),
+      createActivity({
+        id: "ch15-exercise-countdown",
+        sectionId: "15.1",
+        type: "exercise",
+        title: "15.1 練習：倒數計時",
+        question: "使用 Thread.sleep() 做 3 秒倒數計時。",
+        hint: "sleep 會丟出 InterruptedException，請用 try/catch。",
+        solution: `Thread t = new Thread(() -> {
+    for (int i = 3; i >= 1; i--) {
+        System.out.println(i);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            System.out.println("中斷");
+        }
+    }
+});
+
+t.start();`,
+        explanation: "sleep() 可暫停目前執行緒一段時間，常用來模擬等待。"
+      }),
+      createActivity({
+        id: "ch15-thought-start-run",
+        sectionId: "15.1",
+        type: "thought",
+        title: "15.1 思考題：start() 和 run() 差在哪？",
+        question: "請說明為什麼啟動新執行緒應該使用 start()，不是 run()。",
+        hint: "run() 是普通方法呼叫；start() 會建立新的執行緒。",
+        solution: "start() 會讓 JVM 建立新執行緒，並在新執行緒中呼叫 run()；直接呼叫 run() 不會建立新執行緒，只是在目前執行緒執行方法。",
+        explanation: "這是多執行緒初學最常犯的錯，務必記住要用 start()。"
+      }),
+      createActivity({
+        id: "ch15-exercise-sync-counter",
+        sectionId: "15.2",
+        type: "exercise",
+        title: "15.2 練習：同步計數器",
+        question: "建立 Counter，使用 synchronized 讓 add() 安全累加。",
+        hint: "在方法宣告加上 synchronized。",
+        solution: `class Counter {
+    private int count = 0;
+
+    public synchronized void add() {
+        count++;
+    }
+
+    public int getCount() {
+        return count;
+    }
+}`,
+        explanation: "synchronized 讓同一時間只有一個執行緒能進入 add() 修改 count。"
+      }),
+      createActivity({
+        id: "ch15-homework-bank-sync",
+        sectionId: "15.2",
+        type: "homework",
+        title: "15.2 作業：銀行提款系統",
+        question: "建立 BankAccount，使用 synchronized 保護 withdraw()。",
+        hint: "提款時檢查餘額與扣款要放在同一個同步流程中。",
+        solution: `class BankAccount {
+    private int balance = 1000;
+
+    public synchronized void withdraw(int amount) {
+        if (balance >= amount) {
+            balance -= amount;
+        }
+    }
+}`,
+        explanation: "共享資料 balance 必須被保護，避免多執行緒同時讀寫造成錯誤。"
+      }),
+      createActivity({
+        id: "ch15-thought-race-condition",
+        sectionId: "15.2",
+        type: "thought",
+        title: "15.2 思考題：Race Condition 是什麼？",
+        question: "用兩個人同時提款的例子，說明 Race Condition。",
+        hint: "想像兩個執行緒同時讀到同一個舊餘額。",
+        solution: "Race Condition 是多個執行緒同時操作共享資料，導致結果取決於執行順序。兩個提款執行緒若同時讀到舊餘額，就可能扣款結果錯誤。",
+        explanation: "同步的目的就是讓重要操作不被交錯打斷。"
+      }),
+      createActivity({
+        id: "ch15-exercise-wait-notify",
+        sectionId: "15.3",
+        type: "exercise",
+        title: "15.3 練習：wait / notify",
+        question: "建立 Box，Consumer 沒資料時 wait，Producer 放資料後 notify。",
+        hint: "wait 和 notify 要在 synchronized 方法或區塊內使用。",
+        solution: `class Box {
+    private int data;
+    private boolean hasData = false;
+
+    synchronized void put(int value) {
+        data = value;
+        hasData = true;
+        notify();
+    }
+
+    synchronized int get() throws InterruptedException {
+        while (!hasData) {
+            wait();
+        }
+        return data;
+    }
+}`,
+        explanation: "wait/notify 讓執行緒能依共享資源狀態互相協調。"
+      }),
+      createActivity({
+        id: "ch15-exercise-join",
+        sectionId: "15.3",
+        type: "exercise",
+        title: "15.3 練習：join",
+        question: "建立子執行緒並讓 main 等待它完成後再輸出結束。",
+        hint: "呼叫 `t.join()`。",
+        solution: `Thread t = new Thread(() -> {
+    System.out.println("子執行緒完成");
+});
+
+t.start();
+t.join();
+System.out.println("main 結束");`,
+        explanation: "join() 可讓目前執行緒等待另一個執行緒完成。"
+      }),
+      createActivity({
+        id: "ch15-project-timer-listener",
+        sectionId: "15.4",
+        type: "exercise",
+        title: "15.4 綜合練習：TimerListener",
+        question: "建立 `TimerListener` 介面，定義 `timeUp()`。",
+        hint: "介面只需要方法規格。",
+        solution: `interface TimerListener {
+    void timeUp();
+}`,
+        explanation: "TimerListener 是 Timer 和外部通知行為之間的橋樑。"
+      }),
+      createActivity({
+        id: "ch15-homework-timer",
+        sectionId: "15.4",
+        type: "homework",
+        title: "15.4 作業：完成 Timer",
+        question: "建立 Timer 類別，指定秒數、倒數計時、時間到呼叫 listener.timeUp()。",
+        hint: "倒數工作放在 Thread 或 Runnable 裡。",
+        solution: `class Timer {
+    private int seconds;
+    private TimerListener listener;
+
+    Timer(int seconds, TimerListener listener) {
+        this.seconds = seconds;
+        this.listener = listener;
+    }
+
+    void start() {
+        new Thread(() -> {
+            for (int i = seconds; i >= 1; i--) {
+                System.out.println(i);
+            }
+            listener.timeUp();
+        }).start();
+    }
+}`,
+        explanation: "Timer 不需要知道通知後要做什麼，只要依賴 TimerListener 介面即可。"
+      })
+    ],
+    quiz: [
+      { question: "Thread 是什麼？", options: ["程式中的一條工作線", "只能是字串", "資料庫表格", "package 名稱"], answer: 0, explanation: "Thread 是程序中的執行單位。" },
+      { question: "Process 與 Thread 關係是？", options: ["一個 Process 可包含多個 Thread", "Thread 一定包含多個 Process", "兩者完全無關", "Process 只能是 int"], answer: 0, explanation: "程序中可有多條執行緒。" },
+      { question: "啟動新執行緒應呼叫？", options: ["start()", "run()", "main()", "sleepOnly()"], answer: 0, explanation: "start() 會建立新執行緒並呼叫 run()。" },
+      { question: "直接呼叫 run() 會怎樣？", options: ["只是普通方法呼叫", "一定建立新執行緒", "程式無法編譯", "會自動同步"], answer: 0, explanation: "run() 本身只是方法，不會啟動新執行緒。" },
+      { question: "Runnable 的主要方法是？", options: ["run()", "start()", "notify()", "waitAll()"], answer: 0, explanation: "Runnable 定義 run()。" },
+      { question: "Thread.sleep() 作用是？", options: ["暫停目前執行緒一段時間", "永久停止 JVM", "建立新 package", "同步所有物件"], answer: 0, explanation: "sleep 讓目前執行緒暫停指定毫秒數。" },
+      { question: "Race Condition 是什麼？", options: ["多執行緒共享資料因執行順序造成錯誤", "跑步遊戲", "編譯成功", "字串不可變"], answer: 0, explanation: "競爭條件常發生在共享資料讀寫。" },
+      { question: "synchronized 用途是？", options: ["保護共享資料的關鍵區段", "建立執行緒", "刪除類別", "宣告 package"], answer: 0, explanation: "synchronized 讓同一時間只有一個執行緒進入受保護區域。" },
+      { question: "Object Lock 是什麼概念？", options: ["物件上的同步鎖", "物件的字串名稱", "例外類別", "Regex 規則"], answer: 0, explanation: "同步方法或區塊會使用鎖來控制進入。" },
+      { question: "同步方法語法包含？", options: ["synchronized", "threaded", "safe", "lockAll"], answer: 0, explanation: "例如 public synchronized void withdraw()。" },
+      { question: "wait() 通常會做什麼？", options: ["讓執行緒等待並釋放鎖", "啟動新執行緒", "直接結束程式", "編譯程式"], answer: 0, explanation: "wait 用於等待條件成立。" },
+      { question: "notify() 作用是？", options: ["喚醒一個等待中的執行緒", "讓所有類別同步", "建立 Runnable", "永久停止執行緒"], answer: 0, explanation: "notify 喚醒等待同一鎖的其中一個執行緒。" },
+      { question: "notifyAll() 作用是？", options: ["喚醒所有等待中的執行緒", "刪除所有執行緒", "等待子執行緒完成", "啟動 main"], answer: 0, explanation: "notifyAll 會喚醒所有等待者，讓它們重新競爭鎖。" },
+      { question: "wait/notify 通常要在哪裡使用？", options: ["synchronized 區塊或方法內", "任何註解內", "package 宣告前", "HTML 中"], answer: 0, explanation: "它們需要搭配物件鎖使用。" },
+      { question: "join() 用途是？", options: ["等待另一個執行緒完成", "喚醒所有執行緒", "建立匿名類別", "同步欄位"], answer: 0, explanation: "join 會等待指定執行緒結束。" },
+      { question: "yield() 是什麼？", options: ["提示目前執行緒願意禮讓", "保證切換執行緒", "關閉檔案", "拋出例外"], answer: 0, explanation: "yield 只是提示，不保證排程結果。" },
+      { question: "TimerListener 的 timeUp() 適合代表？", options: ["計時結束通知", "提款同步", "package 匯入", "例外訊息"], answer: 0, explanation: "Listener 負責接收事件通知。" },
+      { question: "Timer 倒數不想卡住主程式，可使用？", options: ["Thread 或 Runnable", "只用 package", "只用 private", "只用 equals"], answer: 0, explanation: "倒數工作可放到新執行緒中。" },
+      { question: "匿名內部類別在 Timer 測試中可用來？", options: ["一次性實作 TimerListener", "建立 Thread Pool", "使用 ForkJoin", "建立 Maven"], answer: 0, explanation: "匿名內部類別適合一次性 listener 行為。" },
+      { question: "本章避免深入哪個主題？", options: ["Executor Framework", "Thread", "Runnable", "synchronized"], answer: 0, explanation: "初學階段先掌握基本 Thread 與同步即可。" }
     ]
   };
 }
