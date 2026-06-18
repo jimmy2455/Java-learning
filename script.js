@@ -4180,6 +4180,7 @@ nums[j + 1] = temp;`,
   chapters.push(createChapter15());
   chapters.push(createChapter16());
   chapters.push(createChapter17());
+  chapters.push(createChapter18());
   applyVisualTeachingUpgrade();
 }
 
@@ -10373,6 +10374,751 @@ scores.put("Jimmy", 90);`,
   };
 }
 
+function createChapter18() {
+  return {
+    id: 18,
+    code: "CH18",
+    title: "圖形使用者介面（GUI）",
+    minutes: 240,
+    summary: "使用 Swing 建立視窗、元件、事件、版面配置與簡單 2D 繪圖。",
+    intro: "GUI 讓程式從文字命令進入可點擊、可輸入、可互動的桌面應用。本章使用 Swing 介紹 Java GUI 的基本架構，讓你完成小型視窗程式。",
+    goals: [
+      "了解什麼是 GUI",
+      "學會 Java GUI 基本架構",
+      "學會常見 Swing 元件",
+      "學會事件處理(Event Handling)",
+      "學會版面配置(Layout Manager)",
+      "學會簡單 2D 繪圖",
+      "能夠開發小型桌面應用程式"
+    ],
+    sections: [
+      {
+        sectionId: "18.1",
+        title: "什麼是圖形使用者介面",
+        body: [
+          "Console 程式通常用文字互動，例如畫面顯示「請輸入姓名：」，使用者在終端機輸入資料。GUI 程式則用視窗、文字框、按鈕、選單等元件讓使用者操作。",
+          "GUI 是 Graphical User Interface，也就是圖形使用者介面。你每天使用的 Windows、macOS、計算機、瀏覽器、記事本，大多都屬於 GUI 程式。",
+          "GUI 程式的核心不是一行一行等使用者輸入，而是等待事件發生。使用者點按鈕、輸入文字、關閉視窗，都是事件；程式收到事件後執行對應處理，再更新畫面。"
+        ],
+        visuals: [
+          {
+            type: "compare",
+            title: "Console 與 GUI 比較",
+            before: `Console 程式
+
+請輸入姓名：
+Jimmy`,
+            after: `GUI 程式
+
++-------------------+
+| 姓名：[ Jimmy ]   |
+|                   |
+| [送出]            |
++-------------------+`
+          },
+          {
+            type: "event",
+            title: "GUI 事件流程圖",
+            value: `使用者
+  ↓
+按鈕
+  ↓
+事件
+  ↓
+程式處理
+  ↓
+畫面更新`
+          },
+          {
+            type: "steps",
+            title: "GUI 與 Console 差異",
+            headers: ["項目", "Console", "GUI"],
+            rows: [
+              ["互動方式", "文字輸入輸出", "視窗、按鈕、輸入框"],
+              ["程式流程", "通常由上往下執行", "等待事件發生後處理"],
+              ["使用者體驗", "適合練習邏輯", "適合一般使用者操作"],
+              ["常見應用", "工具、練習題", "計算機、編輯器、桌面軟體"]
+            ]
+          }
+        ],
+        codes: [
+          { title: "範例 1：Console 輸入提示", value: `System.out.println("請輸入姓名：");` },
+          { title: "範例 2：GUI 視窗概念", value: `JFrame frame = new JFrame("我的視窗");` },
+          { title: "範例 3：標籤概念", value: `JLabel label = new JLabel("姓名：");` },
+          { title: "範例 4：文字框概念", value: `JTextField field = new JTextField(10);` },
+          { title: "範例 5：按鈕概念", value: `JButton button = new JButton("送出");` },
+          { title: "範例 6：事件概念", value: `button.addActionListener(e -> {
+    System.out.println("按鈕被點擊");
+});` },
+          { title: "範例 7：更新畫面文字", value: `label.setText("你好 Jimmy");` },
+          { title: "範例 8：常見 GUI 元件組合", value: `JPanel panel = new JPanel();
+panel.add(new JLabel("姓名："));
+panel.add(new JTextField(10));
+panel.add(new JButton("送出"));` }
+        ]
+      },
+      {
+        sectionId: "18.2",
+        title: "Java 的 GUI 基本架構",
+        body: [
+          "本章採用 Swing 教學。Swing 是 Java 內建的 GUI 工具組，可以建立視窗、按鈕、標籤、文字框、文字區域與選單等桌面元件。",
+          "`JFrame` 是最外層視窗；`JPanel` 是用來放元件的容器；`JLabel` 顯示文字；`JButton` 是按鈕；`JTextField` 是單行輸入框。",
+          "建立 Swing 程式時，通常會先建立 `JFrame`，設定大小、關閉行為，再建立面板與元件，最後呼叫 `setVisible(true)` 顯示視窗。"
+        ],
+        visuals: [
+          {
+            type: "component",
+            title: "元件階層圖",
+            value: `JFrame
+ └─ JPanel
+      ├─ JLabel
+      ├─ JTextField
+      └─ JButton`
+          },
+          {
+            type: "window",
+            title: "第一個視窗草圖",
+            value: `+----------------------+
+| My Window            |
+|                      |
+|  Hello Swing         |
+|                      |
++----------------------+`
+          },
+          {
+            type: "steps",
+            title: "Swing 常用元件表",
+            headers: ["元件", "用途"],
+            rows: [
+              ["JFrame", "視窗"],
+              ["JPanel", "容器"],
+              ["JButton", "按鈕"],
+              ["JLabel", "標籤"],
+              ["JTextField", "文字框"],
+              ["JTextArea", "多行文字區域"]
+            ]
+          }
+        ],
+        codes: [
+          { title: "範例 1：建立 JFrame", value: `import javax.swing.JFrame;
+
+JFrame frame = new JFrame("My Window");` },
+          { title: "範例 2：設定視窗大小", value: `frame.setSize(400, 300);` },
+          { title: "範例 3：顯示視窗", value: `frame.setVisible(true);` },
+          { title: "範例 4：關閉視窗時結束程式", value: `frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);` },
+          { title: "範例 5：完整第一個視窗", value: `import javax.swing.JFrame;
+
+public class Main {
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("My Window");
+        frame.setSize(400, 300);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
+}` },
+          { title: "範例 6：建立 JPanel", value: `JPanel panel = new JPanel();
+frame.add(panel);` },
+          { title: "範例 7：建立 JLabel", value: `JLabel label = new JLabel("Hello Swing");
+panel.add(label);` },
+          { title: "範例 8：建立 JButton", value: `JButton button = new JButton("Click");
+panel.add(button);` },
+          { title: "範例 9：建立 JTextField", value: `JTextField field = new JTextField(10);
+panel.add(field);` },
+          { title: "範例 10：建立簡易表單", value: `JPanel panel = new JPanel();
+panel.add(new JLabel("姓名："));
+panel.add(new JTextField(10));
+panel.add(new JButton("送出"));
+frame.add(panel);` },
+          { title: "範例 11：設定視窗位置置中", value: `frame.setLocationRelativeTo(null);` },
+          { title: "範例 12：使用 setTitle 修改標題", value: `frame.setTitle("Java 新手村 GUI");` },
+          { title: "範例 13：JTextArea 多行文字", value: `JTextArea area = new JTextArea(5, 20);
+panel.add(area);` },
+          { title: "範例 14：加入 JScrollPane", value: `JTextArea area = new JTextArea(8, 30);
+JScrollPane scroll = new JScrollPane(area);
+panel.add(scroll);` },
+          { title: "範例 15：完整姓名輸入視窗", value: `import javax.swing.*;
+
+public class Main {
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("Name Form");
+        JPanel panel = new JPanel();
+
+        panel.add(new JLabel("姓名："));
+        panel.add(new JTextField(10));
+        panel.add(new JButton("送出"));
+
+        frame.add(panel);
+        frame.setSize(300, 120);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
+}` }
+        ]
+      },
+      {
+        sectionId: "18.3",
+        title: "GUI 的事件處理",
+        body: [
+          "GUI 程式會等待使用者操作。當按鈕被點擊時，Java 會產生 `ActionEvent`，再交給 `ActionListener` 處理。",
+          "`addActionListener()` 可以把事件處理器註冊到按鈕上。初學時可以先使用匿名內部類別；如果你熟悉 Lambda，也可以用更短的寫法。",
+          "事件處理常見用途包含按鈕計數器、按鈕改變文字、讀取文字框內容、簡易登入判斷。"
+        ],
+        visuals: [
+          {
+            type: "event",
+            title: "ActionEvent 流程",
+            value: `使用者點按鈕
+  ↓
+ActionEvent
+  ↓
+ActionListener
+  ↓
+執行程式碼`
+          },
+          {
+            type: "flow",
+            title: "簡易登入事件流程",
+            value: `點擊登入
+  ↓
+讀取帳號與密碼
+  ↓
+資料正確？
+  ├─ 是：顯示登入成功
+  └─ 否：顯示登入失敗`
+          }
+        ],
+        codes: [
+          { title: "範例 1：註冊 ActionListener", value: `button.addActionListener(...);` },
+          { title: "範例 2：匿名內部類別", value: `button.addActionListener(new ActionListener() {
+    public void actionPerformed(ActionEvent e) {
+        System.out.println("Clicked");
+    }
+});` },
+          { title: "範例 3：Lambda 寫法", value: `button.addActionListener(e -> {
+    System.out.println("Clicked");
+});` },
+          { title: "範例 4：按鈕改變標籤文字", value: `JLabel label = new JLabel("尚未點擊");
+JButton button = new JButton("按我");
+
+button.addActionListener(e -> {
+    label.setText("已點擊");
+});` },
+          { title: "範例 5：讀取文字框", value: `JTextField field = new JTextField(10);
+button.addActionListener(e -> {
+    String name = field.getText();
+    System.out.println(name);
+});` },
+          { title: "範例 6：按鈕計數器", value: `int[] count = {0};
+button.addActionListener(e -> {
+    count[0]++;
+    label.setText("次數：" + count[0]);
+});` },
+          { title: "範例 7：清除文字框", value: `clearButton.addActionListener(e -> {
+    field.setText("");
+});` },
+          { title: "範例 8：簡易登入判斷", value: `loginButton.addActionListener(e -> {
+    if(userField.getText().equals("admin")){
+        message.setText("登入成功");
+    }else{
+        message.setText("登入失敗");
+    }
+});` },
+          { title: "範例 9：顯示對話框", value: `JOptionPane.showMessageDialog(frame, "完成");` },
+          { title: "範例 10：取得事件來源", value: `button.addActionListener(e -> {
+    Object source = e.getSource();
+    System.out.println(source);
+});` },
+          { title: "範例 11：多個按鈕共用事件", value: `ActionListener listener = e -> {
+    JButton btn = (JButton)e.getSource();
+    label.setText(btn.getText());
+};
+
+yesButton.addActionListener(listener);
+noButton.addActionListener(listener);` },
+          { title: "範例 12：加法計算", value: `calcButton.addActionListener(e -> {
+    int a = Integer.parseInt(aField.getText());
+    int b = Integer.parseInt(bField.getText());
+    result.setText(String.valueOf(a + b));
+});` },
+          { title: "範例 13：按鈕啟用與停用", value: `button.addActionListener(e -> {
+    button.setEnabled(false);
+});` },
+          { title: "範例 14：改變視窗標題", value: `button.addActionListener(e -> {
+    frame.setTitle("已更新");
+});` },
+          { title: "範例 15：完整事件小程式", value: `import javax.swing.*;
+
+public class Main {
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("Event Demo");
+        JPanel panel = new JPanel();
+        JTextField field = new JTextField(10);
+        JButton button = new JButton("送出");
+        JLabel label = new JLabel("等待輸入");
+
+        button.addActionListener(e -> {
+            label.setText("你好 " + field.getText());
+        });
+
+        panel.add(field);
+        panel.add(button);
+        panel.add(label);
+        frame.add(panel);
+        frame.setSize(300, 120);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
+}` }
+        ]
+      },
+      {
+        sectionId: "18.4",
+        title: "版面配置管理員",
+        body: [
+          "你可能會想用 `setBounds()` 把每個元件放在固定座標，但視窗大小、字體、作業系統差異都可能讓版面跑掉。Layout Manager 可以幫你依規則排列元件。",
+          "`FlowLayout` 會像文字一樣由左到右排列；`BorderLayout` 把畫面分成東西南北中；`GridLayout` 用表格方式平均分配；`BoxLayout` 適合垂直或水平堆疊。",
+          "初學階段先掌握 FlowLayout、BorderLayout、GridLayout，就能做出很多簡單 GUI。"
+        ],
+        visuals: [
+          { type: "layout", title: "FlowLayout 視覺化", value: `[A] [B] [C]` },
+          { type: "layout", title: "BorderLayout 視覺化", value: `+----------------+
+| NORTH          |
++----+------+----+
+|WEST|CENTER|EAST|
++----+------+----+
+| SOUTH          |
++----------------+` },
+          { type: "layout", title: "GridLayout 視覺化", value: `+---+---+
+| A | B |
++---+---+
+| C | D |
++---+---+` },
+          {
+            type: "steps",
+            title: "Layout Manager 比較表",
+            headers: ["Layout", "優點", "缺點", "適用情境"],
+            rows: [
+              ["FlowLayout", "簡單自然", "複雜版面不夠精準", "按鈕列、小表單"],
+              ["BorderLayout", "區域清楚", "只有五個主要區域", "主視窗架構"],
+              ["GridLayout", "整齊平均", "每格大小相同", "計算機、棋盤"],
+              ["BoxLayout", "可水平或垂直堆疊", "初學設定稍多", "工具列、表單欄位"]
+            ]
+          }
+        ],
+        codes: [
+          { title: "範例 1：FlowLayout", value: `panel.setLayout(new FlowLayout());` },
+          { title: "範例 2：FlowLayout 加入按鈕", value: `panel.add(new JButton("A"));
+panel.add(new JButton("B"));
+panel.add(new JButton("C"));` },
+          { title: "範例 3：BorderLayout", value: `frame.setLayout(new BorderLayout());` },
+          { title: "範例 4：BorderLayout 五區", value: `frame.add(new JButton("North"), BorderLayout.NORTH);
+frame.add(new JButton("Center"), BorderLayout.CENTER);` },
+          { title: "範例 5：GridLayout 2x2", value: `panel.setLayout(new GridLayout(2, 2));
+panel.add(new JButton("A"));
+panel.add(new JButton("B"));
+panel.add(new JButton("C"));
+panel.add(new JButton("D"));` },
+          { title: "範例 6：計算機按鈕格", value: `panel.setLayout(new GridLayout(4, 3));
+for(int i = 1; i <= 9; i++){
+    panel.add(new JButton(String.valueOf(i)));
+}` },
+          { title: "範例 7：BoxLayout 垂直排列", value: `panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));` },
+          { title: "範例 8：表單上下排列", value: `panel.add(new JLabel("帳號"));
+panel.add(new JTextField(12));
+panel.add(new JLabel("密碼"));
+panel.add(new JTextField(12));` },
+          { title: "範例 9：JPanel 組合版面", value: `JPanel top = new JPanel();
+top.add(new JButton("開啟"));
+top.add(new JButton("儲存"));
+frame.add(top, BorderLayout.NORTH);` },
+          { title: "範例 10：主內容放中央", value: `JTextArea area = new JTextArea();
+frame.add(new JScrollPane(area), BorderLayout.CENTER);` },
+          { title: "範例 11：避免絕對定位", value: `// 不建議初學依賴：
+button.setBounds(10, 10, 80, 30);` },
+          { title: "範例 12：完整 BorderLayout 範例", value: `import javax.swing.*;
+import java.awt.*;
+
+public class Main {
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("Layout Demo");
+        frame.setLayout(new BorderLayout());
+
+        frame.add(new JButton("上方"), BorderLayout.NORTH);
+        frame.add(new JTextArea(), BorderLayout.CENTER);
+        frame.add(new JButton("下方"), BorderLayout.SOUTH);
+
+        frame.setSize(400, 300);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
+}` }
+        ]
+      },
+      {
+        sectionId: "18.5",
+        title: "2D 繪圖",
+        body: [
+          "Swing 不只可以放按鈕與文字框，也能畫圖。簡單 2D 繪圖通常會建立自己的 `JPanel`，覆寫 `paintComponent()`，再用 `Graphics` 畫線、矩形、圓形、文字與顏色。",
+          "`paintComponent(Graphics g)` 是畫面需要重畫時被呼叫的方法。你不應該直接呼叫它，而是讓 Swing 自己管理，或在需要更新時呼叫 `repaint()`。",
+          "畫圖時常見方法包含 `drawLine()`、`drawRect()`、`fillRect()`、`drawOval()`、`fillOval()`、`drawString()`、`setColor()`。"
+        ],
+        visuals: [
+          { type: "drawing", title: "drawRect 繪圖結果預覽", value: `drawRect()
+  ↓
++---------+
+|         |
+|         |
++---------+` },
+          { type: "drawing", title: "drawOval 繪圖結果預覽", value: `drawOval()
+  ↓
+   ****
+ *      *
+ *      *
+   ****` },
+          { type: "flow", title: "Swing 繪圖流程", value: `建立自訂 JPanel
+  ↓
+覆寫 paintComponent
+  ↓
+呼叫 super.paintComponent(g)
+  ↓
+使用 Graphics 繪圖
+  ↓
+加入 JFrame 顯示`
+          }
+        ],
+        codes: [
+          { title: "範例 1：自訂 JPanel", value: `class DrawPanel extends JPanel {
+}` },
+          { title: "範例 2：覆寫 paintComponent", value: `protected void paintComponent(Graphics g) {
+    super.paintComponent(g);
+}` },
+          { title: "範例 3：畫直線", value: `g.drawLine(20, 20, 180, 20);` },
+          { title: "範例 4：畫矩形", value: `g.drawRect(30, 40, 100, 60);` },
+          { title: "範例 5：填滿矩形", value: `g.fillRect(30, 40, 100, 60);` },
+          { title: "範例 6：畫圓形", value: `g.drawOval(50, 50, 80, 80);` },
+          { title: "範例 7：填滿圓形", value: `g.fillOval(50, 50, 80, 80);` },
+          { title: "範例 8：畫文字", value: `g.drawString("Hello GUI", 40, 40);` },
+          { title: "範例 9：改變顏色", value: `g.setColor(Color.RED);
+g.fillOval(50, 50, 80, 80);` },
+          { title: "範例 10：畫交通號誌", value: `g.setColor(Color.RED);
+g.fillOval(40, 20, 50, 50);
+g.setColor(Color.YELLOW);
+g.fillOval(40, 80, 50, 50);
+g.setColor(Color.GREEN);
+g.fillOval(40, 140, 50, 50);` },
+          { title: "範例 11：畫棋盤格", value: `for(int row = 0; row < 8; row++){
+    for(int col = 0; col < 8; col++){
+        if((row + col) % 2 == 0){
+            g.setColor(Color.WHITE);
+        }else{
+            g.setColor(Color.BLACK);
+        }
+        g.fillRect(col * 30, row * 30, 30, 30);
+    }
+}` },
+          { title: "範例 12：完整簡易畫板", value: `import javax.swing.*;
+import java.awt.*;
+
+class DrawPanel extends JPanel {
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        g.setColor(Color.BLUE);
+        g.drawRect(40, 40, 120, 80);
+        g.drawString("My Drawing", 55, 80);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("Drawing");
+        frame.add(new DrawPanel());
+        frame.setSize(240, 180);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
+}` }
+        ]
+      },
+      {
+        sectionId: "18.6",
+        title: "綜合演練",
+        body: [
+          "本節把 Swing 元件、事件處理、版面配置、Math 與 CH16 的檔案讀寫整合成兩個小型桌面應用。先看視窗草圖，再規劃元件與事件流程，最後才寫程式。",
+          "第一題是簡易三角函數計算器；第二題是簡易文字編輯器。兩題都不是為了做出完整商業軟體，而是練習把前面章節的概念串起來。"
+        ],
+        visuals: [
+          {
+            type: "window",
+            title: "題目 1：三角函數計算器視窗草圖",
+            value: `+----------------------+
+| 角度: [_____]        |
+|                      |
+| [sin] [cos] [tan]    |
+|                      |
+| 結果:                |
++----------------------+`
+          },
+          {
+            type: "uml",
+            title: "題目 1 UML 概念",
+            value: `TrigCalculator
+├─ JFrame
+├─ JTextField angleField
+├─ JButton sin/cos/tan
+└─ JLabel resultLabel`
+          },
+          {
+            type: "flow",
+            title: "題目 1 流程圖",
+            value: `輸入角度
+  ↓
+點 sin/cos/tan
+  ↓
+角度轉弧度 Math.toRadians
+  ↓
+呼叫 Math.sin/cos/tan
+  ↓
+顯示結果`
+          },
+          {
+            type: "window",
+            title: "題目 2：文字編輯器視窗草圖",
+            value: `+----------------------+
+| [開啟] [儲存] [清除] |
++----------------------+
+|                      |
+|      JTextArea       |
+|                      |
++----------------------+`
+          },
+          {
+            type: "flow",
+            title: "題目 2 檔案操作流程",
+            value: `點開啟
+  ↓
+讀取檔案內容
+  ↓
+顯示到 JTextArea
+
+點儲存
+  ↓
+取得 JTextArea 文字
+  ↓
+寫入檔案`
+          }
+        ],
+        codes: [
+          { title: "題目 1 Solution：簡易三角函數計算器", value: `import javax.swing.*;
+import java.awt.*;
+
+public class Main {
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("三角函數計算器");
+        JPanel panel = new JPanel(new FlowLayout());
+
+        JTextField angleField = new JTextField(8);
+        JLabel result = new JLabel("結果：");
+
+        JButton sin = new JButton("sin");
+        JButton cos = new JButton("cos");
+        JButton tan = new JButton("tan");
+
+        sin.addActionListener(e -> calculate(angleField, result, "sin"));
+        cos.addActionListener(e -> calculate(angleField, result, "cos"));
+        tan.addActionListener(e -> calculate(angleField, result, "tan"));
+
+        panel.add(new JLabel("角度："));
+        panel.add(angleField);
+        panel.add(sin);
+        panel.add(cos);
+        panel.add(tan);
+        panel.add(result);
+
+        frame.add(panel);
+        frame.setSize(360, 140);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
+
+    static void calculate(JTextField field, JLabel result, String type) {
+        double angle = Double.parseDouble(field.getText());
+        double rad = Math.toRadians(angle);
+        double value = 0;
+
+        if(type.equals("sin")) value = Math.sin(rad);
+        if(type.equals("cos")) value = Math.cos(rad);
+        if(type.equals("tan")) value = Math.tan(rad);
+
+        result.setText("結果：" + value);
+    }
+}` },
+          { title: "題目 2 Solution：簡易文字編輯器", value: `import javax.swing.*;
+import java.awt.*;
+import java.io.*;
+
+public class Main {
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("簡易文字編輯器");
+        JTextArea area = new JTextArea();
+        JPanel toolbar = new JPanel();
+
+        JButton open = new JButton("開啟");
+        JButton save = new JButton("儲存");
+        JButton clear = new JButton("清除");
+
+        open.addActionListener(e -> {
+            try(BufferedReader br = new BufferedReader(new FileReader("note.txt"))) {
+                area.setText("");
+                String line;
+                while((line = br.readLine()) != null){
+                    area.append(line + "\\n");
+                }
+            }catch(IOException ex){
+                JOptionPane.showMessageDialog(frame, "讀取失敗");
+            }
+        });
+
+        save.addActionListener(e -> {
+            try(BufferedWriter bw = new BufferedWriter(new FileWriter("note.txt"))) {
+                bw.write(area.getText());
+            }catch(IOException ex){
+                JOptionPane.showMessageDialog(frame, "儲存失敗");
+            }
+        });
+
+        clear.addActionListener(e -> area.setText(""));
+
+        toolbar.add(open);
+        toolbar.add(save);
+        toolbar.add(clear);
+
+        frame.add(toolbar, BorderLayout.NORTH);
+        frame.add(new JScrollPane(area), BorderLayout.CENTER);
+        frame.setSize(500, 400);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
+}` }
+        ]
+      }
+    ],
+    activities: [
+      createActivity({
+        id: "ch18-exercise-gui-observe",
+        sectionId: "18.1",
+        type: "exercise",
+        title: "實作練習：觀察 GUI 程式",
+        question: "選一個你常用的 GUI 程式，列出至少 5 個畫面元件，並說明它們的功能。",
+        hint: "可以觀察計算機、瀏覽器、記事本。找按鈕、輸入框、選單、文字區域、視窗標題。",
+        solution: "以記事本為例：視窗標題顯示檔名，選單列提供開啟與儲存，文字區域輸入內容，捲軸瀏覽長文字，關閉按鈕結束視窗。",
+        explanation: "GUI 是由許多元件組成。先學會辨認元件，後面寫 Swing 時會更容易把需求拆成 JFrame、JPanel、JButton 等物件。"
+      }),
+      createActivity({
+        id: "ch18-exercise-basic-window",
+        sectionId: "18.2",
+        type: "exercise",
+        title: "實作練習：建立視窗與輸入框",
+        question: "建立一個 JFrame，裡面放 JLabel、JTextField、JButton，視窗標題為 My First GUI。",
+        hint: "使用 JFrame、JPanel、JLabel、JTextField、JButton，最後記得 setVisible(true)。",
+        solution: `JFrame frame = new JFrame("My First GUI");
+JPanel panel = new JPanel();
+panel.add(new JLabel("姓名："));
+panel.add(new JTextField(10));
+panel.add(new JButton("送出"));
+frame.add(panel);
+frame.setSize(300, 120);
+frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+frame.setVisible(true);`,
+        explanation: "JFrame 是視窗，JPanel 是容器，其他元件放進 panel，再把 panel 放進 frame。這是 Swing 最基本的組合方式。"
+      }),
+      createActivity({
+        id: "ch18-exercise-event",
+        sectionId: "18.3",
+        type: "exercise",
+        title: "實作練習：按鈕事件",
+        question: "建立一個按鈕與標籤，點擊按鈕後把標籤文字改成「已點擊」。",
+        hint: "使用 `button.addActionListener(e -> { ... })`，在事件內呼叫 `label.setText()`。",
+        solution: `JLabel label = new JLabel("尚未點擊");
+JButton button = new JButton("按我");
+
+button.addActionListener(e -> {
+    label.setText("已點擊");
+});`,
+        explanation: "事件處理是 GUI 的核心。程式先註冊 listener，之後使用者點擊按鈕時，listener 裡面的程式碼才會執行。"
+      }),
+      createActivity({
+        id: "ch18-exercise-layout",
+        sectionId: "18.4",
+        type: "exercise",
+        title: "實作練習：比較三種 Layout",
+        question: "分別用 FlowLayout、GridLayout、BorderLayout 排列三個按鈕，觀察畫面差異。",
+        hint: "同樣三個 JButton，換不同 `setLayout()` 即可觀察差異。",
+        solution: `panel.setLayout(new FlowLayout());
+// 或：
+panel.setLayout(new GridLayout(1, 3));
+// 或：
+frame.setLayout(new BorderLayout());`,
+        explanation: "Layout Manager 會決定元件如何排列。選對 Layout，比用座標硬排更能適應不同視窗大小。"
+      }),
+      createActivity({
+        id: "ch18-exercise-drawing",
+        sectionId: "18.5",
+        type: "exercise",
+        title: "實作練習：畫房子",
+        question: "使用 Graphics 畫出一間簡單房子，至少包含屋頂、牆壁、門與窗。",
+        hint: "牆壁可用 drawRect，門可用 fillRect，窗戶可用 drawRect，屋頂可先用 drawLine 組成三角形。",
+        solution: `protected void paintComponent(Graphics g) {
+    super.paintComponent(g);
+    g.drawLine(80, 80, 140, 30);
+    g.drawLine(140, 30, 200, 80);
+    g.drawRect(90, 80, 100, 80);
+    g.fillRect(125, 120, 30, 40);
+    g.drawRect(105, 100, 20, 20);
+    g.drawRect(160, 100, 20, 20);
+}`,
+        explanation: "2D 繪圖可以把圖形拆成基本形狀。房子不是一個單一方法，而是線條、矩形與填滿矩形的組合。"
+      }),
+      createActivity({
+        id: "ch18-homework-mini-app",
+        sectionId: "18.6",
+        type: "homework",
+        title: "作業：完成一個小型 GUI 應用",
+        question: "從三角函數計算器或文字編輯器中選一題完成，並畫出視窗草圖與事件流程。",
+        hint: "先畫草圖，再列出元件，最後寫事件處理。不要一開始就直接寫完整程式。",
+        solution: "選三角函數計算器：JFrame 放入角度輸入框、sin/cos/tan 三個按鈕與結果標籤。按下按鈕時讀取角度，轉成弧度後呼叫 Math.sin/cos/tan，再更新結果標籤。",
+        explanation: "GUI 專案最容易亂在元件與事件混在一起。用草圖與流程圖先整理想法，可以讓程式碼更清楚。"
+      })
+    ],
+    quiz: [
+      { question: "GUI 是什麼的縮寫？", options: ["Graphical User Interface", "General User Internet", "Graphic Utility Input", "Global Unit Info"], answer: 0, explanation: "GUI 是圖形使用者介面。" },
+      { question: "Console 程式主要使用什麼互動？", options: ["文字輸入輸出", "滑鼠拖曳為主", "只能播放音樂", "只用圖片"], answer: 0, explanation: "Console 多以文字方式互動。" },
+      { question: "GUI 程式常等待什麼發生？", options: ["事件", "編譯器消失", "package 自動生成", "CPU 停止"], answer: 0, explanation: "點按鈕、輸入文字都是事件。" },
+      { question: "下列哪個是 GUI 程式案例？", options: ["計算機視窗", "只有 javac 指令", "純文字錯誤訊息", "package 宣告"], answer: 0, explanation: "計算機通常是 GUI 應用。" },
+      { question: "Swing 中最外層視窗常用？", options: ["JFrame", "JString", "JNumber", "JPackage"], answer: 0, explanation: "JFrame 用來建立視窗。" },
+      { question: "Swing 中常用作容器的是？", options: ["JPanel", "JInt", "JMath", "JClass"], answer: 0, explanation: "JPanel 可放置其他元件。" },
+      { question: "顯示文字標籤常用？", options: ["JLabel", "JButton", "JFrame", "JFile"], answer: 0, explanation: "JLabel 用於顯示文字或圖示。" },
+      { question: "按鈕元件是？", options: ["JButton", "JTextField", "JPanel", "JLabel"], answer: 0, explanation: "JButton 是按鈕。" },
+      { question: "單行輸入框是？", options: ["JTextField", "JTextArea", "JPanel", "JFrame"], answer: 0, explanation: "JTextField 用於單行文字輸入。" },
+      { question: "顯示視窗需要呼叫？", options: ["setVisible(true)", "showConsole()", "openPackage()", "runButton()"], answer: 0, explanation: "setVisible(true) 會讓視窗顯示。" },
+      { question: "關閉視窗時結束程式常設定？", options: ["setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)", "setEnd()", "closeAll()", "System.close()"], answer: 0, explanation: "這是 JFrame 常見設定。" },
+      { question: "按鈕點擊通常產生？", options: ["ActionEvent", "FileEventOnly", "PackageEvent", "MathEvent"], answer: 0, explanation: "按鈕動作會產生 ActionEvent。" },
+      { question: "處理按鈕事件常用？", options: ["ActionListener", "LayoutManager", "FileReader", "HashSet"], answer: 0, explanation: "ActionListener 負責處理 action event。" },
+      { question: "註冊事件監聽器使用？", options: ["addActionListener()", "setSize()", "addPackage()", "drawRect()"], answer: 0, explanation: "按鈕可透過 addActionListener 註冊事件處理。" },
+      { question: "Lambda 事件寫法常見符號是？", options: ["->", ":::", "=>=>", "<-"], answer: 0, explanation: "Java Lambda 使用 ->。" },
+      { question: "不建議全部依賴 setBounds 的原因是？", options: ["不同視窗大小與環境容易跑版", "setBounds 不能編譯", "GUI 不需要位置", "Swing 沒有座標"], answer: 0, explanation: "固定座標不易適應不同環境。" },
+      { question: "FlowLayout 的排列方式接近？", options: ["由左到右排列", "只能中央一格", "固定五區", "樹狀結構"], answer: 0, explanation: "FlowLayout 會按順序流動排列。" },
+      { question: "BorderLayout 分成幾個主要區域？", options: ["五個", "兩個", "八個", "十個"], answer: 0, explanation: "NORTH、SOUTH、EAST、WEST、CENTER。" },
+      { question: "GridLayout 適合什麼？", options: ["整齊格狀版面", "只放一個文字", "只管理檔案", "處理例外"], answer: 0, explanation: "GridLayout 會把元件平均放入格子。" },
+      { question: "Swing 2D 繪圖常覆寫？", options: ["paintComponent()", "mainOnly()", "drawMain()", "clickPaint()"], answer: 0, explanation: "自訂繪圖通常覆寫 paintComponent。" },
+      { question: "paintComponent 的參數常見型別是？", options: ["Graphics", "Scanner", "HashMap", "Thread"], answer: 0, explanation: "Graphics 提供繪圖方法。" },
+      { question: "畫矩形可用？", options: ["drawRect()", "drawString()", "setVisible()", "addActionListener()"], answer: 0, explanation: "drawRect 畫矩形外框。" },
+      { question: "改變繪圖顏色可用？", options: ["setColor()", "setText()", "setSize()", "setLayoutOnly()"], answer: 0, explanation: "Graphics 的 setColor 設定後續繪圖顏色。" },
+      { question: "三角函數計算器會用到哪個標準類別？", options: ["Math", "FileReader only", "Thread only", "HashSet only"], answer: 0, explanation: "sin、cos、tan 可使用 Math。" },
+      { question: "簡易文字編輯器可結合哪章概念？", options: ["CH16 檔案讀寫", "只需要 CH01", "只需要 HTML", "只需要多執行緒"], answer: 0, explanation: "開啟與儲存檔案會用到 File IO。" }
+    ]
+  };
+}
+
 const app = document.querySelector("#app");
 const mainNav = document.querySelector("[data-main-nav]");
 const siteHeader = document.querySelector("[data-site-header]");
@@ -10846,7 +11592,12 @@ function renderVisualBlock(visual) {
     uml: "UML 類別圖",
     memory: "記憶體概念圖",
     files: "檔案結構圖",
-    timeline: "執行緒時間軸圖"
+    timeline: "執行緒時間軸圖",
+    window: "視窗草圖預覽",
+    component: "元件階層圖",
+    event: "事件流程圖",
+    layout: "Layout 視覺化圖",
+    drawing: "繪圖結果預覽"
   }[visual.type] || "視覺化教學";
 
   return `
