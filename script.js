@@ -4178,6 +4178,8 @@ nums[j + 1] = temp;`,
   chapters.push(createChapter13());
   chapters.push(createChapter14());
   chapters.push(createChapter15());
+  chapters.push(createChapter16());
+  applyVisualTeachingUpgrade();
 }
 
 function updateSection(chapterId, sectionId, data) {
@@ -4193,6 +4195,97 @@ function replaceSectionActivities(chapterId, sectionId, activities) {
     ...chapter.activities.filter((activity) => activity.sectionId !== sectionId),
     ...activities
   ];
+}
+
+function addVisuals(chapterId, sectionId, visuals) {
+  const chapter = chapters.find((item) => item.id === chapterId);
+  const section = chapter?.sections.find((item) => item.sectionId === sectionId);
+  if (!section) return;
+
+  section.visuals = [...(section.visuals || []), ...visuals];
+}
+
+function applyVisualTeachingUpgrade() {
+  addVisuals(1, "1.3", [
+    { type: "flow", title: "Java 跨平台流程", value: `Java 原始碼\n  ↓ javac 編譯\nBytecode\n  ↓ JVM\nWindows / macOS / Linux 執行` },
+    { type: "callout", variant: "tip", text: "Java 的跨平台重點是 JVM，不是原始碼直接在所有系統上執行。" }
+  ]);
+  addVisuals(2, "2.4", [
+    { type: "flow", title: "Hello World 執行流程", value: `class Main\n  ↓\nmain 方法\n  ↓\nSystem.out.println()\n  ↓\n螢幕輸出文字` }
+  ]);
+  addVisuals(3, "3.1", [
+    { type: "memory", title: "變數記憶體概念", value: `age\n ↓\n25\n\nname\n ↓\n"Jimmy"` }
+  ]);
+  addVisuals(4, "4.6", [
+    { type: "steps", title: "運算順序示範：3 + 4 * 5", headers: ["步驟", "運算", "結果"], rows: [["1", "4 * 5", "20"], ["2", "3 + 20", "23"]] }
+  ]);
+  addVisuals(5, "5.2", [
+    { type: "flow", title: "if-else 判斷流程", value: `score >= 60 ?\n    ↓\n  是   否\n  ↓     ↓\n及格  不及格` }
+  ]);
+  addVisuals(6, "6.1", [
+    { type: "flow", title: "for 迴圈流程", value: `初始值\n  ↓\n條件成立？\n  ├─ 是 → 執行程式 → 更新 → 回到條件\n  └─ 否 → 離開迴圈` },
+    { type: "steps", title: "for(int i=1; i<=3; i++)", headers: ["次數", "i", "輸出"], rows: [["1", "1", "1"], ["2", "2", "2"], ["3", "3", "3"]] }
+  ]);
+  addVisuals(6, "6.2", [
+    { type: "flow", title: "while 迴圈流程", value: `判斷條件\n  ├─ true  → 執行區塊 → 回到條件\n  └─ false → 離開迴圈` },
+    { type: "callout", variant: "warning", text: "while 迴圈若忘記更新變數，很容易變成無限迴圈。" }
+  ]);
+  addVisuals(6, "6.4", [
+    { type: "flow", title: "巢狀迴圈圖解", value: `外層 i=1\n  ├─ 內層 j=1\n  ├─ 內層 j=2\n  └─ 內層 j=3\n外層 i=2\n  ├─ 內層 j=1\n  ├─ 內層 j=2\n  └─ 內層 j=3` }
+  ]);
+  addVisuals(7, "7.1", [
+    { type: "array", title: "一維陣列索引", value: `Index\n\n0     1     2     3     4\n+----+----+----+----+----+\n| 80 | 75 | 90 | 60 | 88 |\n+----+----+----+----+----+` },
+    { type: "callout", variant: "warning", text: "長度是 5 的陣列，最後索引是 4，不是 5。" }
+  ]);
+  addVisuals(7, "7.3", [
+    { type: "array", title: "二維陣列表格", value: `      0   1   2\n\n0    10  20  30\n1    40  50  60\n2    70  80  90` }
+  ]);
+  addVisuals(7, "7.4", [
+    { type: "memory", title: "參照型別共享同一陣列", value: `arr1 ─┐\n      ├─> [1, 2, 3]\narr2 ─┘\n\n修改 arr2[0]\narr1 也會看到變化` }
+  ]);
+  addVisuals(8, "8.1", [
+    { type: "uml", title: "Class 與 Object", value: `Student 類別\n- name\n- age\n+ showInfo()\n\nnew Student()\n  ↓\nJimmy 物件\nAmy 物件` }
+  ]);
+  addVisuals(8, "8.3", [
+    { type: "flow", title: "方法呼叫流程", value: `main()\n  ↓\ngreet()\n  ↓\nhello()\n  ↓\nreturn 回 main()` },
+    { type: "flow", title: "遞迴 factorial(5)", value: `factorial(5)\n ↓\n5 * factorial(4)\n ↓\n5 * 4 * factorial(3)\n ↓\n5 * 4 * 3 * 2 * 1` }
+  ]);
+  addVisuals(9, "9.1", [
+    { type: "memory", title: "this 指向目前物件", value: `new Student("Jimmy", 25)\n  ↓\nthis\n  ↓\nname = "Jimmy"\nage = 25` }
+  ]);
+  addVisuals(10, "10.1", [
+    { type: "memory", title: "String 不可變概念", value: `s ──> "Hello"\n\ns.concat(" World")\n  ↓ 產生新物件\n"Hello World"\n\n若沒有 s = ...\ns 仍指向 "Hello"` },
+    { type: "compare", title: "concat 接住結果前後", before: `String s = "Hello";\ns.concat(" World");\n// s 是 Hello`, after: `s = s.concat(" World");\n// s 是 Hello World` }
+  ]);
+  addVisuals(11, "11.1", [
+    { type: "uml", title: "繼承關係", value: `Animal\n  ↑\n Dog\n\nAnimal\n  ↑\n Cat` }
+  ]);
+  addVisuals(12, "12.2", [
+    { type: "uml", title: "介面能力圖", value: `<<interface>> Flyable\n+ fly()\n   ↑ implements\n ┌─┴──────┐\nBird   Airplane` }
+  ]);
+  addVisuals(13, "13.1", [
+    { type: "files", title: "Package 檔案結構", value: `src\n ├─ school\n │   ├─ Student.java\n │   └─ Teacher.java\n ├─ animal\n │   ├─ Dog.java\n │   └─ Cat.java\n └─ Main.java` }
+  ]);
+  addVisuals(14, "14.1", [
+    { type: "flow", title: "例外發生流程", value: `程式執行\n  ↓\n發生例外\n  ↓\n有 catch？\n  ├─ 有 → 處理後繼續\n  └─ 無 → 程式中斷` }
+  ]);
+  addVisuals(14, "14.2", [
+    { type: "flow", title: "try/catch/finally 流程", value: `try\n  ↓\n發生例外？\n  ├─ 是 → catch\n  └─ 否 → 跳過 catch\n  ↓\nfinally` },
+    { type: "callout", variant: "tip", text: "finally 常用於關閉檔案、資料庫連線等收尾工作。" }
+  ]);
+  addVisuals(14, "14.3", [
+    { type: "flow", title: "throw 與呼叫鏈", value: `main()\n  ↓\nmethodA()\n  ↓\nmethodB()\n  ↓ throw Exception\n  ↑ 往上尋找 catch` }
+  ]);
+  addVisuals(15, "15.1", [
+    { type: "timeline", title: "多執行緒時間軸", value: `時間 →\n\nMain Thread\n|------|------|\n\nThread A\n   |----|----|\n\nThread B\n      |----|----|` },
+    { type: "callout", variant: "warning", text: "呼叫 run() 不會建立新執行緒；啟動新執行緒請呼叫 start()。" }
+  ]);
+  addVisuals(15, "15.2", [
+    { type: "timeline", title: "Race Condition 時間軸", value: `balance = 1000\n\nThread A: 讀取 1000 ---- 寫回 500\nThread B:    讀取 1000 ---- 寫回 500\n\n兩次提款後結果錯誤` }
+  ]);
+  addVisuals(15, "15.3", [
+    { type: "flow", title: "Producer / Consumer 協調", value: `Consumer\n  ↓ 沒資料\nwait()\n\nProducer\n  ↓ 放資料\nnotify()\n\nConsumer 醒來取資料` }
+  ]);
 }
 
 function enhanceChapter08MethodPath() {
@@ -9292,6 +9385,379 @@ System.out.println("main 結束");`,
   };
 }
 
+function createChapter16() {
+  return {
+    id: 16,
+    code: "CH16",
+    title: "資料輸入與輸出（Input / Output）",
+    minutes: 150,
+    summary: "理解 Stream、Reader/Writer、檔案讀寫、try-with-resources 與物件序列化。",
+    intro: "資料輸入與輸出讓程式能把資訊存到檔案、從檔案讀回來，甚至保存物件狀態。本章會用水流類比理解 Stream，再逐步學會文字檔、位元檔與物件讀寫。",
+    goals: [
+      "了解 Stream 概念",
+      "分辨 Input Stream 與 Output Stream",
+      "分辨 Byte Stream 與 Character Stream",
+      "學會 FileWriter / FileReader",
+      "學會 BufferedWriter / BufferedReader",
+      "了解 Serializable 與物件序列化",
+      "能夠完成簡單檔案讀寫程式"
+    ],
+    sections: [
+      {
+        sectionId: "16.1",
+        title: "什麼是串流",
+        body: [
+          "Stream 可以想成資料的水流。資料從來源流進程式，就是 Input Stream；資料從程式流到目的地，就是 Output Stream。",
+          "來源和目的地可以是檔案、鍵盤、網路、記憶體。初學先聚焦檔案：從檔案讀進來是輸入，把資料寫出去是輸出。",
+          "Byte Stream 以 byte 為單位，適合圖片、影片、二進位資料；Character Stream 以字元為單位，適合文字檔。",
+          "學 IO 的重點是掌握方向、資料單位、以及用完後關閉資源。"
+        ],
+        visuals: [
+          { type: "flow", title: "水流類比：Input / Output", value: `資料來源\n  ↓ Input Stream\nJava 程式\n  ↓ Output Stream\n目的地` },
+          { type: "flow", title: "Byte Stream vs Character Stream", value: `Byte Stream\n  ↓\n圖片 / 音訊 / 二進位檔\n\nCharacter Stream\n  ↓\n文字 / CSV / 設定檔` },
+          { type: "callout", variant: "tip", text: "先判斷資料是文字還是二進位，再選 Reader/Writer 或 InputStream/OutputStream。" }
+        ],
+        code: {
+          title: "Stream 方向圖",
+          value: `讀取檔案：
+file.txt → Java 程式
+
+寫入檔案：
+Java 程式 → file.txt`
+        },
+        codes: [
+          { title: "範例 1：Input Stream 概念", value: `檔案資料\n  ↓\nFileInputStream\n  ↓\nJava 程式` },
+          { title: "範例 2：Output Stream 概念", value: `Java 程式\n  ↓\nFileOutputStream\n  ↓\n檔案資料` },
+          { title: "範例 3：Byte Stream 適合二進位", value: `FileInputStream in =\n    new FileInputStream("photo.jpg");\n\n// 解說：\n// 圖片適合用 byte 方式處理。` },
+          { title: "範例 4：Character Stream 適合文字", value: `FileReader reader =\n    new FileReader("note.txt");\n\n// 解說：\n// 文字檔適合用 Reader / Writer。` },
+          { title: "範例 5：輸入與輸出方向", value: `Input：外部資料進入程式\nOutput：程式資料送到外部\n\nScanner 讀鍵盤：Input\nFileWriter 寫檔案：Output` },
+          { title: "範例 6：讀取一個 byte", value: `FileInputStream in = new FileInputStream("data.bin");\nint value = in.read();\nin.close();\n\n// read() 回傳一個 byte 資料，或 -1 表示結束。` },
+          { title: "範例 7：寫出一個 byte", value: `FileOutputStream out = new FileOutputStream("data.bin");\nout.write(65);\nout.close();\n\n// 65 對應文字 A 的編碼。` },
+          { title: "範例 8：讀取一個字元", value: `FileReader reader = new FileReader("note.txt");\nint ch = reader.read();\nreader.close();\n\n// Character Stream 以字元為主。` },
+          { title: "範例 9：寫出文字", value: `FileWriter writer = new FileWriter("note.txt");\nwriter.write("Hello Java");\nwriter.close();` },
+          { title: "範例 10：關閉資源的重要性", value: `FileWriter writer = new FileWriter("note.txt");\nwriter.write("Hello");\nwriter.close();\n\n// 解說：\n// close() 可把資料確實送出並釋放檔案資源。` }
+        ]
+      },
+      {
+        sectionId: "16.2",
+        title: "Java 串流類別架構",
+        body: [
+          "Java IO 類別很多，但可以先抓四大方向：InputStream、OutputStream、Reader、Writer。",
+          "InputStream / OutputStream 是 Byte Stream；Reader / Writer 是 Character Stream。",
+          "Buffered Stream 像是加了緩衝區，可以減少頻繁讀寫的成本。File 類別則代表檔案或資料夾路徑。",
+          "初學不需要背完整繼承樹，只要會依需求選擇：讀文字用 FileReader/BufferedReader；寫文字用 FileWriter/BufferedWriter；處理二進位用 FileInputStream/FileOutputStream。"
+        ],
+        visuals: [
+          { type: "uml", title: "IO 類別樹狀架構", value: `Byte Stream\n├─ InputStream\n│  └─ FileInputStream\n└─ OutputStream\n   └─ FileOutputStream\n\nCharacter Stream\n├─ Reader\n│  ├─ FileReader\n│  └─ BufferedReader\n└─ Writer\n   ├─ FileWriter\n   └─ BufferedWriter` },
+          { type: "files", title: "File 類別代表路徑", value: `project\n ├─ data.txt\n ├─ score.csv\n └─ images\n     └─ logo.png` }
+        ],
+        code: {
+          title: "選擇類別速查",
+          value: `文字讀取：FileReader + BufferedReader
+文字寫入：FileWriter + BufferedWriter
+二進位讀取：FileInputStream
+二進位寫入：FileOutputStream
+檔案路徑：File`
+        },
+        codes: [
+          { title: "範例 1：InputStream", value: `InputStream in = new FileInputStream("data.bin");\nin.close();` },
+          { title: "範例 2：OutputStream", value: `OutputStream out = new FileOutputStream("data.bin");\nout.close();` },
+          { title: "範例 3：Reader", value: `Reader reader = new FileReader("note.txt");\nreader.close();` },
+          { title: "範例 4：Writer", value: `Writer writer = new FileWriter("note.txt");\nwriter.close();` },
+          { title: "範例 5：BufferedReader", value: `BufferedReader br =\n    new BufferedReader(new FileReader("note.txt"));\nbr.close();` },
+          { title: "範例 6：BufferedWriter", value: `BufferedWriter bw =\n    new BufferedWriter(new FileWriter("note.txt"));\nbw.close();` },
+          { title: "範例 7：File 物件", value: `File file = new File("note.txt");\nSystem.out.println(file.exists());` },
+          { title: "範例 8：檢查是否為檔案", value: `File file = new File("note.txt");\nSystem.out.println(file.isFile());` },
+          { title: "範例 9：檢查是否為資料夾", value: `File dir = new File("data");\nSystem.out.println(dir.isDirectory());` },
+          { title: "範例 10：取得檔名", value: `File file = new File("note.txt");\nSystem.out.println(file.getName());\n\n// 執行結果：\n// note.txt` },
+          { title: "範例 11：建立資料夾", value: `File dir = new File("output");\ndir.mkdir();` },
+          { title: "範例 12：類別關係概念", value: `FileReader 是 Reader 的一種。\nFileWriter 是 Writer 的一種。\nFileInputStream 是 InputStream 的一種。` }
+        ]
+      },
+      {
+        sectionId: "16.3",
+        title: "輸出、輸入資料",
+        body: [
+          "寫文字檔可用 FileWriter；讀文字檔可用 FileReader。若要一行一行讀寫，常搭配 BufferedWriter / BufferedReader。",
+          "二進位資料可用 FileInputStream / FileOutputStream。它們以 byte 為單位，適合複製圖片或非文字檔案。",
+          "try-with-resources 是 Java 中管理 IO 資源的好習慣。把資源放在 try 小括號內，區塊結束後會自動 close。",
+          "檔案讀寫最容易忘記處理例外與關閉資源。本節會用執行前/執行後比較讓你看到資料如何變化。"
+        ],
+        visuals: [
+          { type: "compare", title: "寫入檔案前後", before: `score.txt\n\n（空檔案）`, after: `score.txt\n\nJimmy,90\nAmy,85` },
+          { type: "flow", title: "try-with-resources 流程", value: `try(開啟資源)\n  ↓\n讀寫資料\n  ↓\n自動 close()\n  ↓\n離開區塊` }
+        ],
+        code: {
+          title: "try-with-resources 基本格式",
+          value: `try (FileWriter writer = new FileWriter("note.txt")) {
+    writer.write("Hello");
+}`
+        },
+        codes: [
+          { title: "範例 1：FileWriter 寫文字", value: `try (FileWriter writer = new FileWriter("note.txt")) {\n    writer.write("Hello Java");\n}` },
+          { title: "範例 2：FileReader 讀文字", value: `try (FileReader reader = new FileReader("note.txt")) {\n    int ch;\n    while ((ch = reader.read()) != -1) {\n        System.out.print((char) ch);\n    }\n}` },
+          { title: "範例 3：BufferedWriter 寫一行", value: `try (BufferedWriter bw = new BufferedWriter(new FileWriter("score.txt"))) {\n    bw.write("Jimmy,90");\n    bw.newLine();\n}` },
+          { title: "範例 4：BufferedReader 讀一行", value: `try (BufferedReader br = new BufferedReader(new FileReader("score.txt"))) {\n    String line = br.readLine();\n    System.out.println(line);\n}` },
+          { title: "範例 5：讀取所有行", value: `try (BufferedReader br = new BufferedReader(new FileReader("score.txt"))) {\n    String line;\n    while ((line = br.readLine()) != null) {\n        System.out.println(line);\n    }\n}` },
+          { title: "範例 6：追加寫入", value: `try (FileWriter writer = new FileWriter("note.txt", true)) {\n    writer.write("\\n追加文字");\n}` },
+          { title: "範例 7：FileOutputStream 寫 byte", value: `try (FileOutputStream out = new FileOutputStream("data.bin")) {\n    out.write(65);\n}` },
+          { title: "範例 8：FileInputStream 讀 byte", value: `try (FileInputStream in = new FileInputStream("data.bin")) {\n    int value = in.read();\n    System.out.println(value);\n}` },
+          { title: "範例 9：複製二進位檔", value: `try (FileInputStream in = new FileInputStream("source.bin");\n     FileOutputStream out = new FileOutputStream("copy.bin")) {\n    int data;\n    while ((data = in.read()) != -1) {\n        out.write(data);\n    }\n}` },
+          { title: "範例 10：寫 CSV", value: `try (BufferedWriter bw = new BufferedWriter(new FileWriter("students.csv"))) {\n    bw.write("Jimmy,90");\n    bw.newLine();\n    bw.write("Amy,85");\n}` },
+          { title: "範例 11：讀 CSV 並 split", value: `try (BufferedReader br = new BufferedReader(new FileReader("students.csv"))) {\n    String line;\n    while ((line = br.readLine()) != null) {\n        String[] parts = line.split(",");\n        System.out.println(parts[0] + "：" + parts[1]);\n    }\n}` },
+          { title: "範例 12：檢查檔案存在", value: `File file = new File("students.csv");\nif (file.exists()) {\n    System.out.println("檔案存在");\n}` },
+          { title: "範例 13：處理 IOException", value: `try (FileReader reader = new FileReader("missing.txt")) {\n    System.out.println(reader.read());\n} catch (IOException e) {\n    System.out.println("讀取失敗");\n}` },
+          { title: "範例 14：寫入多行自我介紹", value: `try (BufferedWriter bw = new BufferedWriter(new FileWriter("intro.txt"))) {\n    bw.write("我是 Jimmy");\n    bw.newLine();\n    bw.write("我正在學 Java IO");\n}` },
+          { title: "範例 15：執行前/後概念", value: `執行前：\nintro.txt 不存在或空白\n\n執行後：\nintro.txt 內有兩行自我介紹。` }
+        ]
+      },
+      {
+        sectionId: "16.4",
+        title: "物件的讀寫",
+        body: [
+          "一般文字檔保存的是文字；如果想保存整個物件，可以使用序列化（Serialization）。",
+          "要讓物件能被寫出，類別需要 implements Serializable。ObjectOutputStream 可把物件寫入檔案，ObjectInputStream 可讀回物件。",
+          "`serialVersionUID` 是序列化版本識別。初學可先固定宣告一個 `private static final long serialVersionUID = 1L;`。",
+          "`transient` 表示某個欄位不要被序列化，例如密碼、暫存資料。"
+        ],
+        visuals: [
+          { type: "flow", title: "物件序列化流程", value: `Student 物件\n  ↓ ObjectOutputStream\nstudent.dat\n  ↓ ObjectInputStream\nStudent 物件` },
+          { type: "memory", title: "transient 欄位", value: `Student\n- name = "Jimmy"  → 會保存\n- score = 90       → 會保存\n- password         → transient，不保存` }
+        ],
+        code: {
+          title: "Serializable 基本類別",
+          value: `class Student implements Serializable {
+    private static final long serialVersionUID = 1L;
+    String name;
+    int score;
+}`
+        },
+        codes: [
+          { title: "範例 1：implements Serializable", value: `class Student implements Serializable {\n    String name;\n    int score;\n}` },
+          { title: "範例 2：serialVersionUID", value: `class Student implements Serializable {\n    private static final long serialVersionUID = 1L;\n}` },
+          { title: "範例 3：建立 Student 物件", value: `Student s = new Student();\ns.name = "Jimmy";\ns.score = 90;` },
+          { title: "範例 4：ObjectOutputStream 寫物件", value: `try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("student.dat"))) {\n    out.writeObject(s);\n}` },
+          { title: "範例 5：ObjectInputStream 讀物件", value: `try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("student.dat"))) {\n    Student s2 = (Student) in.readObject();\n    System.out.println(s2.name);\n}` },
+          { title: "範例 6：transient", value: `class User implements Serializable {\n    String name;\n    transient String password;\n}\n\n// password 不會被序列化保存。` },
+          { title: "範例 7：序列化多個物件", value: `out.writeObject(new Student("Jimmy", 90));\nout.writeObject(new Student("Amy", 85));` },
+          { title: "範例 8：保存 ArrayList", value: `ArrayList<Student> list = new ArrayList<>();\nlist.add(new Student("Jimmy", 90));\nout.writeObject(list);` },
+          { title: "範例 9：讀回 ArrayList", value: `ArrayList<Student> list =\n    (ArrayList<Student>) in.readObject();` },
+          { title: "範例 10：ClassNotFoundException", value: `try {\n    Object obj = in.readObject();\n} catch (ClassNotFoundException e) {\n    System.out.println("找不到類別");\n}` },
+          { title: "範例 11：NotSerializableException", value: `class Student {\n}\n\n// 若沒有 implements Serializable，\n// writeObject(student) 可能發生 NotSerializableException。` },
+          { title: "範例 12：物件讀寫適合情境", value: `適合：\n- 儲存程式內部物件狀態\n- 暫存資料\n\n不適合：\n- 需要給人直接閱讀的資料\n- 跨語言交換資料` }
+        ]
+      },
+      {
+        sectionId: "16.5",
+        title: "綜合演練",
+        body: [
+          "本節把 Student 類別、文字檔讀寫、陣列/迴圈統計整合成兩個實用小專案。",
+          "第一題負責把學生成績存成檔案；第二題讀取檔案後計算總分、平均、最高分、最低分。"
+        ],
+        visuals: [
+          { type: "uml", title: "Student UML", value: `Student\n- name: String\n- score: int\n+ toCsv(): String` },
+          { type: "flow", title: "成績檔處理流程", value: `建立 Student 資料\n  ↓\n寫入 students.csv\n  ↓\n讀取 students.csv\n  ↓\n計算總分 / 平均 / 最大 / 最小` }
+        ],
+        code: {
+          title: "題目 1：將學生成績資料存檔",
+          value: `問題說明：
+建立 Student 類別，包含姓名與分數，將資料存成 students.csv。
+
+Hint：
+每位學生一行，格式可用 name,score。
+
+Solution：
+class Student {
+    String name;
+    int score;
+
+    Student(String name, int score) {
+        this.name = name;
+        this.score = score;
+    }
+
+    String toCsv() {
+        return name + "," + score;
+    }
+}
+
+Student[] students = {
+    new Student("Jimmy", 90),
+    new Student("Amy", 85),
+    new Student("John", 78)
+};
+
+try (BufferedWriter bw = new BufferedWriter(new FileWriter("students.csv"))) {
+    for (Student s : students) {
+        bw.write(s.toCsv());
+        bw.newLine();
+    }
+}
+
+Explanation：
+Student 負責保存資料，toCsv() 負責把物件轉成可寫入檔案的一行文字。`
+        },
+        codes: [
+          {
+            title: "題目 2：讀取學生成績檔並計算平均",
+            value: `問題說明：
+讀取 students.csv，計算總分、平均、最高分、最低分。
+
+流程圖：
+讀取一行
+  ↓
+split(",")
+  ↓
+取出 score
+  ↓
+更新 total / max / min
+  ↓
+讀完後計算 average
+
+Hint：
+score 是字串，需用 Integer.parseInt() 轉成 int。
+
+Solution：
+int total = 0;
+int count = 0;
+int max = Integer.MIN_VALUE;
+int min = Integer.MAX_VALUE;
+
+try (BufferedReader br = new BufferedReader(new FileReader("students.csv"))) {
+    String line;
+    while ((line = br.readLine()) != null) {
+        String[] parts = line.split(",");
+        int score = Integer.parseInt(parts[1]);
+
+        total += score;
+        count++;
+        if (score > max) max = score;
+        if (score < min) min = score;
+    }
+}
+
+double average = total / (double) count;
+
+System.out.println("總分：" + total);
+System.out.println("平均：" + average);
+System.out.println("最高：" + max);
+System.out.println("最低：" + min);
+
+Explanation：
+這題整合 File IO、String split、型態轉換、迴圈與統計邏輯。`
+          }
+        ]
+      }
+    ],
+    activities: [
+      createActivity({
+        id: "ch16-exercise-stream-direction",
+        sectionId: "16.1",
+        type: "exercise",
+        title: "16.1 練習：判斷 Stream 方向",
+        question: "判斷讀檔、寫檔、鍵盤輸入、螢幕輸出分別屬於 Input 還是 Output。",
+        hint: "資料進入程式是 Input，資料離開程式是 Output。",
+        solution: "讀檔是 Input；寫檔是 Output；鍵盤輸入是 Input；螢幕輸出是 Output。",
+        explanation: "IO 的第一步是判斷資料流向。"
+      }),
+      createActivity({
+        id: "ch16-exercise-stream-class",
+        sectionId: "16.2",
+        type: "exercise",
+        title: "16.2 練習：選擇 IO 類別",
+        question: "文字檔讀取、文字檔寫入、圖片複製，各適合哪些類別？",
+        hint: "文字用 Reader/Writer，二進位用 InputStream/OutputStream。",
+        solution: "文字讀取可用 FileReader / BufferedReader；文字寫入可用 FileWriter / BufferedWriter；圖片複製可用 FileInputStream / FileOutputStream。",
+        explanation: "先判斷文字或二進位，再選擇對應串流類別。"
+      }),
+      createActivity({
+        id: "ch16-exercise-write-read-file",
+        sectionId: "16.3",
+        type: "exercise",
+        title: "16.3 練習：寫入並讀取文字檔",
+        question: "用 BufferedWriter 寫入兩行文字，再用 BufferedReader 讀出。",
+        hint: "寫入後記得 newLine()，讀取時用 readLine()。",
+        solution: `try (BufferedWriter bw = new BufferedWriter(new FileWriter("note.txt"))) {
+    bw.write("Hello");
+    bw.newLine();
+    bw.write("Java");
+}
+
+try (BufferedReader br = new BufferedReader(new FileReader("note.txt"))) {
+    String line;
+    while ((line = br.readLine()) != null) {
+        System.out.println(line);
+    }
+}`,
+        explanation: "BufferedWriter / BufferedReader 適合處理一行一行的文字資料。"
+      }),
+      createActivity({
+        id: "ch16-exercise-serializable",
+        sectionId: "16.4",
+        type: "exercise",
+        title: "16.4 練習：建立可序列化 Student",
+        question: "建立 Student implements Serializable，包含 name、score、serialVersionUID。",
+        hint: "記得 import java.io.Serializable。",
+        solution: `class Student implements Serializable {
+    private static final long serialVersionUID = 1L;
+    String name;
+    int score;
+}`,
+        explanation: "implements Serializable 表示這個物件允許被 ObjectOutputStream 寫出。"
+      }),
+      createActivity({
+        id: "ch16-project-save-students",
+        sectionId: "16.5",
+        type: "exercise",
+        title: "16.5 綜合練習：儲存學生成績",
+        question: "建立 Student 陣列並存成 students.csv。",
+        hint: "每行格式使用 name,score。",
+        solution: `try (BufferedWriter bw = new BufferedWriter(new FileWriter("students.csv"))) {
+    bw.write("Jimmy,90");
+    bw.newLine();
+    bw.write("Amy,85");
+}`,
+        explanation: "CSV 是初學者很好理解的文字資料格式。"
+      }),
+      createActivity({
+        id: "ch16-homework-read-average",
+        sectionId: "16.5",
+        type: "homework",
+        title: "16.5 作業：讀取成績並統計",
+        question: "讀取 students.csv，計算總分、平均、最大值、最小值。",
+        hint: "使用 split(',') 和 Integer.parseInt()。",
+        solution: `int total = 0;
+int count = 0;
+int max = Integer.MIN_VALUE;
+int min = Integer.MAX_VALUE;`,
+        explanation: "本題整合檔案讀取、字串切割、數字轉換與統計運算。"
+      })
+    ],
+    quiz: [
+      { question: "Stream 可類比成什麼？", options: ["資料水流", "類別繼承", "例外物件", "CSS 樣式"], answer: 0, explanation: "Stream 表示資料流動。" },
+      { question: "資料從檔案進入程式是？", options: ["Input Stream", "Output Stream", "UML", "Thread"], answer: 0, explanation: "資料進入程式是 Input。" },
+      { question: "資料從程式寫到檔案是？", options: ["Output Stream", "Input Stream", "Exception", "Interface"], answer: 0, explanation: "資料離開程式是 Output。" },
+      { question: "Byte Stream 適合處理？", options: ["圖片或二進位檔", "只處理 class 名稱", "只處理 package", "只處理 UML"], answer: 0, explanation: "Byte Stream 以 byte 為單位。" },
+      { question: "Character Stream 適合處理？", options: ["文字檔", "圖片像素", "執行緒鎖", "例外堆疊"], answer: 0, explanation: "Reader/Writer 適合文字資料。" },
+      { question: "InputStream 屬於？", options: ["Byte Stream", "Character Stream", "Interface Only", "Package"], answer: 0, explanation: "InputStream 以 byte 讀取資料。" },
+      { question: "Reader 屬於？", options: ["Character Stream", "Byte Stream", "Thread", "Exception"], answer: 0, explanation: "Reader 以字元為主。" },
+      { question: "BufferedReader 常用方法是？", options: ["readLine()", "writeObject()", "start()", "notifyAll()"], answer: 0, explanation: "BufferedReader 可一行一行讀取。" },
+      { question: "File 類別代表？", options: ["檔案或資料夾路徑", "一定是文字內容", "執行緒", "介面"], answer: 0, explanation: "File 描述檔案系統路徑。" },
+      { question: "寫文字檔常用？", options: ["FileWriter", "FileReader", "Thread", "ObjectInputStream"], answer: 0, explanation: "FileWriter 用於文字輸出。" },
+      { question: "讀文字檔常用？", options: ["FileReader", "FileWriter", "FileOutputStream only", "Runnable"], answer: 0, explanation: "FileReader 用於文字輸入。" },
+      { question: "try-with-resources 的好處是？", options: ["自動關閉資源", "自動建立 package", "自動建立 Thread", "避免所有邏輯錯誤"], answer: 0, explanation: "try 小括號內資源會自動 close。" },
+      { question: "複製二進位檔適合？", options: ["FileInputStream / FileOutputStream", "FileReader / FileWriter", "Scanner only", "StringBuilder only"], answer: 0, explanation: "二進位資料用 byte stream。" },
+      { question: "ObjectOutputStream 用途是？", options: ["寫出物件", "讀取一行文字", "啟動執行緒", "宣告 package"], answer: 0, explanation: "ObjectOutputStream 可序列化物件。" },
+      { question: "ObjectInputStream 用途是？", options: ["讀回物件", "寫文字", "同步方法", "Regex 驗證"], answer: 0, explanation: "ObjectInputStream 可反序列化物件。" },
+      { question: "要讓物件可序列化，類別通常要？", options: ["implements Serializable", "extends Thread", "implements Runnable only", "package Serializable"], answer: 0, explanation: "Serializable 是序列化標記介面。" },
+      { question: "serialVersionUID 是什麼概念？", options: ["序列化版本識別", "執行緒名稱", "檔案副檔名", "package 名稱"], answer: 0, explanation: "它用於序列化版本控制。" },
+      { question: "transient 欄位會？", options: ["不被序列化保存", "一定被加密", "變成 static", "自動寫入文字檔"], answer: 0, explanation: "transient 表示略過序列化。" },
+      { question: "讀取 CSV 後常用哪個方法切欄位？", options: ["split()", "join()", "wait()", "start()"], answer: 0, explanation: "split(',') 可切開欄位。" },
+      { question: "將 score 字串轉 int 可用？", options: ["Integer.parseInt()", "String.start()", "Thread.parse()", "File.toInt()"], answer: 0, explanation: "Integer.parseInt 可把數字字串轉整數。" }
+    ]
+  };
+}
+
 const app = document.querySelector("#app");
 const mainNav = document.querySelector("[data-main-nav]");
 const siteHeader = document.querySelector("[data-site-header]");
@@ -9705,12 +10171,88 @@ function renderCodeBlock(code) {
   `;
 }
 
+function renderVisualBlock(visual) {
+  if (!visual) return "";
+
+  if (visual.type === "steps") {
+    const headers = visual.headers || [];
+    const rows = visual.rows || [];
+    return `
+      <div class="visual-block visual-steps">
+        <div class="visual-title">${visual.title}</div>
+        <div class="visual-table-wrap">
+          <table>
+            <thead><tr>${headers.map((header) => `<th>${header}</th>`).join("")}</tr></thead>
+            <tbody>
+              ${rows.map((row) => `<tr>${row.map((cell) => `<td>${cell}</td>`).join("")}</tr>`).join("")}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+
+  if (visual.type === "compare") {
+    return `
+      <div class="visual-block visual-compare">
+        <div class="visual-title">${visual.title}</div>
+        <div class="compare-grid">
+          <div>
+            <strong>執行前</strong>
+            <pre><code>${escapeHtml(visual.before)}</code></pre>
+          </div>
+          <div>
+            <strong>執行後</strong>
+            <pre><code>${escapeHtml(visual.after)}</code></pre>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  if (visual.type === "callout") {
+    const label = {
+      tip: "💡 重點",
+      warning: "⚠️ 常見錯誤",
+      challenge: "🚀 延伸挑戰"
+    }[visual.variant || "tip"];
+
+    return `
+      <aside class="visual-callout ${visual.variant || "tip"}">
+        <strong>${label}</strong>
+        <p>${formatInlineCode(visual.text)}</p>
+      </aside>
+    `;
+  }
+
+  const typeLabel = {
+    flow: "流程圖",
+    array: "陣列視覺化",
+    uml: "UML 類別圖",
+    memory: "記憶體概念圖",
+    files: "檔案結構圖",
+    timeline: "執行緒時間軸圖"
+  }[visual.type] || "視覺化教學";
+
+  return `
+    <div class="visual-block visual-${visual.type}">
+      <div class="visual-title">${visual.title || typeLabel}<span>${typeLabel}</span></div>
+      <pre><code>${escapeHtml(visual.value)}</code></pre>
+    </div>
+  `;
+}
+
+function renderVisualBlocks(section) {
+  return section.visuals ? section.visuals.map(renderVisualBlock).join("") : "";
+}
+
 function renderSection(section, index) {
   return `
     <section id="section-${section.sectionId}" class="content-section">
       <h2>${section.sectionId} ${section.title}</h2>
       ${section.body.map((paragraph) => `<p>${formatInlineCode(paragraph)}</p>`).join("")}
       ${section.list ? `<ul>${section.list.map((item) => `<li>${formatInlineCode(item)}</li>`).join("")}</ul>` : ""}
+      ${renderVisualBlocks(section)}
       ${renderCodeBlock(section.code)}
       ${section.codes ? section.codes.map(renderCodeBlock).join("") : ""}
     </section>
