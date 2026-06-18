@@ -1213,6 +1213,143 @@ code {
   color: var(--ok);
 }
 
+.wrong-book-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(21, 31, 54, 0.82);
+}
+
+.wrong-book-summary strong {
+  display: block;
+  font-size: 2rem;
+  line-height: 1.1;
+}
+
+.wrong-book-summary span {
+  color: var(--muted);
+}
+
+.wrong-book-list {
+  display: grid;
+  gap: 28px;
+}
+
+.wrong-book-group {
+  display: grid;
+  gap: 14px;
+}
+
+.wrong-book-group h2 {
+  margin: 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+  color: var(--accent);
+  font-size: clamp(1.3rem, 2.4vw, 1.8rem);
+}
+
+.wrong-card-list {
+  display: grid;
+  gap: 14px;
+}
+
+.wrong-card {
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+  border: 1px solid rgba(251, 113, 133, 0.26);
+  border-radius: var(--radius);
+  background: rgba(15, 23, 42, 0.74);
+}
+
+.wrong-card-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.wrong-card-head h3 {
+  margin: 6px 0 0;
+  line-height: 1.35;
+}
+
+.wrong-card-head small {
+  color: var(--muted);
+  font-size: 0.86rem;
+  white-space: nowrap;
+}
+
+.wrong-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.wrong-detail {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.wrong-detail strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.88rem;
+}
+
+.wrong-detail p {
+  margin: 0;
+  color: #dbe7ff;
+}
+
+.wrong-detail.user-answer {
+  border-color: rgba(251, 113, 133, 0.38);
+  background: rgba(251, 113, 133, 0.09);
+}
+
+.wrong-detail.user-answer strong {
+  color: #fecdd3;
+}
+
+.wrong-detail.correct-answer {
+  border-color: rgba(134, 239, 172, 0.36);
+  background: rgba(134, 239, 172, 0.08);
+}
+
+.wrong-detail.correct-answer strong {
+  color: var(--ok);
+}
+
+.wrong-detail.explanation {
+  border-color: rgba(96, 165, 250, 0.36);
+  background: rgba(96, 165, 250, 0.08);
+}
+
+.wrong-detail.explanation strong {
+  color: #bfdbfe;
+}
+
+.wrong-retry {
+  display: grid;
+  gap: 12px;
+}
+
+.wrong-retry-options {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(7, 11, 22, 0.42);
+}
+
 .completion-card {
   margin-top: 18px;
   padding: 22px;
@@ -1327,6 +1464,20 @@ code {
   .syntax-card-head {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .wrong-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .wrong-card-head,
+  .wrong-book-summary {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .wrong-card-head small {
+    white-space: normal;
   }
 }
 

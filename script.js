@@ -11775,7 +11775,8 @@ function getDefaultState() {
     completedChapters: [],
     completedSections: [],
     completedActivities: [],
-    quizAnswers: {}
+    quizAnswers: {},
+    wrongBook: []
   };
 }
 
@@ -11796,7 +11797,8 @@ function getState() {
       completedChapters: Array.isArray(saved?.completedChapters) ? saved.completedChapters : [],
       completedSections: Array.isArray(saved?.completedSections) ? saved.completedSections : [],
       completedActivities: Array.isArray(saved?.completedActivities) ? saved.completedActivities : [],
-      quizAnswers: saved?.quizAnswers && typeof saved.quizAnswers === "object" ? saved.quizAnswers : {}
+      quizAnswers: saved?.quizAnswers && typeof saved.quizAnswers === "object" ? saved.quizAnswers : {},
+      wrongBook: Array.isArray(saved?.wrongBook) ? saved.wrongBook : []
     });
   } catch {
     return getDefaultState();
@@ -11807,6 +11809,7 @@ function normalizeState(state) {
   const completedActivities = [...new Set(state.completedActivities)];
   const completedSections = [...new Set(state.completedSections)];
   const quizAnswers = state.quizAnswers;
+  const wrongBook = dedupeWrongBook(state.wrongBook || []);
   const completedChapters = state.completedChapters.filter((chapterId) => {
     const chapter = chapters.find((item) => item.id === chapterId);
     if (!chapter) return false;
@@ -11822,7 +11825,8 @@ function normalizeState(state) {
     ...state,
     completedActivities,
     completedSections,
-    completedChapters
+    completedChapters,
+    wrongBook
   };
 }
 
@@ -11900,6 +11904,61 @@ function getChapterQuizAnswers(chapterId, state = getState()) {
   return state.quizAnswers[getChapterKey(chapterId)] || {};
 }
 
+function getWrongQuestionId(chapterId, questionIndex, type = "quiz") {
+  return `${chapterId}:${type}:${questionIndex}`;
+}
+
+function dedupeWrongBook(items) {
+  const map = new Map();
+  items.forEach((item) => {
+    if (item?.questionId && !map.has(item.questionId)) {
+      map.set(item.questionId, item);
+    }
+  });
+  return [...map.values()];
+}
+
+function getWrongBookItem(chapter, questionIndex, userAnswerIndex) {
+  const question = chapter.quiz[questionIndex];
+  const assessment = getAssessmentSection(chapter);
+  return {
+    chapter: `${chapter.code} ${chapter.title}`,
+    chapterId: chapter.id,
+    section: `${assessment.sectionId} ${assessment.title}`,
+    questionId: getWrongQuestionId(chapter.id, questionIndex),
+    questionIndex,
+    question: question.question,
+    options: question.options,
+    userAnswer: question.options[userAnswerIndex],
+    userAnswerIndex,
+    correctAnswer: question.options[question.answer],
+    correctAnswerIndex: question.answer,
+    explanation: question.explanation,
+    timestamp: new Date().toISOString()
+  };
+}
+
+function updateWrongBookForQuizAnswer(state, chapterId, questionIndex, selected) {
+  const chapter = getChapter(chapterId);
+  const question = chapter.quiz[questionIndex];
+  const questionId = getWrongQuestionId(chapterId, questionIndex);
+  const wrongBook = (state.wrongBook || []).filter((item) => item.questionId !== questionId);
+
+  if (selected !== question.answer) {
+    wrongBook.push(getWrongBookItem(chapter, questionIndex, selected));
+  }
+
+  return wrongBook;
+}
+
+function removeWrongBookItem(questionId) {
+  const state = getState();
+  saveState({
+    ...state,
+    wrongBook: state.wrongBook.filter((item) => item.questionId !== questionId)
+  });
+}
+
 function getChapterStats(chapter, state = getState()) {
   const completedActivities = chapter.activities.filter((activity) => state.completedActivities.includes(activity.id)).length;
   const sections = getSortedSections(chapter);
@@ -11961,6 +12020,7 @@ function getProgressStats() {
     completedQuiz,
     totalQuiz,
     quizPercent,
+    wrongCount: state.wrongBook.length,
     isCourseComplete: state.completedChapters.length === chapters.length
   };
 }
@@ -11999,6 +12059,7 @@ function renderMainNav() {
       </div>
     </div>
     <a href="#syntax" data-nav-link>Java 語法速查</a>
+    <a href="#wrongbook" data-nav-link>錯題本</a>
     <a href="#progress" data-nav-link>學習進度</a>
   `;
 }
@@ -12082,6 +12143,10 @@ function renderHome() {
           <div class="stat-card">
             <strong>${stats.chapterPercent}%</strong>
             <span>總學習進度</span>
+          </div>
+          <div class="stat-card">
+            <strong>${stats.wrongCount}</strong>
+            <span>錯題</span>
           </div>
         </div>
         ${renderProgressPanel()}
@@ -12233,6 +12298,94 @@ function renderSyntaxReference() {
     </section>
 
     <div class="copy-toast" data-copy-toast hidden>已複製程式碼</div>
+  `;
+}
+
+function groupWrongBookByChapter(wrongBook) {
+  return wrongBook.reduce((groups, item) => {
+    const key = item.chapter || "未分類";
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(item);
+    return groups;
+  }, {});
+}
+
+function renderWrongBookCard(item) {
+  return `
+    <article class="wrong-card" data-wrong-card="${item.questionId}">
+      <div class="wrong-card-head">
+        <div>
+          <span class="chapter-kicker">${item.section}</span>
+          <h3>${formatInlineCode(item.question)}</h3>
+        </div>
+        <small>${new Date(item.timestamp).toLocaleString("zh-TW")}</small>
+      </div>
+      <div class="wrong-detail-grid">
+        <div class="wrong-detail user-answer">
+          <strong>你的答案</strong>
+          <p>${item.userAnswer}</p>
+        </div>
+        <div class="wrong-detail correct-answer">
+          <strong>正確答案</strong>
+          <p>${item.correctAnswer}</p>
+        </div>
+        <div class="wrong-detail explanation">
+          <strong>解說</strong>
+          <p>${item.explanation}</p>
+        </div>
+      </div>
+      <div class="wrong-retry">
+        <button class="button secondary compact" type="button" data-toggle-wrong-retry="${item.questionId}">重新作答</button>
+        <div class="wrong-retry-options" id="retry-${item.questionId}" hidden>
+          ${item.options.map((option, index) => `
+            <button class="quiz-option" type="button" data-retry-wrong="${item.questionId}" data-option="${index}">
+              ${option}
+            </button>
+          `).join("")}
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function renderWrongBook() {
+  const state = getState();
+  const groups = groupWrongBookByChapter(state.wrongBook);
+  const groupEntries = Object.entries(groups);
+
+  app.innerHTML = `
+    <section class="page-title wrong-book-title">
+      <p class="eyebrow">Wrong Book</p>
+      <h1>錯題本</h1>
+      <p>測驗答錯時會自動加入錯題本。重新作答答對後，該題會自動移除。</p>
+      <div class="wrong-book-summary">
+        <div class="stat-card">
+          <strong>${state.wrongBook.length}</strong>
+          <span>總錯題數</span>
+        </div>
+        <button class="button secondary" type="button" data-clear-wrong-book ${state.wrongBook.length === 0 ? "disabled" : ""}>清空錯題本</button>
+      </div>
+    </section>
+
+    <section class="wrong-book-list" aria-label="錯題列表">
+      ${groupEntries.length ? groupEntries.map(([chapter, items]) => `
+        <section class="wrong-book-group">
+          <div class="course-group-heading">
+            <h2>${chapter}</h2>
+            <span>${items.length} 題</span>
+          </div>
+          <div class="wrong-card-list">
+            ${items.map(renderWrongBookCard).join("")}
+          </div>
+        </section>
+      `).join("") : `
+        <section class="content-section empty-state">
+          <h2>目前沒有錯題</h2>
+          <p>完成章節測驗後，答錯的題目會出現在這裡。</p>
+          <a class="button" href="#map">前往課程地圖</a>
+        </section>
+      `}
+    </section>
   `;
 }
 
@@ -12775,6 +12928,53 @@ function handlePanelToggle(button) {
   button.textContent = `${shouldShow ? "隱藏" : "查看"}${button.dataset.label}`;
 }
 
+function handleWrongRetryToggle(button) {
+  const panel = document.getElementById(`retry-${button.dataset.toggleWrongRetry}`);
+  if (!panel) return;
+
+  const shouldShow = panel.hidden;
+  panel.hidden = !shouldShow;
+  button.textContent = shouldShow ? "隱藏重新作答" : "重新作答";
+}
+
+function handleWrongRetry(button) {
+  const questionId = button.dataset.retryWrong;
+  const selected = Number(button.dataset.option);
+  const state = getState();
+  const item = state.wrongBook.find((wrong) => wrong.questionId === questionId);
+  if (!item) return;
+
+  if (selected === item.correctAnswerIndex) {
+    removeWrongBookItem(questionId);
+    renderWrongBook();
+    return;
+  }
+
+  saveState({
+    ...state,
+    wrongBook: state.wrongBook.map((wrong) => wrong.questionId === questionId
+      ? {
+        ...wrong,
+        userAnswer: wrong.options[selected],
+        userAnswerIndex: selected,
+        timestamp: new Date().toISOString()
+      }
+      : wrong)
+  });
+  renderWrongBook();
+}
+
+function clearWrongBook() {
+  if (!confirm("確定要清空錯題本嗎？這個動作無法復原。")) return;
+
+  const state = getState();
+  saveState({
+    ...state,
+    wrongBook: []
+  });
+  renderWrongBook();
+}
+
 function handleQuizClick(button) {
   const chapterId = Number(button.dataset.chapter);
   const questionIndex = Number(button.dataset.question);
@@ -12784,9 +12984,11 @@ function handleQuizClick(button) {
     ...getChapterQuizAnswers(chapterId, state),
     [questionIndex]: selected
   };
+  const wrongBook = updateWrongBookForQuizAnswer(state, chapterId, questionIndex, selected);
 
   saveState({
     ...state,
+    wrongBook,
     quizAnswers: {
       ...state.quizAnswers,
       [getChapterKey(chapterId)]: chapterAnswers
@@ -12986,6 +13188,24 @@ function bindEvents() {
       return;
     }
 
+    const wrongRetryToggle = event.target.closest("[data-toggle-wrong-retry]");
+    if (wrongRetryToggle) {
+      handleWrongRetryToggle(wrongRetryToggle);
+      return;
+    }
+
+    const wrongRetryButton = event.target.closest("[data-retry-wrong]");
+    if (wrongRetryButton) {
+      handleWrongRetry(wrongRetryButton);
+      return;
+    }
+
+    const clearWrongBookButton = event.target.closest("[data-clear-wrong-book]");
+    if (clearWrongBookButton) {
+      clearWrongBook();
+      return;
+    }
+
     const quizButton = event.target.closest(".quiz-option");
     if (quizButton) {
       handleQuizClick(quizButton);
@@ -13068,6 +13288,8 @@ function renderCurrentRoute(options = {}) {
     renderMap();
   } else if (hash === "#syntax" || hash === "#toolbox" || hash === "#cheatsheet") {
     renderSyntaxReference();
+  } else if (hash === "#wrongbook") {
+    renderWrongBook();
   } else if (hash === "#progress") {
     renderProgressPage();
   } else {
