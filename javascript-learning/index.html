@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="40 天跟著 Todo App 每天成長，從零開始學會 JavaScript 與前端互動。">
+  <title>JavaScript 新手村｜跟著 Todo App 每天成長</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#day-1" aria-label="前往第一天課程">
+      <span class="brand-mark">JS</span>
+      <span><strong>JavaScript 新手村</strong><small>跟著 Todo App 每天成長</small></span>
+    </a>
+
+    <div class="header-actions">
+      <button class="icon-button mobile-only" id="sidebarToggle" type="button" aria-label="開啟課程導覽" aria-expanded="false">☰</button>
+      <button class="search-button" id="searchOpen" type="button" aria-label="搜尋課程">
+        <span aria-hidden="true">⌕</span><span>搜尋課程</span><kbd>/</kbd>
+      </button>
+      <button class="icon-button" id="favoritesOpen" type="button" aria-label="查看收藏">★<span class="count-badge" id="favoriteCount">0</span></button>
+      <button class="icon-button" id="wrongBookOpen" type="button" aria-label="查看錯題本">✎<span class="count-badge" id="wrongCount">0</span></button>
+      <button class="icon-button" id="themeToggle" type="button" aria-label="切換深色模式">☾</button>
+    </div>
+  </header>
+
+  <div class="course-layout">
+    <aside class="sidebar" id="sidebar" aria-label="40 天課程導覽">
+      <div class="sidebar-head">
+        <div><span class="overline">LEARNING PATH</span><h2>Day 01 - 40</h2></div>
+        <button class="icon-button mobile-only" id="sidebarClose" type="button" aria-label="關閉課程導覽">×</button>
+      </div>
+      <div class="progress-summary">
+        <div><span>閱讀進度</span><strong id="progressText">1 / 40</strong></div>
+        <div class="progress-track"><span id="progressBar"></span></div>
+      </div>
+      <nav class="day-nav" id="dayNav"></nav>
+    </aside>
+
+    <main class="main-content" id="mainContent" tabindex="-1">
+      <article id="lessonContent" aria-live="polite"></article>
+    </main>
+  </div>
+
+  <div class="backdrop" id="backdrop" hidden></div>
+
+  <section class="dialog" id="searchDialog" role="dialog" aria-modal="true" aria-labelledby="searchTitle" hidden>
+    <div class="dialog-head">
+      <div><span class="overline">QUICK FIND</span><h2 id="searchTitle">搜尋課程</h2></div>
+      <button class="icon-button" data-close-dialog type="button" aria-label="關閉">×</button>
+    </div>
+    <label class="search-field">
+      <span aria-hidden="true">⌕</span>
+      <input id="searchInput" type="search" placeholder="搜尋標題、語法或關鍵字，例如 localStorage" autocomplete="off">
+    </label>
+    <div class="search-results" id="searchResults"></div>
+  </section>
+
+  <section class="dialog" id="collectionDialog" role="dialog" aria-modal="true" aria-labelledby="collectionTitle" hidden>
+    <div class="dialog-head">
+      <div><span class="overline" id="collectionLabel">MY LIBRARY</span><h2 id="collectionTitle">我的收藏</h2></div>
+      <button class="icon-button" data-close-dialog type="button" aria-label="關閉">×</button>
+    </div>
+    <div class="collection-list" id="collectionList"></div>
+  </section>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
