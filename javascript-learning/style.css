@@ -155,11 +155,14 @@ kbd { padding: 1px 6px; border: 1px solid var(--line); border-radius: 4px; backg
 .day-nav { min-height: 0; padding: 12px; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
 .nav-phase { margin: 18px 10px 7px; color: var(--muted); font-size: .72rem; font-weight: 900; }
 .nav-phase:first-child { margin-top: 4px; }
-.day-link { display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 8px; width: 100%; padding: 10px; border: 0; border-radius: 6px; background: transparent; color: var(--muted); text-align: left; cursor: pointer; }
+.day-link { display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 4px 8px; width: 100%; padding: 10px; border: 0; border-radius: 6px; background: transparent; color: var(--muted); text-align: left; cursor: pointer; }
 .day-link:hover { background: var(--panel-2); color: var(--text); }
 .day-link.active { background: var(--accent-soft); color: var(--text); }
+.day-link.completed { color: var(--text); }
 .day-link .day-number { color: var(--accent-strong); font: 700 .76rem "JetBrains Mono", monospace; }
 .day-link .day-title { overflow: hidden; font-size: .86rem; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+.day-status { grid-column: 2; color: var(--muted); font-size: .72rem; }
+.day-link.completed .day-status { color: var(--accent-strong); font-weight: 900; }
 
 .main-content { min-width: 0; overflow-y: auto; overscroll-behavior: contain; scroll-behavior: smooth; }
 #lessonContent { width: min(100% - 40px, 920px); margin: 0 auto; padding: clamp(36px, 6vw, 76px) 0 80px; }
@@ -205,11 +208,36 @@ kbd { padding: 1px 6px; border: 1px solid var(--line); border-radius: 4px; backg
   margin: 0 0 8px;
   font-size: 1rem;
 }
+.mockup-card, .need-card, .flow-box, .review-checklist {
+  margin-top: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+}
+.mockup-card {
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent-soft) 70%, transparent), transparent),
+    var(--panel);
+}
+.mockup-card pre {
+  margin: 0;
+  padding: 22px;
+  color: var(--text);
+  font: 700 .92rem/1.8 "JetBrains Mono", Consolas, monospace;
+}
+.need-card {
+  padding: 18px 20px;
+  border-left: 4px solid var(--accent);
+  color: var(--text);
+  font-weight: 700;
+}
 .todo-bridge {
   margin-top: 18px;
   background: var(--panel-2);
 }
 .todo-bridge strong { display: block; margin-bottom: 8px; }
+.todo-bridge strong:not(:first-child) { margin-top: 14px; }
 .clean-list {
   margin: 0;
   padding-left: 1.2rem;
@@ -217,6 +245,53 @@ kbd { padding: 1px 6px; border: 1px solid var(--line); border-radius: 4px; backg
 }
 .clean-list li + li { margin-top: 4px; }
 .error-box .clean-list { color: var(--muted); }
+.code-intro {
+  margin-top: 20px;
+  color: var(--accent-strong);
+  font: 900 .78rem "JetBrains Mono", Consolas, monospace;
+  letter-spacing: .08em;
+}
+.flow-box {
+  display: grid;
+  gap: 8px;
+  padding: 18px;
+  background: var(--panel-2);
+}
+.flow-step {
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel);
+  color: var(--text);
+  font-weight: 800;
+  text-align: center;
+}
+.flow-arrow {
+  color: var(--accent-strong);
+  font-weight: 900;
+  text-align: center;
+}
+.review-checklist {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+}
+.review-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel-2);
+  cursor: pointer;
+}
+.review-item input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}
+.review-item span { font-weight: 800; }
 
 .code-shell { margin-top: 18px; overflow: hidden; border: 1px solid rgba(126, 156, 190, .25); border-radius: var(--radius); background: var(--code); box-shadow: 0 14px 36px rgba(2, 8, 23, .16); }
 .code-head { display: flex; align-items: center; justify-content: space-between; padding: 9px 13px; border-bottom: 1px solid rgba(255,255,255,.1); color: #96a8bf; font-size: .72rem; }

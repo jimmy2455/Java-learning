@@ -3,7 +3,8 @@ const STORAGE = {
   wrongBook: "jsVillageWrongBook",
   theme: "jsVillageTheme",
   lastDay: "jsVillageLastDay",
-  visited: "jsVillageVisitedDays"
+  visited: "jsVillageVisitedDays",
+  review: "jsVillageReviewChecks"
 };
 
 const dailyPlan = [
@@ -615,6 +616,11 @@ const lessons = dailyPlan
   .sort((a, b) => a.day - b.day)
   .map((item) => ({
     ...item,
+    outcome: createOutcome(item),
+    mockup: createMockup(item),
+    requirement: createRequirement(item),
+    flow: createFlow(item),
+    reviewItems: createReviewItems(item),
     exercises: [
       ...item.syntaxExercises.map(([question, answer], index) => ({
         id: `${item.day}-syntax-${index + 1}`,
@@ -630,6 +636,133 @@ const lessons = dailyPlan
       }))
     ]
   }));
+
+function createOutcome(item) {
+  if (item.day === 20) return "你的 Todo App 會顯示目前任務總數、已完成數與未完成數。";
+  if (item.day === 7) return "你的 Todo App 會第一次把輸入的任務新增到清單畫面。";
+  if (item.day === 8) return "你的 Todo App 會有完成與刪除按鈕，可以操作每一筆任務。";
+  if (item.day === 10) return "你的 Todo App 重新整理後，任務資料仍然會保留。";
+  if (item.day === 16) return "你的 Todo App 會有搜尋框，可以即時找到任務。";
+  if (item.day === 34) return "你的 Todo App 會用 Modal 編輯視窗取代 prompt。";
+  if (item.day === 35) return "你的 Todo App 操作後會出現 Toast 通知，讓使用者知道動作完成。";
+  if (item.day === 40) return "你的 Todo App 會整理成可以放進作品集展示的專案。";
+  return item.todoFeature;
+}
+
+function createMockup(item) {
+  const day = String(item.day).padStart(2, "0");
+  if (item.day === 20) {
+    return `Todo App - Day${day}
+
+目前任務：10
+完成：4
+未完成：6
+
+[新增任務...] [新增]
+
+□ 學 JavaScript
+✓ 完成 Todo 統計`;
+  }
+  if (item.day >= 34) {
+    return `Todo App - Day${day}
+
+[搜尋任務...]  [深色模式]
+
+□ 練習 JavaScript       [編輯] [完成] [刪除]
+□ 整理作品集           [編輯] [完成] [刪除]
+
+${item.day === 34 ? "[Modal 編輯任務視窗]" : item.day === 35 ? "Toast：任務已更新" : "README + Demo Link"}`;
+  }
+  if (item.day >= 25) {
+    return `Todo App - Day${day}
+
+分類：[全部 v]  優先級：[High v]
+搜尋：[__________]
+
+□ [High] 完成專案
+□ [Low]  閱讀筆記`;
+  }
+  if (item.day >= 16) {
+    return `Todo App - Day${day}
+
+搜尋：[買]
+
+□ 買牛奶
+□ 買麵包`;
+  }
+  if (item.day >= 8) {
+    return `Todo App - Day${day}
+
+[輸入任務] [新增]
+
+□ 學 JavaScript  [完成] [刪除]
+□ 寫 Todo App    [完成] [刪除]`;
+  }
+  if (item.day >= 3) {
+    return `Todo App - Day${day}
+
+[輸入任務] [新增]
+
+任務清單
+（今天會讓按鈕開始有反應）`;
+  }
+  return `Todo App - Day${day}
+
+Console
+> 第一筆任務：完成 Day${day} 練習`;
+}
+
+function createRequirement(item) {
+  const requirements = {
+    1: "今天先問：Todo App 要保存一筆任務文字，資料要放在哪裡？",
+    2: "今天想避免使用者新增空白任務，所以需要條件判斷。",
+    3: "今天想讓使用者按下按鈕後，程式真的有反應。",
+    4: "今天想讀到輸入框中的文字，並判斷它是不是空白。",
+    5: "今天想知道目前新增了幾筆任務，所以需要把更新畫面包成函式。",
+    6: "今天想在輸入錯誤時直接在畫面上顯示提示。",
+    7: "今天想把輸入的任務真正放進清單畫面。",
+    8: "今天想讓每一筆任務都能被完成或刪除。",
+    9: "今天想把任務變成一組資料，而不是只存在 HTML 裡。",
+    10: "今天想讓重新整理後任務還在。",
+    13: "今天想把任務資料穩定轉成 HTML，不要手動拼一堆字串。",
+    14: "今天想只看完成或未完成任務。",
+    16: "今天想加入搜尋功能，輸入關鍵字就縮小清單。",
+    17: "今天想讓最新任務在前面，完成任務排到最後。",
+    20: "今天想知道目前有多少任務、完成幾個、還剩幾個。",
+    26: "今天想避免排序或篩選後，操作錯誤的任務。",
+    34: "今天想讓編輯任務的體驗更像正式 App，而不是使用 prompt。",
+    35: "今天想讓新增、刪除、儲存後都有清楚的操作回饋。",
+    40: "今天想把 Todo App 整理成可以交作品、放履歷、上 GitHub Pages 的版本。"
+  };
+  return requirements[item.day] || `今天想完成：${item.todoFeature}`;
+}
+
+function createFlow(item) {
+  const flowMap = {
+    7: ["按新增", "讀取 input.value", "檢查空白", "組出 li", "加入 taskList.innerHTML", "清空輸入框"],
+    8: ["點擊完成或刪除", "找到該筆 li", "完成：切換 finished class", "刪除：remove()", "畫面更新"],
+    10: ["頁面載入", "localStorage.getItem()", "JSON.parse()", "取得 tasks", "renderTasks()", "畫面恢復"],
+    13: ["tasks 陣列", "map 每一筆 task", "轉成 HTML 字串", "join 合併", "innerHTML 更新畫面"],
+    14: ["點擊篩選", "filter tasks", "得到新陣列", "renderTasks(result)", "畫面只顯示符合條件的任務"],
+    16: ["輸入搜尋字", "input 事件觸發", "includes 比對文字", "filter 得到結果", "renderTasks(result)"],
+    20: ["按新增或切換完成", "更新 tasks", "saveTasks()", "renderTasks()", "updateStats()", "統計畫面更新"],
+    26: ["使用者點擊按鈕", "取得 task.id", "find/filter 找資料", "修改正確任務", "saveTasks()", "renderTasks()"],
+    34: ["點擊編輯", "保存 editingId", "開啟 Modal", "修改文字", "按儲存", "更新 task", "關閉 Modal"],
+    35: ["完成操作", "呼叫 showToast(message)", "顯示通知", "setTimeout()", "隱藏通知"]
+  };
+  const steps = flowMap[item.day] || ["使用者操作", "讀取目前資料", "執行今天新增的程式", "更新 tasks 或畫面", "使用者看到新的 Todo App 狀態"];
+  return steps;
+}
+
+function createReviewItems(item) {
+  const words = item.keywords
+    .split(/\s+/)
+    .filter(Boolean)
+    .filter((word) => !["todo", "state", "function"].includes(word.toLowerCase()))
+    .slice(0, 3);
+  const items = [...words, item.todoCode.match(/function\s+([a-zA-Z0-9_]+)/)?.[1]].filter(Boolean);
+  return [...new Set(items)].slice(0, 4).map((entry) => entry.replace(/([a-z])([A-Z])/g, "$1$2"));
+}
 
 const elements = {
   lessonContent: document.querySelector("#lessonContent"),
@@ -657,6 +790,7 @@ const elements = {
 let favorites = JSON.parse(localStorage.getItem(STORAGE.favorites) || "[]");
 let wrongBook = JSON.parse(localStorage.getItem(STORAGE.wrongBook) || "[]");
 let visited = JSON.parse(localStorage.getItem(STORAGE.visited) || "[]");
+let reviewChecks = JSON.parse(localStorage.getItem(STORAGE.review) || "{}");
 let toastTimer;
 let currentDay = clampDay(Number(location.hash.replace("#day-", "")) || Number(localStorage.getItem(STORAGE.lastDay)) || 1);
 
@@ -684,9 +818,10 @@ function renderNavigation() {
   elements.dayNav.innerHTML = groups.map(([label, start, end]) => `
     <div class="nav-phase">${label}</div>
     ${lessons.slice(start - 1, end).map((item) => `
-      <button class="day-link ${item.day === currentDay ? "active" : ""}" type="button" data-day="${item.day}">
+      <button class="day-link ${item.day === currentDay ? "active" : ""} ${isDayComplete(item.day) ? "completed" : ""}" type="button" data-day="${item.day}">
         <span class="day-number">DAY ${String(item.day).padStart(2, "0")}</span>
         <span class="day-title">${escapeHTML(item.title)}</span>
+        <span class="day-status">${isDayComplete(item.day) ? "✓ 已完成" : "跟做中"}</span>
       </button>
     `).join("")}
   `).join("");
@@ -703,6 +838,32 @@ function list(items) {
   return `<ul class="clean-list">${items.map((item) => `<li>${escapeHTML(item)}</li>`).join("")}</ul>`;
 }
 
+function flowDiagram(steps) {
+  return `<div class="flow-box">${steps.map((step, index) => `
+    <div class="flow-step">${escapeHTML(step)}</div>
+    ${index < steps.length - 1 ? '<div class="flow-arrow">↓</div>' : ""}
+  `).join("")}</div>`;
+}
+
+function isDayComplete(day) {
+  const item = lessons[day - 1];
+  const checked = reviewChecks[String(day)] || [];
+  return item.reviewItems.length > 0 && item.reviewItems.every((entry) => checked.includes(entry));
+}
+
+function renderReviewChecklist(item) {
+  const checked = reviewChecks[String(item.day)] || [];
+  return `<div class="review-checklist">
+    ${item.reviewItems.map((entry) => {
+      const id = `review-${item.day}-${entry.replace(/[^a-zA-Z0-9]/g, "-")}`;
+      return `<label class="review-item" for="${id}">
+        <input id="${id}" type="checkbox" data-review-check="${escapeHTML(entry)}" ${checked.includes(entry) ? "checked" : ""}>
+        <span>${escapeHTML(entry)}</span>
+      </label>`;
+    }).join("")}
+  </div>`;
+}
+
 function renderLesson() {
   const item = lessons[currentDay - 1];
   if (!visited.includes(currentDay)) {
@@ -715,11 +876,11 @@ function renderLesson() {
     <header class="lesson-hero">
       <div class="lesson-kicker">DAY ${String(item.day).padStart(2, "0")}</div>
       <h1>${escapeHTML(item.title)}</h1>
-      <p>今天不是背語法百科，而是先學一個必要語法，再把它接到每天成長的 Todo App。</p>
+      <p>每天先看到 Todo App 今天會長出什麼功能，再從需求出發學必要語法，最後把新程式接回昨天的版本。</p>
       <div class="lesson-meta">
-        <span class="tag">今日語法練習</span>
-        <span class="tag">Todo App 今日進度</span>
-        <span class="tag">跟做作品路線</span>
+        <span class="tag">需求導向</span>
+        <span class="tag">Todo App 跟做</span>
+        <span class="tag">${isDayComplete(item.day) ? "✓ 已完成" : "知識回顧待完成"}</span>
       </div>
       <button class="button favorite-button ${favoriteActive ? "active" : ""}" type="button" data-favorite>
         ${favoriteActive ? "★ 已收藏" : "☆ 收藏本章"}
@@ -727,15 +888,28 @@ function renderLesson() {
     </header>
 
     <section class="lesson-section">
-      <p class="section-label">PART 1</p>
-      <h2>一、今天先學的語法</h2>
+      <p class="section-label">TODAY OUTCOME</p>
+      <h2>🎯 今天完成後，你的 Todo App 會新增什麼？</h2>
+      <p>${escapeHTML(item.outcome)}</p>
+      <div class="mockup-card"><pre>${escapeHTML(item.mockup)}</pre></div>
+    </section>
+
+    <section class="lesson-section">
+      <p class="section-label">REQUIREMENT</p>
+      <h2>📌 今天遇到的需求</h2>
+      <div class="need-card">${escapeHTML(item.requirement)}</div>
+    </section>
+
+    <section class="lesson-section">
+      <p class="section-label">NEW SYNTAX</p>
+      <h2>📚 今天需要的新語法</h2>
       <div class="two-line-card">
         <div>
-          <h3>語法主題</h3>
+          <h3>只學今天會用到的</h3>
           <p>${escapeHTML(item.syntaxTopic)}</p>
         </div>
         <div>
-          <h3>白話解釋</h3>
+          <h3>白話理解</h3>
           <p>${escapeHTML(item.plain)}</p>
         </div>
       </div>
@@ -743,49 +917,43 @@ function renderLesson() {
     </section>
 
     <section class="lesson-section">
-      <p class="section-label">PART 2</p>
-      <h2>二、語法小練習</h2>
+      <p class="section-label">PRACTICE FIRST</p>
+      <h2>✏️ 語法小練習</h2>
       <div class="exercise-grid">
         ${item.exercises.filter((exercise) => exercise.type === "語法練習").map((exercise, index) => renderExercise(item, exercise, index)).join("")}
       </div>
     </section>
 
     <section class="lesson-section">
-      <p class="section-label">PART 3</p>
-      <h2>三、今天 Todo App 加上的功能</h2>
+      <p class="section-label">BUILD TODO APP</p>
+      <h2>🛠 今天開始修改 Todo App</h2>
       <p>${escapeHTML(item.todoFeature)}</p>
       <div class="todo-bridge">
+        <strong>昨天版本 → 今天新增哪些程式？</strong>
+        <p>${escapeHTML(item.connection)}</p>
         <strong>今天要修改哪些檔案</strong>
         ${list(item.files)}
       </div>
-      <div class="syntax-note"><strong>如何接到昨天的版本</strong>${escapeHTML(item.connection)}</div>
-    </section>
-
-    <section class="lesson-section">
-      <p class="section-label">PART 4</p>
-      <h2>四、Todo App 關鍵程式碼</h2>
+      <div class="code-intro">★★★★★ 今天新增 / 修改</div>
       ${codeBlock(item.todoCode)}
-    </section>
-
-    <section class="lesson-section">
-      <p class="section-label">PART 5</p>
-      <h2>五、常見錯誤</h2>
-      <div class="error-box"><strong>今天最容易卡住的地方</strong>${list(item.errors)}</div>
-    </section>
-
-    <section class="lesson-section">
-      <p class="section-label">PART 6</p>
-      <h2>六、今日作業</h2>
-      <p>${escapeHTML(item.homework)}</p>
       <div class="exercise-grid todo-practice">
         ${item.exercises.filter((exercise) => exercise.type === "Todo App 實作").map((exercise, index) => renderExercise(item, exercise, index)).join("")}
       </div>
     </section>
 
     <section class="lesson-section">
-      <p class="section-label">PART 7</p>
-      <h2>七、答案與提示</h2>
-      <p>每題旁邊都有「顯示答案」按鈕。建議先自己做一次，再展開參考答案；不熟的題目可以加入錯題本。</p>
+      <p class="section-label">PROGRAM FLOW</p>
+      <h2>今天的程式流程圖</h2>
+      ${flowDiagram(item.flow)}
+    </section>
+
+    <section class="lesson-section">
+      <p class="section-label">REVIEW</p>
+      <h2>🎓 今天的知識回顧</h2>
+      <p>完成今天內容後，把你真的理解的項目打勾。全部勾選後，左側 Day 會顯示已完成，並存到 localStorage。</p>
+      ${renderReviewChecklist(item)}
+      <div class="syntax-note"><strong>今日作業</strong>${escapeHTML(item.homework)}</div>
+      <div class="error-box"><strong>常見錯誤</strong>${list(item.errors)}</div>
     </section>
 
     <footer class="lesson-footer">
@@ -878,11 +1046,28 @@ function toggleWrong(exerciseId) {
   renderLesson();
 }
 
+function toggleReview(itemText, checked) {
+  const key = String(currentDay);
+  const current = new Set(reviewChecks[key] || []);
+  if (checked) {
+    current.add(itemText);
+    showToast("已更新今日回顧");
+  } else {
+    current.delete(itemText);
+    showToast("已取消勾選");
+  }
+  reviewChecks[key] = [...current];
+  localStorage.setItem(STORAGE.review, JSON.stringify(reviewChecks));
+  renderNavigation();
+  updateStats();
+}
+
 function updateStats() {
+  const completedDays = lessons.filter((item) => isDayComplete(item.day)).length;
   elements.favoriteCount.textContent = favorites.length;
   elements.wrongCount.textContent = wrongBook.length;
-  elements.progressText.textContent = `${visited.length} / ${lessons.length}`;
-  elements.progressBar.style.width = `${(visited.length / lessons.length) * 100}%`;
+  elements.progressText.textContent = `${completedDays} / ${lessons.length}`;
+  elements.progressBar.style.width = `${(completedDays / lessons.length) * 100}%`;
 }
 
 function openSearch() {
@@ -996,6 +1181,9 @@ function bindEvents() {
 
     const wrongButton = event.target.closest("[data-wrong-toggle]");
     if (wrongButton) toggleWrong(wrongButton.dataset.wrongToggle);
+
+    const reviewInput = event.target.closest("[data-review-check]");
+    if (reviewInput) toggleReview(reviewInput.dataset.reviewCheck, reviewInput.checked);
 
     const copyButton = event.target.closest("[data-copy]");
     if (copyButton) copyCode(copyButton);
