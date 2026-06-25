@@ -4109,8 +4109,6 @@ for (int i = 0; i < classScores.length; i++) {
   }
 ];
 
-applyRequestedContentUpdates();
-
 function applyRequestedContentUpdates() {
   updateSection(5, "5.4", {
     title: "綜合演練",
@@ -4813,7 +4811,453 @@ nums[j + 1] = temp;`,
   chapters.push(createChapter17());
   chapters.push(createChapter18());
   applyVisualTeachingUpgrade();
+  upgradeChallengeSystem();
 }
+
+const CHALLENGE_BANK = {
+  1: [
+    ["生活應用盤點", "請觀察你每天使用的 3 個數位服務，推測哪些部分可能適合用 Java 製作，並說明原因。", "程式思考", 1, ["先從後端、資料保存、手機 App 方向想。", "Java 常出現在需要穩定處理資料與流程的系統。", "可用「服務名稱 → Java 可能負責的部分 → 原因」整理。"], "銀行 App → 帳戶資料與交易流程；購物網站 → 訂單與庫存；學校系統 → 成績與選課資料。", "這題不是背 Java 定義，而是把 Java 的特色連到真實場景。重點是判斷哪些功能需要穩定、可維護、能處理大量資料。常見錯誤是只寫產品名稱，沒有說明 Java 可能負責哪一層。"],
+    ["語言角色判斷", "你要做一個會員登入網站，請判斷 Java 與 JavaScript 可能各自負責哪些工作。", "程式思考", 2, ["先把畫面互動和伺服器處理分開。", "JavaScript 常在瀏覽器端，Java 常在後端服務。", "用表格列出：輸入檢查、登入驗證、資料庫查詢、按鈕互動。"], "JavaScript：按鈕互動、表單即時提示。Java：登入驗證、查詢會員資料、建立登入狀態。", "這題訓練前後端分工。不是說某語言一定只能做某件事，而是用常見情境理解各自擅長位置。其他寫法可補充 Node.js 也能做後端，但本課程聚焦 Java。"]
+  ],
+  2: [
+    ["安裝檢查清單", "設計一份 Java 學習環境檢查清單，讓完全新手能確認自己的電腦是否可以編譯與執行 Java。", "日常生活情境", 2, ["想想新手最容易漏掉哪些工具。", "至少需要 JDK、編輯器、終端機驗證。", "檢查項目可包含 java -version、javac -version、第一支程式能否執行。"], "1. 已安裝 JDK 21。\n2. 終端機可執行 java -version。\n3. 終端機可執行 javac -version。\n4. VS Code 已安裝 Java Extension Pack。\n5. Main.java 可輸出 Hello Java。", "這題要求把環境建置變成可驗證流程。常見錯誤是只寫下載連結，卻沒有驗證方式。真正的檢查清單應該能讓學生一步步判斷問題在哪裡。"],
+    ["輸出格式設計", "請設計一個程式輸出課程報到資訊，至少包含課程名稱、學生姓名、今天目標，並讓輸出排版清楚。", "日常生活情境", 1, ["思考要輸出幾行。", "每一行可以用一次 println。", "可以加上分隔線讓資訊更清楚。"], `public class Main {
+    public static void main(String[] args) {
+        System.out.println("=== 課程報到 ===");
+        System.out.println("課程：Java 新手村");
+        System.out.println("姓名：Jimmy");
+        System.out.println("目標：完成第一支 Java 程式");
+    }
+}`, "這題不是只改 Hello World，而是自行決定輸出資訊與格式。步驟是先規劃要顯示的欄位，再決定每行輸出的文字。常見錯誤是忘記雙引號或分號。"]
+  ],
+  3: [
+    ["自我介紹資料卡", "設計一個自我介紹程式，儲存姓名、年齡、身高、是否為學生，最後輸出完整介紹。", "日常生活情境", 2, ["先判斷每個資料適合的型態。", "姓名用文字，是否為學生用 true/false。", "輸出時可用 + 把文字和變數串起來。"], `public class Profile {
+    public static void main(String[] args) {
+        String name = "Jimmy";
+        int age = 25;
+        double height = 170.5;
+        boolean student = true;
+
+        System.out.println("我是 " + name);
+        System.out.println("今年 " + age + " 歲，身高 " + height + " 公分");
+        System.out.println("學生身分：" + student);
+    }
+}`, "這題要先把真實資料分類，再選擇型態。為什麼 age 用 int？因為年齡通常是整數。height 用 double 是因為可能有小數。其他寫法可以把輸出合併成一行，但分行較清楚。"],
+    ["商品標籤產生器", "建立商品資訊變數，包含商品名稱、價格、庫存數量、是否上架，最後輸出一張商品標籤。", "日常生活情境", 2, ["商品名稱是文字，庫存是整數。", "價格可能需要小數。", "是否上架可用 boolean 表示。"], `String product = "Java 筆記本";
+double price = 199.0;
+int stock = 30;
+boolean active = true;
+
+System.out.println("商品：" + product);
+System.out.println("價格：" + price);
+System.out.println("庫存：" + stock);
+System.out.println("上架：" + active);`, "這題把變數放進商店情境。解題步驟是列出資料、選型態、輸出。常見錯誤是把數字都用 String，導致後續不能計算。"]
+  ],
+  4: [
+    ["BMI 計算器", "輸入或設定身高與體重，計算 BMI，並輸出到小數結果。", "數學運算", 2, ["BMI 需要身高公尺與體重公斤。", "公式是體重 / (身高 * 身高)。", "如果身高用公分，要先除以 100.0。"], `double weight = 68;
+double heightCm = 172;
+double heightM = heightCm / 100.0;
+double bmi = weight / (heightM * heightM);
+System.out.println("BMI = " + bmi);`, "這題練習運算式與型態。使用 100.0 可得到小數結果，避免整數除法。常見錯誤是用公分直接代入公式，或把 height * height 寫漏括號。"],
+    ["商品折扣計算", "設計結帳計算：原價、折扣率、購買數量，輸出折扣後總價。", "數學運算", 2, ["總價和數量有關。", "折扣率可用 0.8 表示 8 折。", "先算小計，再乘折扣率。"], `double price = 250;
+int quantity = 3;
+double discount = 0.8;
+double total = price * quantity * discount;
+System.out.println("折扣後總價：" + total);`, "這題不是單純加減乘除，而是把商業規則轉成運算式。常見錯誤是把 8 折寫成 8，導致總價變大。"],
+    ["秒速換算時速", "給定每秒移動公尺數，換算成每小時公里數。", "數學運算", 2, ["1 公尺 = 0.001 公里。", "1 小時 = 3600 秒。", "m/s 轉 km/h 可乘以 3.6。"], `double metersPerSecond = 12.5;
+double kmPerHour = metersPerSecond * 3.6;
+System.out.println(kmPerHour + " km/h");`, "這題訓練單位轉換思考。先理解單位，再寫公式。其他寫法可寫成 metersPerSecond * 3600 / 1000。"]
+  ],
+  5: [
+    ["電影票價計算", "根據年齡與是否為會員計算電影票價，兒童、成人、敬老票不同，會員再折扣。", "日常生活情境", 3, ["先決定基本票價。", "再處理會員折扣。", "年齡區間建議由特殊區間開始判斷。"], `int age = 70;
+boolean member = true;
+int price;
+
+if (age < 12) {
+    price = 180;
+} else if (age >= 65) {
+    price = 160;
+} else {
+    price = 300;
+}
+
+if (member) {
+    price = price - 30;
+}
+System.out.println("票價：" + price);`, "這題要拆成兩階段：先算基本票價，再套用會員規則。常見錯誤是把所有條件混在一起，導致某些年齡沒有被涵蓋。也可改用方法封裝票價計算。"],
+    ["閏年判斷", "判斷某一年是否為閏年，輸出「閏年」或「平年」。", "小演算法", 3, ["閏年規則不只是能被 4 整除。", "能被 100 整除通常不是閏年。", "能被 400 整除又是閏年。"], `int year = 2024;
+boolean leap = (year % 400 == 0) || (year % 4 == 0 && year % 100 != 0);
+System.out.println(leap ? "閏年" : "平年");`, "這題訓練複合條件。先處理 400，再處理 4 與 100 的關係。常見錯誤是只判斷 year % 4 == 0。"],
+    ["簡易 ATM 選單", "設計提款、存款、查詢餘額的判斷流程，根據使用者選擇輸出對應結果。", "小型模擬", 3, ["先定義選項代碼。", "固定選項可用多條件或 switch。", "提款時要檢查餘額是否足夠。"], `int choice = 2;
+int balance = 1000;
+int amount = 300;
+
+switch (choice) {
+    case 1:
+        System.out.println("餘額：" + balance);
+        break;
+    case 2:
+        System.out.println(amount <= balance ? "提款成功" : "餘額不足");
+        break;
+    case 3:
+        System.out.println("存款成功");
+        break;
+    default:
+        System.out.println("選項錯誤");
+}`, "這題讓學生自己判斷分支結構。固定選單適合 switch，提款規則需要額外判斷。常見錯誤是忘記 break 造成貫穿。"]
+  ],
+  6: [
+    ["星號金字塔", "輸入層數，輸出置中的星號金字塔。", "小演算法", 4, ["每一列有空白和星號。", "第 i 列星號數通常是 2*i-1。", "外層控制列，內層分別處理空白與星號。"], `int n = 5;
+for (int i = 1; i <= n; i++) {
+    for (int s = 1; s <= n - i; s++) System.out.print(" ");
+    for (int j = 1; j <= 2 * i - 1; j++) System.out.print("*");
+    System.out.println();
+}`, "這題不是單純跑迴圈，而是把圖形拆成列、空白、星號三部分。常見錯誤是只印星號沒有處理空白。"],
+    ["質數檢查器", "判斷一個整數是否為質數，並輸出結果。", "小演算法", 3, ["質數只能被 1 和自己整除。", "從 2 檢查到 n - 1。", "找到任何整除數就可以提前停止。"], `int n = 17;
+boolean prime = n > 1;
+for (int i = 2; i < n; i++) {
+    if (n % i == 0) {
+        prime = false;
+        break;
+    }
+}
+System.out.println(prime ? "質數" : "不是質數");`, "這題訓練迴圈與旗標變數。常見錯誤是沒有處理 1，或找到因數後仍繼續跑。可優化為檢查到平方根。"],
+    ["費氏數列產生器", "輸出前 n 個費氏數列數字。", "小演算法", 3, ["每一項來自前兩項相加。", "需要保存前兩個數。", "每次輸出後更新兩個變數。"], `int n = 8;
+int a = 0, b = 1;
+for (int i = 1; i <= n; i++) {
+    System.out.print(a + " ");
+    int next = a + b;
+    a = b;
+    b = next;
+}`, "這題重點是狀態更新。不是每次從頭算，而是保存前兩項。常見錯誤是更新順序錯，導致資料被覆蓋。"]
+  ],
+  7: [
+    ["成績分析器", "給一組成績，輸出最高分、最低分、平均分數。", "陣列分析", 3, ["先用第一筆資料初始化最大最小。", "跑過每一筆成績。", "同時累加總分並更新 max/min。"], `int[] scores = {82, 95, 61, 77, 88};
+int max = scores[0], min = scores[0], total = 0;
+for (int score : scores) {
+    if (score > max) max = score;
+    if (score < min) min = score;
+    total += score;
+}
+System.out.println("最高：" + max);
+System.out.println("最低：" + min);
+System.out.println("平均：" + (double) total / scores.length);`, "這題把陣列當成資料集合分析。常見錯誤是 max 初始為 0，遇到負數資料會錯。"],
+    ["排行榜排序", "給定玩家分數，將分數由高到低排序並輸出名次。", "陣列分析", 4, ["需要比較並交換資料。", "可以用氣泡排序概念。", "外層控制回合，內層比較相鄰元素。"], `int[] scores = {1200, 900, 1500, 700};
+for (int i = 0; i < scores.length - 1; i++) {
+    for (int j = 0; j < scores.length - 1 - i; j++) {
+        if (scores[j] < scores[j + 1]) {
+            int temp = scores[j];
+            scores[j] = scores[j + 1];
+            scores[j + 1] = temp;
+        }
+    }
+}
+for (int i = 0; i < scores.length; i++) {
+    System.out.println((i + 1) + " 名：" + scores[i]);
+}`, "這題需要思考排序流程，不只是讀取陣列。常見錯誤是交換時少了暫存變數。其他寫法可使用 Arrays.sort 後反向輸出。"],
+    ["二維座位搜尋", "在教室座位表中搜尋某個學生座號，輸出所在列與欄。", "陣列分析", 3, ["座位表適合用二維陣列。", "外層找列，內層找欄。", "找到後記錄位置或直接輸出。"], `int[][] seats = {
+    {101, 102, 103},
+    {201, 202, 203}
+};
+int target = 202;
+for (int r = 0; r < seats.length; r++) {
+    for (int c = 0; c < seats[r].length; c++) {
+        if (seats[r][c] == target) {
+            System.out.println("第 " + r + " 列，第 " + c + " 欄");
+        }
+    }
+}`, "這題練習二維陣列的座標概念。常見錯誤是把 rows 和 columns 的 length 混用。"]
+  ],
+  8: [
+    ["學生類別模型", "設計 Student 類別，能保存姓名、分數，並輸出是否及格。", "日常生活情境", 3, ["類別放資料與行為。", "分數是屬性，判斷及格是方法。", "建立多個物件測試不同學生。"], `class Student {
+    String name;
+    int score;
+
+    void showResult() {
+        System.out.println(name + "：" + (score >= 60 ? "及格" : "不及格"));
+    }
+}`, "這題把資料和行為放在同一個類別中。常見錯誤是只建立變數，沒有把行為封裝成方法。"],
+    ["銀行帳戶物件", "設計 BankAccount 類別，能存款、提款、顯示餘額。", "小型模擬", 3, ["帳戶需要 balance。", "存款和提款是方法。", "提款前要判斷餘額。"], `class BankAccount {
+    int balance;
+
+    void deposit(int amount) {
+        balance += amount;
+    }
+
+    void withdraw(int amount) {
+        if (amount <= balance) balance -= amount;
+    }
+}`, "這題訓練把操作封裝在物件裡。常見錯誤是讓外部直接改 balance，後續封裝章會改善。"],
+    ["寵物系統", "設計 Pet 類別，包含名稱、種類，並能依種類發出不同叫聲。", "小型模擬", 2, ["屬性保存名稱與種類。", "方法中可根據種類輸出。", "先做 Dog / Cat 兩種即可。"], `class Pet {
+    String name;
+    String type;
+
+    void speak() {
+        if (type.equals("dog")) System.out.println(name + "：汪");
+        else if (type.equals("cat")) System.out.println(name + "：喵");
+        else System.out.println(name + "：...");
+    }
+}`, "這題連接字串比較與方法。常見錯誤是在 Java 用 == 比較 String 內容。"]
+  ],
+  9: [
+    ["會員建立流程", "建立 Member 類別，建立物件時就必須給姓名、等級與點數。", "日常生活情境", 3, ["使用 Constructor 初始化資料。", "參數名稱可和屬性相同。", "用 this 區分屬性與參數。"], `class Member {
+    private String name;
+    private String level;
+    private int points;
+
+    Member(String name, String level, int points) {
+        this.name = name;
+        this.level = level;
+        this.points = Math.max(points, 0);
+    }
+}`, "這題重點是物件一建立就處於合理狀態。常見錯誤是寫 void Member，這不是 Constructor。"],
+    ["商品初始化檢查", "建立 Product 類別，建構時給名稱與價格，價格不可小於 0。", "日常生活情境", 3, ["建構方法可以呼叫 setter。", "setter 負責驗證資料。", "private 欄位避免外部亂改。"], `class Product {
+    private String name;
+    private double price;
+
+    Product(String name, double price) {
+        this.name = name;
+        setPrice(price);
+    }
+
+    void setPrice(double price) {
+        if (price >= 0) this.price = price;
+    }
+}`, "這題結合 Constructor 與封裝。常見錯誤是 Constructor 檢查一次，但 setter 不檢查，之後仍可塞入錯誤資料。"],
+    ["帳戶編號統計", "每建立一個帳戶，自動累計帳戶數量，並提供查詢總數功能。", "小型模擬", 3, ["所有帳戶共享同一個計數。", "共享資料適合 static。", "Constructor 中增加計數。"], `class Account {
+    static int count = 0;
+    String owner;
+
+    Account(String owner) {
+        this.owner = owner;
+        count++;
+    }
+}`, "這題區分物件成員和類別成員。owner 每個物件不同，count 所有物件共享。"]
+  ],
+  10: [
+    ["密碼強度檢查", "檢查密碼是否至少 8 碼，且同時包含英文字母與數字。", "字串處理", 3, ["先檢查長度。", "逐字檢查是否有字母與數字。", "兩個條件都成立才通過。"], `String password = "java2026";
+boolean hasLetter = false, hasDigit = false;
+for (int i = 0; i < password.length(); i++) {
+    char ch = password.charAt(i);
+    if (Character.isLetter(ch)) hasLetter = true;
+    if (Character.isDigit(ch)) hasDigit = true;
+}
+System.out.println(password.length() >= 8 && hasLetter && hasDigit);`, "這題訓練字串走訪。常見錯誤是只檢查長度，忽略內容規則。也可使用 Regex 完成。"],
+    ["Email 格式檢查", "檢查一段文字是否看起來像 Email：包含 @，且 @ 後面有點號。", "字串處理", 2, ["找 @ 的位置。", "找最後一個點號的位置。", "點號必須在 @ 後面。"], `String email = "test@example.com";
+int at = email.indexOf("@");
+int dot = email.lastIndexOf(".");
+boolean ok = at > 0 && dot > at + 1 && dot < email.length() - 1;
+System.out.println(ok);`, "這題用 indexOf 轉成格式規則。常見錯誤是只判斷 contains('@')，會接受不完整格式。"],
+    ["回文判斷", "判斷一段文字正著讀和反著讀是否相同。", "字串處理", 3, ["可以用 StringBuilder 反轉。", "也可以從頭尾逐字比較。", "比較內容用 equals。"], `String text = "level";
+String reversed = new StringBuilder(text).reverse().toString();
+System.out.println(text.equals(reversed));`, "這題讓學生思考字串轉換。常見錯誤是用 == 比較字串內容。"]
+  ],
+  11: [
+    ["員工薪資繼承", "設計 Employee、Engineer、Sales，讓不同員工能輸出不同獎金說明。", "日常生活情境", 3, ["共同欄位放父類別。", "不同輸出可覆寫方法。", "用父類別參考測試不同子類別。"], `class Employee {
+    String name;
+    void bonus() { System.out.println("一般獎金"); }
+}
+class Engineer extends Employee {
+    @Override void bonus() { System.out.println("專案獎金"); }
+}`, "這題練習繼承和覆寫。常見錯誤是把每個類別重複寫共同欄位。"],
+    ["動物聲音多型", "建立一組動物物件，逐一呼叫發出聲音的方法，讓不同動物有不同輸出。", "小型模擬", 3, ["共同型別可放在陣列。", "實際物件決定覆寫結果。", "父類別參考可指向子類別物件。"], `Animal[] animals = {new Dog(), new Cat()};
+for (Animal animal : animals) {
+    animal.speak();
+}`, "這題重點是多型：同一行 animal.speak() 會因實際物件不同而有不同結果。"],
+    ["不定參數加總", "設計一個方法，可接收任意數量整數並回傳總和。", "小演算法", 2, ["參數數量不固定。", "可使用 varargs。", "方法內把 nums 當陣列走訪。"], `static int sum(int... nums) {
+    int total = 0;
+    for (int n : nums) total += n;
+    return total;
+}`, "這題把陣列走訪概念延伸到 varargs。常見錯誤是 varargs 參數後面再放其他一般參數。"]
+  ],
+  12: [
+    ["形狀面積系統", "設計可擴充的 Shape 結構，讓 Circle 與 Rectangle 都能計算面積。", "小型模擬", 4, ["共同規格放在抽象類別或介面。", "不同形狀各自實作計算。", "用同一型別陣列保存不同形狀。"], `abstract class Shape {
+    abstract double area();
+}
+class Circle extends Shape {
+    double r;
+    Circle(double r) { this.r = r; }
+    double area() { return Math.PI * r * r; }
+}`, "這題訓練抽象化。常見錯誤是讓 Shape 寫死某一種形狀公式，導致無法擴充。"],
+    ["付款能力介面", "設計 Payable 介面，讓 CreditCard 與 LinePay 都能執行付款。", "日常生活情境", 3, ["付款是一種能力。", "不同類別可以共享同一介面。", "呼叫端只需要知道 Payable。"], `interface Payable {
+    void pay(int amount);
+}
+class CreditCard implements Payable {
+    public void pay(int amount) {
+        System.out.println("信用卡付款：" + amount);
+    }
+}`, "這題讓學生判斷何時用介面。付款能力可由不同類別實作，不一定有共同父類別。"],
+    ["按鈕監聽器", "設計 Button 與 ClickListener，讓按鈕被 click 時通知外部程式。", "小型模擬", 4, ["Button 保存 listener。", "click 時呼叫 listener 的方法。", "可用匿名內部類別提供行為。"], `interface ClickListener {
+    void onClick();
+}
+class Button {
+    ClickListener listener;
+    void setListener(ClickListener listener) { this.listener = listener; }
+    void click() { if (listener != null) listener.onClick(); }
+}`, "這題把介面當成物件溝通橋樑。常見錯誤是 Button 直接寫死點擊行為，導致不能重用。"]
+  ],
+  13: [
+    ["校園套件規劃", "規劃 school、animal、utility 三個套件，決定哪些類別放在哪裡，並寫出 package 宣告。", "程式思考", 2, ["先依功能分類。", "package 名稱通常小寫。", "類別檔案位置要對應 package。"], `package school;
+public class Student { }
+
+package utility;
+public class ScoreTool { }`, "這題訓練專案組織，不只是寫 package。常見錯誤是 package 名稱和資料夾不一致。"],
+    ["重名類別處理", "專案中同時有 school.Student 與 company.Student，請設計一段程式避免混淆。", "程式思考", 3, ["Java 無法 import 兩個同名類別後都用短名。", "其中一個可使用完整名稱。", "完整名稱包含 package。"], `import school.Student;
+
+Student s1 = new Student();
+company.Student s2 = new company.Student();`, "這題訓練完整類別名稱。常見錯誤是同時 import 兩個 Student，導致名稱衝突。"],
+    ["存取權限測試", "設計兩個不同 package 的類別，驗證 public、protected、default、private 哪些能被存取。", "程式思考", 3, ["先畫表格。", "default 只限同 package。", "private 只限同類別。"], "請建立 access.A 與 other.B，分別嘗試讀取四種欄位，觀察編譯錯誤。", "這題的重點是用實驗理解規則。完整解答不是背表格，而是能根據 package 與繼承關係判斷存取權限。"]
+  ],
+  14: [
+    ["安全除法工具", "設計除法計算，使用者輸入除數為 0 時不能讓程式中斷。", "小型模擬", 2, ["危險程式放在 try。", "錯誤發生時 catch。", "給使用者看得懂的訊息。"], `try {
+    int result = 10 / 0;
+    System.out.println(result);
+} catch (ArithmeticException e) {
+    System.out.println("除數不可為 0");
+}`, "這題訓練把可能出錯的程式隔離。常見錯誤是 catch Exception 但訊息太籠統。"],
+    ["分數驗證器", "設計方法驗證分數必須介於 0 到 100，不合法時主動拋出例外。", "小型模擬", 3, ["驗證失敗時主動丟出錯誤。", "方法宣告可能需要 throws。", "呼叫端負責處理錯誤。"], `static void validateScore(int score) {
+    if (score < 0 || score > 100) {
+        throw new IllegalArgumentException("分數超出範圍");
+    }
+}`, "這題不是等錯誤發生，而是主動保護資料。常見錯誤是只印錯誤訊息但仍讓不合法資料繼續使用。"],
+    ["ATM 餘額不足例外", "建立提款流程，提款金額超過餘額時拋出自訂例外。", "小型模擬", 4, ["先建立自訂 Exception。", "提款方法檢查餘額。", "呼叫端 catch 並顯示訊息。"], `class BalanceException extends Exception {
+    BalanceException(String message) { super(message); }
+}`, "這題是例外處理 Mini Project 的核心。自訂例外讓錯誤意義更明確。常見錯誤是用 RuntimeException 逃避處理，初學階段建議先練 checked exception。"]
+  ],
+  15: [
+    ["雙任務倒數", "建立兩個同時倒數的任務，觀察輸出交錯情況。", "小型模擬", 3, ["每個任務放在不同 Thread。", "啟動用 start。", "sleep 可以讓結果更明顯。"], `Thread a = new Thread(() -> {
+    for (int i = 5; i >= 1; i--) System.out.println("A:" + i);
+});
+Thread b = new Thread(() -> {
+    for (int i = 5; i >= 1; i--) System.out.println("B:" + i);
+});
+a.start();
+b.start();`, "這題用輸出交錯理解多執行緒。常見錯誤是呼叫 run 而不是 start。"],
+    ["同步提款", "兩個人同時從同一帳戶提款，請避免餘額被扣錯。", "小型模擬", 4, ["共享資料是 balance。", "檢查餘額和扣款要一起保護。", "可以使用 synchronized。"], `synchronized void withdraw(int amount) {
+    if (amount <= balance) {
+        balance -= amount;
+    }
+}`, "這題訓練 race condition。常見錯誤是只同步扣款，不同步餘額檢查。"],
+    ["計時器通知", "設計倒數計時器，時間到後通知外部 listener。", "小型模擬", 4, ["計時工作放在 Thread。", "Listener 定義 timeUp。", "倒數結束後呼叫 listener。"], `interface TimerListener {
+    void timeUp();
+}`, "這題結合介面與多執行緒。常見錯誤是讓 Timer 寫死通知內容，導致無法重用。"]
+  ],
+  16: [
+    ["學生成績存檔", "把多位學生姓名與分數寫入文字檔，每行一筆資料。", "小型模擬", 3, ["文字資料適合 Writer。", "每行可用逗號分隔。", "try-with-resources 可自動關閉。"], `try (BufferedWriter bw = new BufferedWriter(new FileWriter("students.csv"))) {
+    bw.write("Amy,90");
+    bw.newLine();
+    bw.write("Ben,75");
+}`, "這題把資料轉成檔案格式。常見錯誤是忘記換行，導致資料黏在一起。"],
+    ["讀檔計算平均", "讀取學生成績檔，計算總分、平均、最高與最低。", "資料分析", 4, ["逐行 readLine。", "split 取得姓名與分數。", "分數字串需轉成 int。"], `String line = "Amy,90";
+String[] parts = line.split(",");
+int score = Integer.parseInt(parts[1]);`, "這題結合檔案、字串與數字轉換。常見錯誤是沒有處理空檔或格式錯誤。"],
+    ["物件序列化保存", "將 Student 物件寫入檔案，再讀回來確認資料。", "小型模擬", 4, ["類別需要 Serializable。", "寫入用 ObjectOutputStream。", "讀取後需要轉型。"], `class Student implements Serializable {
+    private static final long serialVersionUID = 1L;
+    String name;
+}`, "這題理解物件讀寫流程。常見錯誤是忘記 implements Serializable。"]
+  ],
+  17: [
+    ["樂透號碼產生器", "產生 6 個不重複的 1 到 49 號碼並排序。", "小演算法", 3, ["不重複適合 Set。", "亂數可用 Random。", "排序可轉成 List 後 sort。"], `HashSet<Integer> numbers = new HashSet<>();
+Random random = new Random();
+while (numbers.size() < 6) {
+    numbers.add(random.nextInt(49) + 1);
+}`, "這題讓標準類別庫解決常見問題。常見錯誤是用陣列手動檢查重複，容易寫錯。"],
+    ["英漢字典", "建立簡易字典，輸入英文單字後輸出中文意思。", "日常生活情境", 2, ["Key 對 Value 適合 Map。", "put 新增資料。", "get 查詢資料。"], `HashMap<String, String> dict = new HashMap<>();
+dict.put("apple", "蘋果");
+System.out.println(dict.get("apple"));`, "這題理解 HashMap 的查表能力。常見錯誤是用兩個陣列分別保存英文和中文，維護困難。"],
+    ["距離計算工具", "給兩個座標點，計算兩點距離。", "數學運算", 2, ["使用平方、相加、開根號。", "Math.pow 可以算平方。", "Math.sqrt 可以開根號。"], `double dx = x2 - x1;
+double dy = y2 - y1;
+double distance = Math.sqrt(dx * dx + dy * dy);`, "這題訓練使用 Math 類別。常見錯誤是忘記先平方差值。"]
+  ],
+  18: [
+    ["GUI 計算機草圖", "設計一個有輸入框、按鈕、結果標籤的簡易計算機視窗。", "小型模擬", 3, ["先列元件。", "再決定 Layout。", "最後處理按鈕事件。"], `JFrame frame = new JFrame("Calculator");
+JTextField input = new JTextField(10);
+JButton button = new JButton("計算");
+JLabel result = new JLabel("結果");`, "這題重點是 GUI 拆解能力。常見錯誤是一開始就寫事件，卻還沒規劃元件。"],
+    ["按鈕計數器", "建立一個視窗，每按一次按鈕，畫面上的數字加一。", "小型模擬", 3, ["需要保存 count。", "按鈕事件中更新 count。", "更新 JLabel 顯示。"], `button.addActionListener(e -> {
+    count++;
+    label.setText("次數：" + count);
+});`, "這題是 GUI 事件處理基本功。常見錯誤是只改變變數，沒有更新畫面元件。"],
+    ["小畫板圖形", "建立 JPanel，畫出房子、太陽或棋盤其中一種圖形。", "小型模擬", 4, ["繪圖放在 paintComponent。", "先呼叫 super.paintComponent。", "用 drawRect、fillOval、drawLine 組合圖形。"], `protected void paintComponent(Graphics g) {
+    super.paintComponent(g);
+    g.drawRect(50, 80, 100, 80);
+    g.drawLine(50, 80, 100, 30);
+    g.drawLine(100, 30, 150, 80);
+}`, "這題訓練把圖形拆成基本形狀。常見錯誤是直接在 main 裡畫圖，而不是覆寫 paintComponent。"]
+  ]
+};
+
+const MINI_PROJECTS = {
+  1: ["Java 應用提案", "設計一份 Java 可製作作品提案，包含目標使用者、功能、Java 負責的部分。"],
+  2: ["環境建置檢查器", "整理自己的 Java 開發環境文件，包含安裝、驗證、常見錯誤排除。"],
+  3: ["個人資料系統", "建立個人資料程式，保存姓名、年齡、身高、興趣與學生狀態並輸出。"],
+  4: ["生活計算工具", "製作包含 BMI、溫度轉換、折扣計算、平均分數的計算工具。"],
+  5: ["簡易 ATM", "設計查詢、存款、提款與錯誤選項處理流程。"],
+  6: ["猜數字遊戲", "製作可重複猜測、提示太大太小、猜中結束的遊戲。"],
+  7: ["成績管理", "使用陣列完成輸入成績、最高最低、平均、搜尋與排序。"],
+  8: ["圖書館管理", "設計 Book 與 Library 類別，能新增書籍並顯示館藏。"],
+  9: ["會員與商品初始化", "設計 Member、Product、Account，使用 Constructor、this、private、static。"],
+  10: ["文字分析工具", "分析一段文字的字數、關鍵字、是否回文、Email 或密碼格式。"],
+  11: ["員工管理繼承系統", "設計 Employee 子類別並用多型輸出不同薪資或獎金策略。"],
+  12: ["圖形繪製架構", "用抽象類別或介面設計 Shape 系統，支援多種圖形。"],
+  13: ["套件化旗幟系統", "把多個 Flag 類別整理到 package，並在 Main 中 import 使用。"],
+  14: ["ATM 錯誤處理", "提款、存款、查詢流程加入自訂例外與 try/catch。"],
+  15: ["倒數計時器", "用 Thread / Runnable 製作倒數並在結束時通知 Listener。"],
+  16: ["成績檔案系統", "將學生資料寫入檔案，再讀取並計算統計。"],
+  17: ["標準類別庫工具箱", "用 Math、HashSet、HashMap 完成樂透、距離、字典工具。"],
+  18: ["GUI 計算機", "用 Swing 製作可輸入數字並顯示計算結果的桌面程式。"]
+};
+
+function upgradeChallengeSystem() {
+  chapters.forEach((chapter) => {
+    const bank = CHALLENGE_BANK[chapter.id] || CHALLENGE_BANK[1];
+    const activities = getSortedSections(chapter).map((section, index) => {
+      const template = bank[index % bank.length];
+      return createChallengeActivity(chapter, section, template, index + 1);
+    });
+
+    const [projectTitle, projectQuestion] = MINI_PROJECTS[chapter.id];
+    activities.push(createMiniProjectActivity(chapter, projectTitle, projectQuestion));
+    chapter.activities = activities;
+  });
+}
+
+function createChallengeActivity(chapter, section, template, order) {
+  const [title, question, category, difficulty, hints, solution, explanation] = template;
+  return {
+    id: `ch${String(chapter.id).padStart(2, "0")}-s${section.sectionId.replace(".", "-")}-challenge`,
+    sectionId: section.sectionId,
+    type: "challenge",
+    title: `Challenge ${order}: ${title}`,
+    question: `${question}\n\n限制：請先依需求自行判斷要使用哪些語法，不要直接照抄本小節範例。`,
+    category,
+    difficulty,
+    hints,
+    solution,
+    explanation: `${explanation}\n\n解題步驟：先理解輸入與輸出，再拆成小規則，最後才寫程式。常見錯誤是看到範例就只替換變數名稱，沒有重新分析需求。其他寫法只要能保持規則清楚、結果正確，也可以接受。`
+  };
+}
+
+function createMiniProjectActivity(chapter, title, question) {
+  return {
+    id: `ch${String(chapter.id).padStart(2, "0")}-mini-project`,
+    sectionId: getAssessmentSection(chapter).sectionId,
+    type: "homework",
+    title: `Mini Project: ${title}`,
+    question: `${question}\n\n請把本章至少三個核心觀念整合在同一個小作品中，並自行設計測試資料。`,
+    category: "Mini Project",
+    difficulty: 4,
+    hints: [
+      "先列出作品需要哪些資料與功能。",
+      "把功能拆成輸入、處理、輸出三段。",
+      "先完成最小可執行版本，再逐步加入檢查、格式與邊界情況。"
+    ],
+    solution: "Mini Project 沒有唯一答案。請先完成可執行版本，再確認：資料是否合理、流程是否清楚、錯誤情況是否有處理、輸出是否容易閱讀。",
+    explanation: "Mini Project 的目標不是背標準答案，而是把本章觀念整合成一個可運作的小系統。建議先畫流程，再寫程式。常見錯誤是一開始就追求完整功能，導致無法執行；應先做最小版本。"
+  };
+}
+
+applyRequestedContentUpdates();
 
 function updateSection(chapterId, sectionId, data) {
   const chapter = chapters.find((item) => item.id === chapterId);
@@ -12515,13 +12959,22 @@ function getActivityTypeLabel(type) {
   const labels = {
     exercise: "實作練習",
     thought: "思考題",
-    homework: "作業"
+    homework: "Mini Project",
+    challenge: "Challenge"
   };
 
   return labels[type] || "練習";
 }
 
+function getDifficultyStars(level = 1) {
+  return "⭐".repeat(Math.max(1, Math.min(Number(level) || 1, 4)));
+}
+
 function renderAnswerContent(value, className) {
+  if (Array.isArray(value)) {
+    return value.map((item) => `<p>${formatInlineCode(item)}</p>`).join("");
+  }
+
   const formatted = formatInlineCode(value);
   const shouldUseCodeBlock = value.includes("\n") || value.includes(";") || value.includes("public class");
 
@@ -12534,20 +12987,44 @@ function renderAnswerContent(value, className) {
 
 function renderRevealPanel(activity, kind, title) {
   const panelId = `${activity.id}-${kind}`;
+  const value = activity[kind];
+  if (!value) return "";
+
   return `
     <div class="answer-panel ${kind}" id="${panelId}" hidden>
       <strong>${title}</strong>
-      ${renderAnswerContent(activity[kind], kind)}
+      ${renderAnswerContent(value, kind)}
     </div>
   `;
 }
 
+function renderHintPanels(activity) {
+  if (!Array.isArray(activity.hints)) {
+    return renderRevealPanel(activity, "hint", "提示");
+  }
+
+  return activity.hints.map((hint, index) => {
+    const kind = `hint${index + 1}`;
+    return `
+      <div class="answer-panel hint ${kind}" id="${activity.id}-${kind}" hidden>
+        <strong>Hint ${index + 1}</strong>
+        ${renderAnswerContent(hint, "hint")}
+      </div>
+    `;
+  }).join("");
+}
+
 function renderActivity(activity, state) {
   const isChecked = state.completedActivities.includes(activity.id);
+  const hasThreeHints = Array.isArray(activity.hints);
   return `
     <section class="callout activity-card ${activity.type}" id="${activity.id}">
       <div class="activity-head">
-        <span class="activity-label">${getActivityTypeLabel(activity.type)}</span>
+        <div class="activity-badges">
+          <span class="activity-label">${getActivityTypeLabel(activity.type)}</span>
+          ${activity.category ? `<span class="activity-category">${activity.category}</span>` : ""}
+          ${activity.difficulty ? `<span class="activity-difficulty level-${activity.difficulty}" aria-label="難度 ${activity.difficulty}">${getDifficultyStars(activity.difficulty)}</span>` : ""}
+        </div>
         <label class="activity-check">
           <input type="checkbox" data-activity-complete="${activity.id}" ${isChecked ? "checked" : ""}>
           <span>我已完成這個練習</span>
@@ -12556,13 +13033,15 @@ function renderActivity(activity, state) {
       <h2>${activity.title}</h2>
       <p>${formatInlineCode(activity.question)}</p>
       <div class="answer-actions">
-        <button class="mini-button hint" type="button" data-toggle-panel="${activity.id}-hint" data-label="提示">查看提示</button>
-        <button class="mini-button solution" type="button" data-toggle-panel="${activity.id}-solution" data-label="解答">查看解答</button>
-        <button class="mini-button explanation" type="button" data-toggle-panel="${activity.id}-explanation" data-label="解析">查看解析</button>
+        ${hasThreeHints
+          ? activity.hints.map((_, index) => `<button class="mini-button hint" type="button" data-toggle-panel="${activity.id}-hint${index + 1}" data-label="Hint ${index + 1}">查看 Hint ${index + 1}</button>`).join("")
+          : `<button class="mini-button hint" type="button" data-toggle-panel="${activity.id}-hint" data-label="提示">查看提示</button>`}
+        <button class="mini-button solution" type="button" data-toggle-panel="${activity.id}-solution" data-label="完整解答">顯示完整解答</button>
+        <button class="mini-button explanation" type="button" data-toggle-panel="${activity.id}-explanation" data-label="解題思路">查看解題思路</button>
       </div>
-      ${renderRevealPanel(activity, "hint", "提示")}
-      ${renderRevealPanel(activity, "solution", "標準解答")}
-      ${renderRevealPanel(activity, "explanation", "解答解析")}
+      ${renderHintPanels(activity)}
+      ${renderRevealPanel(activity, "solution", "完整解答")}
+      ${renderRevealPanel(activity, "explanation", "解題思路")}
     </section>
   `;
 }
@@ -12911,7 +13390,9 @@ function handlePanelToggle(button) {
 
   const shouldShow = panel.hidden;
   panel.hidden = !shouldShow;
-  button.textContent = `${shouldShow ? "隱藏" : "查看"}${button.dataset.label}`;
+  const label = button.dataset.label;
+  const closedVerb = label === "完整解答" ? "顯示" : "查看";
+  button.textContent = `${shouldShow ? "隱藏" : closedVerb} ${label}`;
 }
 
 function handleWrongRetryToggle(button) {

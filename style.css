@@ -995,6 +995,14 @@ code {
   border-left-color: #c084fc;
 }
 
+.activity-card.challenge {
+  border-left-color: var(--accent);
+}
+
+.activity-card.homework {
+  border-left-color: var(--ok);
+}
+
 .activity-head,
 .quiz-heading {
   display: flex;
@@ -1002,6 +1010,13 @@ code {
   justify-content: space-between;
   gap: 16px;
   margin-bottom: 12px;
+}
+
+.activity-badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
 }
 
 .activity-label {
@@ -1014,6 +1029,51 @@ code {
   color: var(--accent);
   font-size: 0.86rem;
   font-weight: 700;
+}
+
+.activity-category,
+.activity-difficulty {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.activity-category {
+  border: 1px solid rgba(96, 165, 250, 0.36);
+  color: #bfdbfe;
+  background: rgba(96, 165, 250, 0.08);
+}
+
+.activity-difficulty {
+  border: 1px solid rgba(251, 191, 36, 0.28);
+  background: rgba(251, 191, 36, 0.08);
+  letter-spacing: 0.04em;
+}
+
+.activity-difficulty.level-1 {
+  color: #bbf7d0;
+  border-color: rgba(134, 239, 172, 0.36);
+  background: rgba(134, 239, 172, 0.08);
+}
+
+.activity-difficulty.level-2 {
+  color: #fde68a;
+}
+
+.activity-difficulty.level-3 {
+  color: #fdba74;
+  border-color: rgba(251, 146, 60, 0.4);
+  background: rgba(251, 146, 60, 0.1);
+}
+
+.activity-difficulty.level-4 {
+  color: #fda4af;
+  border-color: rgba(251, 113, 133, 0.45);
+  background: rgba(251, 113, 133, 0.1);
 }
 
 .activity-check {
@@ -1087,6 +1147,18 @@ code {
 
 .answer-panel.hint strong {
   color: #fde68a;
+}
+
+.answer-panel.hint1 {
+  background: rgba(251, 191, 36, 0.08);
+}
+
+.answer-panel.hint2 {
+  background: rgba(251, 191, 36, 0.13);
+}
+
+.answer-panel.hint3 {
+  background: rgba(251, 191, 36, 0.18);
 }
 
 .answer-panel.solution {
