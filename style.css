@@ -817,6 +817,36 @@ textarea {
   font-size: 1.15rem;
 }
 
+.learning-objectives {
+  margin: 16px 0 20px;
+  padding: 18px;
+  border: 1px solid rgba(96, 165, 250, 0.32);
+  border-left: 4px solid #60a5fa;
+  border-radius: var(--radius);
+  background: rgba(96, 165, 250, 0.08);
+}
+
+.learning-objectives strong {
+  display: block;
+  margin-bottom: 6px;
+  color: #bfdbfe;
+  font-size: 1rem;
+}
+
+.learning-objectives p {
+  margin: 0 0 8px;
+  color: var(--muted);
+}
+
+.learning-objectives ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.learning-objectives li + li {
+  margin-top: 6px;
+}
+
 .content-section p,
 .content-section li,
 .callout p,
